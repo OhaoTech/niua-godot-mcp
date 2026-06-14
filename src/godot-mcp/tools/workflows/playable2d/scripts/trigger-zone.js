@@ -1,0 +1,55 @@
+import { gdBool, gdString } from "./gdscript.js";
+
+export function buildTriggerZone2DScript({
+  className,
+  eventName,
+  watchBodies,
+  watchAreas,
+  printEvents
+}) {
+  const lines = [
+    "extends Area2D",
+    className ? `class_name ${className}` : "",
+    "",
+    `@export var event_name: String = ${gdString(eventName)}`,
+    `@export var watch_bodies: bool = ${gdBool(watchBodies)}`,
+    `@export var watch_areas: bool = ${gdBool(watchAreas)}`,
+    `@export var print_events: bool = ${gdBool(printEvents)}`,
+    "",
+    "func _ready() -> void:",
+    "\tif watch_bodies:",
+    "\t\tbody_entered.connect(_on_body_entered)",
+    "\t\tbody_exited.connect(_on_body_exited)",
+    "\tif watch_areas:",
+    "\t\tarea_entered.connect(_on_area_entered)",
+    "\t\tarea_exited.connect(_on_area_exited)",
+    "",
+    "func _on_body_entered(body: Node2D) -> void:",
+    "\t_emit_trigger(\"body_entered\", body)",
+    "",
+    "func _on_body_exited(body: Node2D) -> void:",
+    "\t_emit_trigger(\"body_exited\", body)",
+    "",
+    "func _on_area_entered(area: Area2D) -> void:",
+    "\t_emit_trigger(\"area_entered\", area)",
+    "",
+    "func _on_area_exited(area: Area2D) -> void:",
+    "\t_emit_trigger(\"area_exited\", area)",
+    "",
+    "func _emit_trigger(kind: String, other: Node) -> void:",
+    "\tvar payload := {",
+    "\t\t\"kind\": kind,",
+    "\t\t\"event_name\": event_name,",
+    "\t\t\"node_path\": str(get_path()),",
+    "\t\t\"other_path\": str(other.get_path()) if other != null else \"\",",
+    "\t\t\"other_name\": str(other.name) if other != null else \"\"",
+    "\t}",
+    "\tvar probe := get_node_or_null(\"/root/NiuaMcpRuntimeProbe\")",
+    "\tif probe != null and probe.has_method(\"log_event\"):",
+    "\t\tprobe.log_event(\"trigger_2d\", payload)",
+    "\telif print_events:",
+    "\t\tprint(\"[NIUA trigger_2d] \", JSON.stringify(payload))",
+    ""
+  ];
+  return lines.filter((line, index) => index !== 1 || line).join("\n");
+}

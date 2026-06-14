@@ -1,0 +1,52 @@
+{
+  "name": "niua-godot-mcp",
+  "version": "0.1.0",
+  "description": "Local MCP server + bundled Godot editor addon that lets an agent create, inspect, run, debug, and export Godot 4.6 games through tools instead of clicking the editor.",
+  "type": "module",
+  "author": "FrankYin (https://github.com/qervas)",
+  "homepage": "https://github.com/OhaoTech/niua-godot-mcp",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OhaoTech/niua-godot-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/OhaoTech/niua-godot-mcp/issues"
+  },
+  "bin": {
+    "niua-godot-mcp": "src/godot-mcp/cli.js",
+    "niua-godot-mcp-doctor": "src/godot-mcp/doctor.js"
+  },
+  "files": [
+    "src/godot-mcp",
+    "godot/addons/niua_mcp",
+    "skills/niua-godot-forge",
+    "scripts/install-niua-godot-addon.js",
+    "scripts/generate-godot-mcp-docs.mjs",
+    "scripts/generate-godot-mcp-skill-reference.mjs",
+    "docs/godot-mcp",
+    "README.md",
+    "SECURITY.md",
+    "LICENSE.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "godot:addon:install": "node scripts/install-niua-godot-addon.js",
+    "godot:mcp": "node src/godot-mcp/server.js",
+    "godot:mcp:doctor": "node src/godot-mcp/doctor.js",
+    "godot:mcp:docs": "node scripts/generate-godot-mcp-docs.mjs && node scripts/generate-godot-mcp-skill-reference.mjs"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "godot",
+    "gamedev",
+    "ai-agent",
+    "claude",
+    "codex"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "PolyForm-Small-Business-1.0.0"
+}
