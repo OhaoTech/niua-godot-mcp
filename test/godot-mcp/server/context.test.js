@@ -18,17 +18,23 @@ test("splitBridgeArgs separates connection fields from payload", () => {
   const { client, payload } = splitBridgeArgs({
     host: "127.0.0.3",
     port: 9181,
+    expectedProjectRoot: "/tmp/moonwell",
     path: "res://main.tscn"
   });
 
   assert.equal(client.host, "127.0.0.3");
   assert.equal(client.port, 9181);
+  assert.equal(client.expectedProjectRoot, "/tmp/moonwell");
   assert.deepEqual(payload, { path: "res://main.tscn" });
 });
 
 test("pickBridgeConnectionArgs preserves only provided connection values", () => {
-  assert.deepEqual(pickBridgeConnectionArgs({ port: 9179, name: "Player" }), {
-    port: 9179
+  assert.deepEqual(pickBridgeConnectionArgs({
+    port: 9179,
+    expectedProjectRoot: "/tmp/moonwell",
+    name: "Player"
+  }), {
+    port: 9179,
+    expectedProjectRoot: "/tmp/moonwell"
   });
 });
-

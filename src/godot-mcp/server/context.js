@@ -7,6 +7,7 @@ export function createBridgeClient(args = {}) {
   return new GodotBridgeClient({
     host,
     port,
+    expectedProjectRoot: args.expectedProjectRoot,
     token: resolveBridgeToken({
       host,
       port,
@@ -17,9 +18,9 @@ export function createBridgeClient(args = {}) {
 }
 
 export function splitBridgeArgs(args = {}) {
-  const { host, port, token, bridgeToken, ...payload } = args;
+  const { host, port, token, bridgeToken, expectedProjectRoot, ...payload } = args;
   return {
-    client: createBridgeClient({ host, port, token, bridgeToken }),
+    client: createBridgeClient({ host, port, token, bridgeToken, expectedProjectRoot }),
     payload
   };
 }
@@ -31,6 +32,9 @@ export function pickBridgeConnectionArgs(args = {}) {
   }
   if (args.port !== undefined) {
     connectionArgs.port = args.port;
+  }
+  if (args.expectedProjectRoot !== undefined) {
+    connectionArgs.expectedProjectRoot = args.expectedProjectRoot;
   }
   return connectionArgs;
 }

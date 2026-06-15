@@ -38,10 +38,16 @@ static func reimport_assets(body: Dictionary, resource_filesystem, refresh_files
 					resource_filesystem.update_file(known_path)
 					registered_paths.append(known_path)
 		if resource_filesystem.has_method("reimport_files"):
-			resource_filesystem.call_deferred("reimport_files", packed_paths)
+			_run_after_process_frame(func() -> void:
+				if is_instance_valid(resource_filesystem):
+					resource_filesystem.reimport_files(packed_paths)
+			)
 			reimported = true
 		elif resource_filesystem.has_method("scan"):
-			resource_filesystem.call_deferred("scan")
+			_run_after_process_frame(func() -> void:
+				if is_instance_valid(resource_filesystem):
+					resource_filesystem.scan()
+			)
 			scanned = true
 
 	if not reimported and not scanned and refresh_filesystem.is_valid():
@@ -56,3 +62,12 @@ static func reimport_assets(body: Dictionary, resource_filesystem, refresh_files
 			"registeredPaths": registered_paths
 		}
 	}
+
+
+static func _run_after_process_frame(callback: Callable) -> void:
+	var main_loop := Engine.get_main_loop()
+	if main_loop is SceneTree:
+		var tree := main_loop as SceneTree
+		tree.process_frame.connect(callback, CONNECT_ONE_SHOT)
+	else:
+		callback.call()

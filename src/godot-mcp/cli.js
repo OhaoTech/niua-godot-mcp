@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { pathToFileURL } from "node:url";
+import { realpathSync } from "node:fs";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { startStdioServer } from "./server/stdio.js";
 import { buildSetupPlan, parseSetupArgs } from "./setup/config.js";
@@ -102,6 +103,17 @@ async function main(argv = process.argv.slice(2)) {
   process.exitCode = 1;
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+function isDirectRun() {
+  if (!process.argv[1]) {
+    return false;
+  }
+  try {
+    return realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1]);
+  } catch {
+    return import.meta.url === pathToFileURL(process.argv[1]).href;
+  }
+}
+
+if (isDirectRun()) {
   void main();
 }

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { pathToFileURL } from "node:url";
+import { realpathSync } from "node:fs";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
 import { startStdioServer } from "./server/stdio.js";
 
@@ -36,6 +37,17 @@ export {
   validateExportPreset
 } from "./tools/index.js";
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+function isDirectRun() {
+  if (!process.argv[1]) {
+    return false;
+  }
+  try {
+    return realpathSync(fileURLToPath(import.meta.url)) === realpathSync(process.argv[1]);
+  } catch {
+    return import.meta.url === pathToFileURL(process.argv[1]).href;
+  }
+}
+
+if (isDirectRun()) {
   startStdioServer();
 }

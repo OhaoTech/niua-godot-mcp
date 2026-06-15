@@ -1491,6 +1491,7 @@ test("Godot filesystem bridge side effects live in filesystem operations", async
   const bridge = await readBridgeWriteSurface();
   const filesystem = await readAddonFile("niua_mcp_filesystem_operations.gd");
   const sideEffects = await readAddonFile("niua_mcp_filesystem_side_effects.gd");
+  const writeSchema = await readPluginFileTest("../../src/godot-mcp/tools/filesystem/schemas/write.js");
   const writeTextBlock = sideEffects.slice(
     sideEffects.indexOf("static func write_text_file_with_side_effects"),
     sideEffects.indexOf("static func write_binary_file_with_side_effects")
@@ -1504,8 +1505,15 @@ test("Godot filesystem bridge side effects live in filesystem operations", async
   assert.match(filesystem, /static func batch_operations_with_side_effects\(body: Dictionary, refresh_filesystem: Callable, remember: Callable\) -> Dictionary:/);
   assert.match(filesystem, /static func delete_entry_with_side_effects\(body: Dictionary, refresh_filesystem: Callable, remember: Callable\) -> Dictionary:/);
   assert.match(sideEffects, /_remember\(remember, "Created folder %s"/);
-  assert.match(writeTextBlock, /_refresh\(refresh_filesystem, str\(data\.get\("path", ""\)\)\)/);
-  assert.match(sideEffects, /_refresh\(refresh_filesystem, str\(data\.get\("path", ""\)\)\)/);
+  assert.match(writeTextBlock, /_refresh\(refresh_filesystem, path\)/);
+  assert.match(writeTextBlock, /refreshAfterWrite/);
+  assert.match(writeTextBlock, /refreshRequested/);
+  assert.match(writeTextBlock, /refreshPath/);
+  assert.match(sideEffects, /_refresh\(refresh_filesystem, path\)/);
+  assert.match(sideEffects, /refreshAfterWrite/);
+  assert.match(sideEffects, /refreshRequested/);
+  assert.match(sideEffects, /refreshPath/);
+  assert.match(writeSchema, /refreshAfterWrite/);
   assert.match(sideEffects, /_remember\(remember, "Batch filesystem operations completed: %d"/);
   assert.doesNotMatch(bridge, /Created folder %s/);
   assert.doesNotMatch(bridge, /Moved %s to %s/);
@@ -2275,9 +2283,11 @@ test("Godot import operations delegate focused domain modules", async () => {
   assert.match(reimport, /static func reimport_assets\(body: Dictionary, resource_filesystem, refresh_filesystem: Callable\) -> Dictionary:/);
   assert.match(reimport, /validate_res_path/);
   assert.match(reimport, /reimport_files/);
-  assert.match(reimport, /resource_filesystem\.call_deferred\("reimport_files", packed_paths\)/);
-  assert.doesNotMatch(reimport, /resource_filesystem\.reimport_files\(packed_paths\)/);
-  assert.match(reimport, /resource_filesystem\.call_deferred\("scan"\)/);
+  assert.match(reimport, /tree\.process_frame\.connect\(callback, CONNECT_ONE_SHOT\)/);
+  assert.match(reimport, /resource_filesystem\.reimport_files\(packed_paths\)/);
+  assert.doesNotMatch(reimport, /call_deferred\("reimport_files"/);
+  assert.match(reimport, /resource_filesystem\.scan\(\)/);
+  assert.doesNotMatch(reimport, /call_deferred\("scan"/);
   assert.match(reimport, /refresh_filesystem\.call/);
 
   assert.match(sideEffects, /preload\("niua_mcp_import_option_operations\.gd"\)/);
@@ -2978,8 +2988,16 @@ test("Godot run operations delegate focused domain modules", async () => {
 	assert.doesNotMatch(facade, /func _error/);
 
 	assert.match(utils, /const MAIN_SCENE_SETTING := "application\/run\/main_scene"/);
+	assert.doesNotMatch(utils, /MAIN_RUN_ARGS_SETTING/);
+	assert.doesNotMatch(utils, /editor\/run\/main_run_args/);
+	assert.doesNotMatch(utils, /ProjectSettings\.set_setting\([^)]*main_run_args/);
+	assert.doesNotMatch(utils, /--headless/);
 	assert.match(utils, /static func run_result_data\(editor: EditorInterface, mode: String\) -> Dictionary:/);
 	assert.match(utils, /static func run_status_data\(editor: EditorInterface\) -> Dictionary:/);
+	assert.match(utils, /ProjectSettings\.globalize_path\("res:\/\/"\)/);
+	assert.match(utils, /DisplayServer\.get_name\(\)/);
+	assert.match(utils, /OS\.get_process_id\(\)/);
+	assert.match(utils, /"interactive": display_server != "headless"/);
 	assert.match(utils, /static func require_editor_method\(editor: EditorInterface, method_name: String\) -> Dictionary:/);
 	assert.match(utils, /static func save_before_run_if_requested\(editor: EditorInterface, body: Dictionary\) -> Dictionary:/);
 	assert.match(utils, /static func remember\(remember: Callable, message: String\) -> void:/);
@@ -3005,6 +3023,7 @@ test("Godot run operations delegate focused domain modules", async () => {
 	assert.match(control, /play_current_scene/);
 	assert.match(control, /play_custom_scene/);
 	assert.match(control, /stop_playing_scene/);
+	assert.doesNotMatch(control, /ensure_headless_run_args/);
 	assert.match(control, /_schedule_play_custom_scene_after_stop/);
 	assert.match(control, /create_timer\(0\.25\)/);
 
@@ -3483,6 +3502,8 @@ test("Godot runtime probe delegates focused domain modules", async () => {
   assert.match(codec, /MAX_SERIALIZED_COLLECTION_ITEMS/);
   assert.match(state, /static func runtime_state\(probe: Node, kind: String\) -> Dictionary:/);
   assert.match(state, /static func serialize_node\(node: Node, depth: int\) -> Dictionary:/);
+  assert.match(state, /node\.is_inside_tree\(\)/);
+  assert.doesNotMatch(state, /"path": str\(node\.get_path\(\)\)/);
   assert.match(logging, /static func log_event\(probe: Node, send_debugger_message: Callable, message: String, level: String = "info", data: Dictionary = {}\) -> void:/);
   assert.match(logging, /MAX_LOG_MESSAGE_LENGTH/);
   assert.match(logging, /variant_to_json\(data\)/);

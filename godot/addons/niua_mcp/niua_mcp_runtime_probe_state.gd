@@ -30,9 +30,11 @@ static func serialize_node(node: Node, depth: int) -> Dictionary:
 		if depth < MAX_TREE_DEPTH and children.size() < MAX_CHILDREN_PER_NODE:
 			children.append(serialize_node(child, depth + 1))
 
+	var node_path := str(node.get_path()) if node.is_inside_tree() else ""
+
 	return {
 		"name": node.name,
-		"path": str(node.get_path()),
+		"path": node_path,
 		"type": node.get_class(),
 		"sceneFilePath": node.scene_file_path,
 		"childCount": total_children,

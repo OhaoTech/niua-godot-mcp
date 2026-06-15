@@ -150,6 +150,58 @@ test("Godot MCP server forwards run_custom_scene calls to the editor bridge", as
   });
 });
 
+test("Godot MCP server rejects run calls when expected project root does not match the bridge", async () => {
+  let runCalls = 0;
+
+  await withBridgeServer(async (req, res) => {
+    if (req.url === "/project/info" && req.method === "GET") {
+      res.setHeader("content-type", "application/json");
+      res.end(JSON.stringify({
+        ok: true,
+        data: {
+          projectRoot: "/tmp/qsim",
+          projectName: "Qsim"
+        }
+      }));
+      return;
+    }
+
+    if (req.url === "/run/main" && req.method === "POST") {
+      runCalls += 1;
+      res.setHeader("content-type", "application/json");
+      res.end(JSON.stringify({
+        ok: true,
+        data: {
+          playing: true
+        }
+      }));
+      return;
+    }
+
+    res.statusCode = 404;
+    res.end(JSON.stringify({ ok: false, error: "not found" }));
+  }, async (port) => {
+    const server = createMcpProcess({ GODOT_MCP_PORT: String(port) });
+
+    try {
+      const response = await server.request("tools/call", {
+        name: "run_main_scene",
+        arguments: {
+          expectedProjectRoot: "/tmp/moonwell"
+        }
+      });
+
+      assert.equal(runCalls, 0);
+      assert.equal(response.error.code, -32000);
+      assert.match(response.error.message, /project root mismatch/);
+      assert.match(response.error.message, /\/tmp\/moonwell/);
+      assert.match(response.error.message, /\/tmp\/qsim/);
+    } finally {
+      await server.close();
+    }
+  });
+});
+
 test("Godot MCP server forwards reload_running_scene calls to the editor bridge", async () => {
   let receivedBody = null;
 

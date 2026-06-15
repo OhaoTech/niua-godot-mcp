@@ -18,7 +18,6 @@ static func run_main_scene(editor: EditorInterface, body: Dictionary) -> Diction
 	if not save_result.get("ok", false):
 		return save_result
 
-	NiuaMcpRunUtils.ensure_headless_run_args()
 	editor.play_main_scene()
 	return {
 		"ok": true,
@@ -39,7 +38,6 @@ static func run_current_scene(editor: EditorInterface, body: Dictionary) -> Dict
 	if not save_result.get("ok", false):
 		return save_result
 
-	NiuaMcpRunUtils.ensure_headless_run_args()
 	editor.play_current_scene()
 	return {
 		"ok": true,
@@ -66,7 +64,6 @@ static func run_custom_scene(editor: EditorInterface, body: Dictionary) -> Dicti
 	if not save_result.get("ok", false):
 		return save_result
 
-	NiuaMcpRunUtils.ensure_headless_run_args()
 	editor.play_custom_scene(path)
 	var data := NiuaMcpRunUtils.run_result_data(editor, "custom")
 	data["path"] = path
@@ -140,6 +137,5 @@ static func _schedule_play_custom_scene_after_stop(editor: EditorInterface, path
 
 	var timer: SceneTreeTimer = tree.create_timer(0.25)
 	timer.timeout.connect(func() -> void:
-		NiuaMcpRunUtils.ensure_headless_run_args()
 		editor.play_custom_scene(path)
 	)

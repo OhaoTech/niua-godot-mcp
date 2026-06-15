@@ -2,22 +2,6 @@
 extends RefCounted
 
 const MAIN_SCENE_SETTING := "application/run/main_scene"
-const MAIN_RUN_ARGS_SETTING := "editor/run/main_run_args"
-
-
-static func ensure_headless_run_args() -> void:
-	# A headless editor cannot host a windowed game: the spawned process
-	# dies before the debugger/runtime probe ever connects. Append
-	# --headless to the run args so play works on display-less hosts.
-	# Godot reads this setting from the saved project.godot when spawning
-	# the game (an in-memory set is not honored), so persist it.
-	if DisplayServer.get_name() != "headless":
-		return
-	var args := str(ProjectSettings.get_setting(MAIN_RUN_ARGS_SETTING, ""))
-	if args.find("--headless") != -1:
-		return
-	ProjectSettings.set_setting(MAIN_RUN_ARGS_SETTING, ("%s --headless" % args).strip_edges())
-	ProjectSettings.save()
 
 
 static func run_result_data(editor: EditorInterface, mode: String) -> Dictionary:
@@ -29,6 +13,7 @@ static func run_result_data(editor: EditorInterface, mode: String) -> Dictionary
 static func run_status_data(editor: EditorInterface) -> Dictionary:
 	var playing := false
 	var playing_scene := ""
+	var display_server := DisplayServer.get_name()
 
 	if editor != null:
 		if editor.has_method("is_playing_scene"):
@@ -38,7 +23,11 @@ static func run_status_data(editor: EditorInterface) -> Dictionary:
 
 	return {
 		"playing": playing,
-		"playingScene": playing_scene
+		"playingScene": playing_scene,
+		"projectRoot": ProjectSettings.globalize_path("res://"),
+		"displayServer": display_server,
+		"editorPid": OS.get_process_id(),
+		"interactive": display_server != "headless"
 	}
 
 

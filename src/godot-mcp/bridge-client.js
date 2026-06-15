@@ -1,3 +1,5 @@
+import path from "node:path";
+
 import { DEBUGGER_BRIDGE_METHODS } from "./bridge-client/debugger.js";
 import { ANIMATION_BRIDGE_METHODS } from "./bridge-client/animation.js";
 import { AUDIO_BRIDGE_METHODS } from "./bridge-client/audio.js";
@@ -29,6 +31,7 @@ export class GodotBridgeClient {
     host = DEFAULT_HOST,
     port = DEFAULT_PORT,
     token = null,
+    expectedProjectRoot = "",
     fetchImpl = globalThis.fetch
   } = {}) {
     if (typeof fetchImpl !== "function") {
@@ -38,6 +41,8 @@ export class GodotBridgeClient {
     this.host = host;
     this.port = port;
     this.token = token;
+    this.expectedProjectRoot = normalizeProjectRoot(expectedProjectRoot);
+    this._verifiedProjectRoot = null;
     this.fetchImpl = fetchImpl;
   }
 
@@ -46,8 +51,13 @@ export class GodotBridgeClient {
     body,
     timeoutMs,
     operationName = endpoint,
-    partialProgress = null
+    partialProgress = null,
+    skipProjectIdentityCheck = false
   } = {}) {
+    if (!skipProjectIdentityCheck) {
+      await this.verifyProjectIdentity(endpoint);
+    }
+
     const url = new URL(endpoint, `http://${this.host}:${this.port}`);
     const headers = {
       accept: "application/json"
@@ -107,6 +117,42 @@ export class GodotBridgeClient {
 
     return normalizeBridgeResponse(payload);
   }
+
+  async verifyProjectIdentity(endpoint = "") {
+    if (!this.expectedProjectRoot || endpoint === "/project/info") {
+      return;
+    }
+    if (this._verifiedProjectRoot === this.expectedProjectRoot) {
+      return;
+    }
+
+    const projectInfo = await this.request("/project/info", {
+      operationName: "project_identity",
+      skipProjectIdentityCheck: true
+    });
+    const actualProjectRoot = normalizeProjectRoot(projectInfo?.data?.projectRoot);
+    if (!actualProjectRoot) {
+      throw new Error(
+        `Godot bridge project root check failed for ${this.host}:${this.port}: /project/info did not return data.projectRoot.`
+      );
+    }
+    if (actualProjectRoot !== this.expectedProjectRoot) {
+      throw new Error(
+        `Godot bridge project root mismatch for ${this.host}:${this.port}: ` +
+          `expected ${this.expectedProjectRoot}, got ${actualProjectRoot}. ` +
+          "Use the bridge port for the intended project or pass the matching expectedProjectRoot."
+      );
+    }
+
+    this._verifiedProjectRoot = actualProjectRoot;
+  }
+}
+
+function normalizeProjectRoot(projectRoot) {
+  if (projectRoot === undefined || projectRoot === null || projectRoot === "") {
+    return "";
+  }
+  return path.resolve(String(projectRoot));
 }
 
 function normalizeRequestTimeoutMs(timeoutMs) {

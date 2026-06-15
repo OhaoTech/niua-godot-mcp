@@ -19,7 +19,12 @@ static func write_text_file_with_side_effects(body: Dictionary, refresh_filesyst
 	var response := NiuaMcpFilesystemMutationOperations.write_text_file(body)
 	if bool(response.get("ok", false)):
 		var data = response.get("data", {})
-		_refresh(refresh_filesystem, str(data.get("path", "")))
+		var path := str(data.get("path", ""))
+		var refresh_requested := bool(body.get("refreshAfterWrite", true))
+		data["refreshRequested"] = refresh_requested
+		data["refreshPath"] = path if refresh_requested else ""
+		if refresh_requested:
+			_refresh(refresh_filesystem, path)
 		_remember(remember, "Wrote text file %s" % str(data.get("path", "")))
 	return response
 
@@ -28,7 +33,12 @@ static func write_binary_file_with_side_effects(body: Dictionary, refresh_filesy
 	var response := NiuaMcpFilesystemMutationOperations.write_binary_file(body)
 	if bool(response.get("ok", false)):
 		var data = response.get("data", {})
-		_refresh(refresh_filesystem, str(data.get("path", "")))
+		var path := str(data.get("path", ""))
+		var refresh_requested := bool(body.get("refreshAfterWrite", true))
+		data["refreshRequested"] = refresh_requested
+		data["refreshPath"] = path if refresh_requested else ""
+		if refresh_requested:
+			_refresh(refresh_filesystem, path)
 		_remember(remember, "Wrote binary file %s" % str(data.get("path", "")))
 	return response
 
