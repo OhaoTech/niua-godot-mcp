@@ -4,21 +4,50 @@
 
 - Node.js: `>=20`
 - Godot: `4.6.x`
-- Primary CI platform: Linux with the official Godot `4.6.2-stable` x86_64 build
-- Cross-platform minimum: macOS and Windows run path-handling unit coverage without a Godot GUI
+- Operating systems: Linux, macOS, and Windows
+- Primary development target: Linux with the official Godot `4.6.x` x86_64 build
 
-Godot `4.5.x` and `4.7.x` are best-effort. Other versions are reported as
-untested through the bridge health response so agents can diagnose version
-drift before a deep editor operation fails.
+Godot `4.5.x` and `4.7.x` are best-effort. Other versions are reported as untested through the bridge health response so agents can diagnose version drift before a deep editor operation fails.
 
-## Deterministic Installs
+## Install Shape
 
-CI uses `npm ci --ignore-scripts` against the committed `package-lock.json`.
-The package intentionally has no `postinstall` lifecycle script.
+This repository currently has no external npm dependencies and does not include a `package-lock.json`.
 
-## CI Gates
+For a source checkout:
 
-- Every push runs the Linux unit suite with Node 20.
-- Every push and pull request runs macOS and Windows path-handling unit tests.
-- Every pull request runs `npm run conformance -- --slice full` against a real
-  headless Godot editor launched from the official pinned Godot build.
+```bash
+npm test
+node src/godot-mcp/cli.js setup --client codex --project-root "$HOME/Godot/NIUAProjects"
+```
+
+For a global command from a checkout:
+
+```bash
+npm install -g .
+niua-godot-mcp setup --client codex --project-root "$HOME/Godot/NIUAProjects" --write
+```
+
+If dependencies are added later, commit a lockfile and switch automation to `npm ci --ignore-scripts`.
+
+## Local Gates
+
+Run these before shipping docs or tool changes:
+
+```bash
+npm test
+npm run godot:mcp:docs
+```
+
+`npm test` runs the Node unit suite. `npm run godot:mcp:docs` regenerates the generated tool catalog and skill reference docs.
+
+This checkout does not include `.github` workflow files. If CI is added, it should run at least:
+
+- Node 20 unit tests on Linux
+- Path-handling tests on macOS and Windows
+- A real Godot 4.6.x conformance run for editor bridge behavior
+
+## Runtime Notes
+
+- `capture_runtime_screenshot`, `capture_editor_screenshot`, and `capture_viewport_screenshot` can return `available:false` in headless or display-less environments.
+- The default MCP tool profile is `v1`; specialized subsystem tools require `NIUA_MCP_PROFILE=full`.
+- Project-management operations are restricted by `GODOT_MCP_ALLOWED_PROJECT_ROOTS`.
