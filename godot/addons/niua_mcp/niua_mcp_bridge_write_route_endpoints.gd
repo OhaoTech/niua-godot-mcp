@@ -33,6 +33,7 @@ const ENDPOINTS := [
 	"/debugger/message/send",
 	"/runtime/probe/install",
 	"/runtime/node/property/set",
+	"/runtime/input/send",
 	"/runtime/screenshot",
 	"/editor/main-screen/set",
 	"/editor/action/invoke",

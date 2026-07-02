@@ -224,12 +224,20 @@ static func _append_track(animation: Animation, track: Dictionary, path_validato
 	for keyframe in keyframes:
 		if typeof(keyframe) != TYPE_DICTIONARY:
 			return _error("keyframe must be an object")
-		animation.track_insert_key(
+		var key_value: Variant = NiuaMcpVariantCodec.json_to_variant(keyframe.get("value"), path_validator)
+		# rotation_3d tracks need a Quaternion; also accept a Vector3 of euler radians.
+		if track_type == Animation.TYPE_ROTATION_3D and typeof(key_value) == TYPE_VECTOR3:
+			key_value = Quaternion.from_euler(key_value)
+		var key_index := animation.track_insert_key(
 			track_index,
 			float(keyframe.get("time", 0.0)),
-			NiuaMcpVariantCodec.json_to_variant(keyframe.get("value"), path_validator),
+			key_value,
 			float(keyframe.get("transition", 1.0))
 		)
+		# track_insert_key returns -1 when the value type is wrong for the track,
+		# which otherwise silently dropped the keyframe and reported success.
+		if key_index < 0:
+			return _error("failed to insert keyframe on the %s track at time %s (unsupported value type?)" % [track_type_name, str(keyframe.get("time", 0.0))])
 
 	return { "ok": true }
 

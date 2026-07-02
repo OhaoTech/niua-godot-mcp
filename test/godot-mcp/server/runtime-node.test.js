@@ -164,6 +164,90 @@ test("Godot MCP server forwards set_runtime_node_property calls to the editor br
   });
 });
 
+test("Godot MCP server forwards send_runtime_input calls to the editor bridge", async () => {
+  const seenRequests = [];
+
+  await withBridgeServer(async (req, res) => {
+    seenRequests.push({ method: req.method, url: req.url });
+
+    if (req.url === "/runtime/input/send" && req.method === "POST") {
+      const chunks = [];
+      for await (const chunk of req) {
+        chunks.push(chunk);
+      }
+      const body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+      assert.deepEqual(body, {
+        actions: [{ action: "move_forward", pressed: true }],
+        holdMs: 1000,
+        mouseMotion: { dx: 12, dy: -4 }
+      });
+      res.setHeader("content-type", "application/json");
+      res.end(JSON.stringify({
+        ok: true,
+        data: {
+          available: true,
+          requestId: "send_input:1",
+          pending: true,
+          responses: []
+        }
+      }));
+      return;
+    }
+
+    if (req.url === "/runtime/input/send/result?requestId=send_input%3A1" && req.method === "GET") {
+      res.setHeader("content-type", "application/json");
+      res.end(JSON.stringify({
+        ok: true,
+        data: {
+          available: true,
+          requestId: "send_input:1",
+          pending: false,
+          responses: [
+            {
+              sessionId: 0,
+              requestId: "send_input:1",
+              ok: true,
+              applied: {
+                actions: [{ action: "move_forward", pressed: true, strength: 1.0 }],
+                mouseMotion: { dx: 12, dy: -4 },
+                heldMs: 1000
+              }
+            }
+          ]
+        }
+      }));
+      return;
+    }
+
+    res.statusCode = 404;
+    res.end(JSON.stringify({ ok: false, error: "not found" }));
+  }, async (port) => {
+    const server = createMcpProcess({ GODOT_MCP_PORT: String(port) });
+
+    try {
+      const response = await server.request("tools/call", {
+        name: "send_runtime_input",
+        arguments: {
+          actions: [{ action: "move_forward", pressed: true }],
+          holdMs: 1000,
+          mouseMotion: { dx: 12, dy: -4 },
+          timeoutMsec: 1000,
+          pollIntervalMsec: 1
+        }
+      });
+
+      assert.match(response.result.content[0].text, /"heldMs": 1000/);
+      assert.match(response.result.content[0].text, /"action": "move_forward"/);
+      assert.deepEqual(seenRequests, [
+        { method: "POST", url: "/runtime/input/send" },
+        { method: "GET", url: "/runtime/input/send/result?requestId=send_input%3A1" }
+      ]);
+    } finally {
+      await server.close();
+    }
+  });
+});
+
 test("Godot MCP server forwards capture_runtime_screenshot calls to the editor bridge", async () => {
   const seenRequests = [];
 

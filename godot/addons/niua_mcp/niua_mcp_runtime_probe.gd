@@ -1,5 +1,6 @@
 extends Node
 
+const NiuaMcpRuntimeProbeInput = preload("niua_mcp_runtime_probe_input.gd")
 const NiuaMcpRuntimeProbeLogging = preload("niua_mcp_runtime_probe_logging.gd")
 const NiuaMcpRuntimeProbeNodeProperties = preload("niua_mcp_runtime_probe_node_properties.gd")
 const NiuaMcpRuntimeProbeProtocol = preload("niua_mcp_runtime_probe_protocol.gd")
@@ -13,6 +14,7 @@ const RUNTIME_STATE_MESSAGE := NiuaMcpRuntimeProbeProtocol.RUNTIME_STATE_MESSAGE
 const NODE_PROPERTIES_MESSAGE := NiuaMcpRuntimeProbeProtocol.NODE_PROPERTIES_MESSAGE
 const NODE_PROPERTY_SET_MESSAGE := NiuaMcpRuntimeProbeProtocol.NODE_PROPERTY_SET_MESSAGE
 const RUNTIME_SCREENSHOT_RESULT_MESSAGE := NiuaMcpRuntimeProbeProtocol.RUNTIME_SCREENSHOT_RESULT_MESSAGE
+const RUNTIME_INPUT_RESULT_MESSAGE := NiuaMcpRuntimeProbeProtocol.RUNTIME_INPUT_RESULT_MESSAGE
 
 
 func _ready() -> void:
@@ -59,8 +61,42 @@ func _capture(message: String, _data: Array) -> bool:
 		"runtime_screenshot":
 			_send_debugger_message(RUNTIME_SCREENSHOT_RESULT_MESSAGE, NiuaMcpRuntimeProbeScreenshot.runtime_screenshot(self, NiuaMcpRuntimeProbeProtocol.request_payload(_data)))
 			return true
+		"send_input":
+			_handle_send_input(NiuaMcpRuntimeProbeProtocol.request_payload(_data))
+			return true
 		_:
 			return false
+
+
+func _handle_send_input(request: Dictionary) -> void:
+	var input_plan := NiuaMcpRuntimeProbeInput.plan(request)
+	if not bool(input_plan.get("ok", false)):
+		_send_debugger_message(RUNTIME_INPUT_RESULT_MESSAGE, {
+			"requestId": input_plan.get("requestId", ""),
+			"ok": false,
+			"error": input_plan.get("error", ""),
+			"errorCode": input_plan.get("errorCode", "bad_request"),
+			"applied": null
+		})
+		return
+
+	NiuaMcpRuntimeProbeInput.apply(input_plan)
+
+	var hold_ms: int = int(input_plan.get("holdMs", 0))
+	var held: Array = NiuaMcpRuntimeProbeInput.held_actions(input_plan)
+	var held_ms = null
+	if hold_ms > 0 and held.size() > 0:
+		held_ms = hold_ms
+		var tree := get_tree()
+		if tree != null:
+			await tree.create_timer(float(hold_ms) / 1000.0).timeout
+		NiuaMcpRuntimeProbeInput.release(held)
+
+	_send_debugger_message(RUNTIME_INPUT_RESULT_MESSAGE, {
+		"requestId": input_plan.get("requestId", ""),
+		"ok": true,
+		"applied": NiuaMcpRuntimeProbeInput.applied_summary(input_plan, held_ms)
+	})
 
 
 func _register_debugger_capture() -> void:

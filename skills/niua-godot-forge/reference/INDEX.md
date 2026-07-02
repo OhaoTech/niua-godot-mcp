@@ -7,7 +7,7 @@ Generated. One file per Godot MCP subsystem domain. Read a file on demand for th
 | `animation` | 8 | 0 | reference/animation.md |
 | `audio` | 5 | 0 | reference/audio.md |
 | `debugger-control` | 4 | 0 | reference/debugger-control.md |
-| `debugger-runtime` | 6 | 2 | reference/debugger-runtime.md |
+| `debugger-runtime` | 7 | 2 | reference/debugger-runtime.md |
 | `export` | 5 | 0 | reference/export.md |
 | `filesystem` | 10 | 5 | reference/filesystem.md |
 | `import` | 7 | 3 | reference/import.md |

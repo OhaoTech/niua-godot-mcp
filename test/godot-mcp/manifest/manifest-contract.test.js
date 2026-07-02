@@ -116,7 +116,7 @@ test("migrated manifest registry validates every migrated domain", () => {
     "viewport"
   ]);
   validateToolManifest(MIGRATED_TOOL_MANIFESTS);
-  assert.equal(MIGRATED_TOOL_MANIFESTS.length, 171);
+  assert.equal(MIGRATED_TOOL_MANIFESTS.length, 172);
 });
 
 test("animation manifest defines imported-scene and editor animation contracts", () => {
@@ -195,7 +195,8 @@ test("debugger manifest includes control and runtime probe bridge tools", () => 
     "get_runtime_events",
     "get_runtime_node_properties",
     "set_runtime_node_property",
-    "capture_runtime_screenshot"
+    "capture_runtime_screenshot",
+    "send_runtime_input"
   ]);
   assert.deepEqual(
     DEBUGGER_TOOL_MANIFEST
@@ -207,7 +208,8 @@ test("debugger manifest includes control and runtime probe bridge tools", () => 
       "get_runtime_events",
       "get_runtime_node_properties",
       "set_runtime_node_property",
-      "capture_runtime_screenshot"
+      "capture_runtime_screenshot",
+      "send_runtime_input"
     ]
   );
   assert.ok(DEBUGGER_TOOL_MANIFEST.every((entry) => entry.category === "debugger"));

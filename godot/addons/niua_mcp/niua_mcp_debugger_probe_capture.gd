@@ -31,5 +31,9 @@ static func capture(store, sessions, message: String, data: Array, session_id: i
 			sessions.remember_session_id(session_id)
 			store.store_runtime_screenshot(data, session_id)
 			return true
+		"runtime_input_result":
+			sessions.remember_session_id(session_id)
+			store.store_runtime_input_result(data, session_id)
+			return true
 		_:
 			return false

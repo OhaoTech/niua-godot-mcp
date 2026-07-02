@@ -7,6 +7,7 @@ import {
   RUNTIME_EVENTS_SCHEMA,
   RUNTIME_NODE_PROPERTIES_SCHEMA,
   RUNTIME_SCREENSHOT_SCHEMA,
+  SEND_RUNTIME_INPUT_SCHEMA,
   SET_RUNTIME_NODE_PROPERTY_SCHEMA
 } from "./schemas.js";
 
@@ -306,6 +307,34 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
     },
     docs: {
       summary: "Captures a PNG screenshot from the running Godot game through the NIUA runtime probe."
+    }
+  },
+  {
+    name: "send_runtime_input",
+    description: "Inject input into the running Godot game through the NIUA runtime probe: press or release input-map actions (for example move_forward, jump) with an optional timed hold, and feed relative mouse-look motion. Lets an agent script a playthrough and verify gameplay without a human.",
+    profile: "full",
+    category: "debugger",
+    inputSchema: SEND_RUNTIME_INPUT_SCHEMA,
+    bridge: {
+      clientMethod: "sendRuntimeInput",
+      endpoint: "/runtime/input/send",
+      method: "POST",
+      request: "body",
+      generate: false
+    },
+    godotRoute: {
+      side: "write",
+      endpoint: "/runtime/input/send",
+      handler: "_send_runtime_input",
+      arg: "body",
+      methodError: "runtime input send requires POST"
+    },
+    conformance: {
+      happy: "inject runtime input-map actions and mouse motion through the probe",
+      error: "reject unknown input actions and surface timeouts when the runtime probe is unavailable"
+    },
+    docs: {
+      summary: "Injects input-map actions and mouse-look motion into the running Godot game through the NIUA runtime probe."
     }
   }
 ];

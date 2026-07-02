@@ -9,7 +9,26 @@ function normalizeInteger(value, fieldName) {
   return number;
 }
 
+// A vector arg can arrive as a JSON string ("[0,0,0]" / '{"x":0,...}') when the
+// client stringifies a schema-untyped param. Parse it back to array/object so
+// plain position:[x,y,z] works end to end; leave anything else for the shape check.
+function coerceStructuredValue(value) {
+  if (typeof value !== "string") {
+    return value;
+  }
+  const trimmed = value.trim();
+  if (trimmed.startsWith("[") || trimmed.startsWith("{")) {
+    try {
+      return JSON.parse(trimmed);
+    } catch {
+      return value;
+    }
+  }
+  return value;
+}
+
 export function vector2ToGodotVector(value, fieldName) {
+  value = coerceStructuredValue(value);
   if (Array.isArray(value)) {
     if (value.length !== 2) {
       throw new Error(`${fieldName} array must have exactly 2 entries`);
@@ -33,6 +52,7 @@ export function vector2ToGodotVector(value, fieldName) {
 }
 
 export function vector2iToGodotVector(value, fieldName) {
+  value = coerceStructuredValue(value);
   if (Array.isArray(value)) {
     if (value.length !== 2) {
       throw new Error(`${fieldName} array must have exactly 2 entries`);
@@ -54,6 +74,7 @@ export function vector2iToGodotVector(value, fieldName) {
 }
 
 export function vector3ToGodotVector(value, fieldName) {
+  value = coerceStructuredValue(value);
   if (Array.isArray(value)) {
     if (value.length !== 3) {
       throw new Error(`${fieldName} array must have exactly 3 entries`);

@@ -92,6 +92,14 @@ func runtime_screenshot_result(request_id: String) -> Array:
 	return NiuaMcpDebuggerProbeState.runtime_screenshot_result(_store, request_id)
 
 
+func send_runtime_input_request(actions: Array, hold_ms, mouse_motion, request_id: String) -> Array:
+	return _runtime_requests.send_runtime_input_request(self, _sessions.ids(), actions, hold_ms, mouse_motion, request_id, Callable(self, "_record_event"))
+
+
+func runtime_input_send_result(request_id: String) -> Array:
+	return NiuaMcpDebuggerProbeState.runtime_input_send_result(_store, request_id)
+
+
 func _on_session_started(session_id: int) -> void:
 	NiuaMcpDebuggerProbeEvents.session_started(session_id, Callable(self, "_record_event"))
 

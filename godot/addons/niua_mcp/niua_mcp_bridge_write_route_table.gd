@@ -33,6 +33,7 @@ const ROUTES := {
 	"/debugger/message/send": { "handler": "_send_debugger_message", "arg": "body", "methodError": "debugger message send requires POST" },
 	"/runtime/probe/install": { "handler": "_install_runtime_probe", "arg": "body", "methodError": "runtime probe install requires POST" },
 	"/runtime/node/property/set": { "handler": "_set_runtime_node_property", "arg": "body", "methodError": "runtime node property set requires POST" },
+	"/runtime/input/send": { "handler": "_send_runtime_input", "arg": "body", "methodError": "runtime input send requires POST" },
 	"/runtime/screenshot": { "handler": "_capture_runtime_screenshot", "arg": "body", "methodError": "runtime screenshot requires POST" },
 	"/editor/main-screen/set": { "handler": "_set_editor_main_screen", "arg": "body", "methodError": "editor main screen switch requires POST" },
 	"/editor/action/invoke": { "handler": "_invoke_editor_action", "arg": "body", "methodError": "editor action invoke requires POST" },

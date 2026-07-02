@@ -10,10 +10,21 @@ var bridge: Node
 
 
 func _enter_tree() -> void:
+	_disable_interactive_save_before_running()
 	bridge = NiuaMcpBridge.new()
 	bridge.name = "NIUA_MCP_Bridge"
 	add_child(bridge)
 	bridge.start(self, _bridge_port(), _bridge_token())
+
+
+# The play_* run controls otherwise trigger Godot's interactive "save before
+# running" flow, which pops an un-dismissable Save-As modal for an untitled
+# scene while the tool returns ok. The MCP saves programmatically via
+# saveBeforeRun instead, so turn the editor's own pre-run save off.
+func _disable_interactive_save_before_running() -> void:
+	var settings := EditorInterface.get_editor_settings()
+	if settings != null and settings.has_setting("run/auto_save/save_before_running"):
+		settings.set_setting("run/auto_save/save_before_running", false)
 
 
 func _exit_tree() -> void:

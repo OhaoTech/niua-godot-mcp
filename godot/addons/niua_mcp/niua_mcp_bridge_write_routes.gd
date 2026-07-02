@@ -52,6 +52,7 @@ const HANDLERS := {
 	"_toggle_debugger_profiler": true,
 	"_send_debugger_message": true,
 	"_set_runtime_node_property": true,
+	"_send_runtime_input": true,
 	"_capture_runtime_screenshot": true,
 	"_install_runtime_probe": true,
 	"_run_main_scene": true,

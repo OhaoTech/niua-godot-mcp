@@ -23,7 +23,31 @@ static func set_node_property(editor: EditorInterface, body: Dictionary, path_va
 	if property_name.is_empty():
 		return NiuaMcpSceneGraphUtils.error("property name is required")
 
-	node.set(property_name, NiuaMcpVariantCodec.json_to_variant(body.get("value"), path_validator))
+	# Object.set() silently no-ops on an unknown property, so a typo or wrong
+	# casing would otherwise return ok:true having changed nothing. Reject it.
+	if not NiuaMcpSceneGraphUtils.object_has_property(node, property_name):
+		return NiuaMcpSceneGraphUtils.error("node has no property '%s': %s" % [property_name, str(body.get("nodePath", ""))], "unknown_property")
+
+	var raw_value = body.get("value")
+	var declared_type := NiuaMcpSceneGraphUtils.property_type(node, property_name)
+
+	# A schema-untyped value can arrive as a raw string. Parse JSON-looking strings
+	# back to structure and coerce a scalar string to the property's declared type —
+	# UNLESS the property is itself a string, where the text must be kept verbatim.
+	var decoded
+	if (declared_type == TYPE_STRING or declared_type == TYPE_STRING_NAME) and typeof(raw_value) == TYPE_STRING:
+		decoded = raw_value
+	else:
+		decoded = NiuaMcpVariantCodec.json_to_variant(raw_value, path_validator)
+		decoded = NiuaMcpVariantCodec.coerce_to_declared_type(decoded, declared_type)
+
+	# For an Object/Resource-typed property, a non-null caller value that failed to
+	# resolve to an Object (unresolved res:// path, unknown type) would otherwise be
+	# written as null and reported as success. Reject it so the failure is visible.
+	if declared_type == TYPE_OBJECT and raw_value != null and not (decoded is Object):
+		return NiuaMcpSceneGraphUtils.error("could not resolve a value for Object/Resource property '%s' (does the res:// path exist and load?)" % property_name, "invalid_value")
+
+	node.set(property_name, decoded)
 
 	return {
 		"ok": true,

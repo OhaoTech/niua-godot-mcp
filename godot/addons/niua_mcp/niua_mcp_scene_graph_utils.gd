@@ -20,3 +20,10 @@ static func object_has_property(object: Object, property_name: String) -> bool:
 		if str(property.get("name", "")) == property_name:
 			return true
 	return false
+
+
+static func property_type(object: Object, property_name: String) -> int:
+	for property in object.get_property_list():
+		if str(property.get("name", "")) == property_name:
+			return int(property.get("type", TYPE_NIL))
+	return TYPE_NIL

@@ -5,6 +5,7 @@ const SNAPSHOT_MESSAGE := "niua_mcp:snapshot"
 const NODE_PROPERTIES_MESSAGE := "niua_mcp:node_properties"
 const SET_NODE_PROPERTY_MESSAGE := "niua_mcp:set_node_property"
 const RUNTIME_SCREENSHOT_MESSAGE := "niua_mcp:runtime_screenshot"
+const SEND_INPUT_MESSAGE := "niua_mcp:send_input"
 
 var _runtime_request_counter := 0
 
@@ -70,6 +71,29 @@ func send_runtime_node_property_set_request(debugger_probe: EditorDebuggerPlugin
 		"nodePath": node_path,
 		"property": property_name,
 		"requestId": request_id,
+		"requestedSessions": requested_sessions
+	})
+	return requested_sessions
+
+
+func send_runtime_input_request(debugger_probe: EditorDebuggerPlugin, session_ids: Array[int], actions: Array, hold_ms, mouse_motion, request_id: String, record_event: Callable) -> Array:
+	var requested_sessions := []
+	for session_id in session_ids:
+		var session := debugger_probe.get_session(session_id)
+		if session == null or not session.is_active():
+			continue
+
+		session.send_message(SEND_INPUT_MESSAGE, [{
+			"requestId": request_id,
+			"actions": actions,
+			"holdMs": hold_ms,
+			"mouseMotion": mouse_motion
+		}])
+		requested_sessions.append(session_id)
+
+	_record(record_event, "runtime_input_send_requested", {
+		"requestId": request_id,
+		"actionCount": actions.size(),
 		"requestedSessions": requested_sessions
 	})
 	return requested_sessions

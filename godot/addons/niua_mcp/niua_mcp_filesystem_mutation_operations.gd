@@ -97,6 +97,14 @@ static func move_entry(body: Dictionary) -> Dictionary:
 
 	var from_path := str(from_validation.get("path"))
 	var to_path := str(to_validation.get("path"))
+
+	# DirAccess.rename() silently overwrites an existing destination. Refuse
+	# unless the caller opts in, mirroring copy_entry and the batch dry-run.
+	if not bool(body.get("overwrite", false)):
+		var to_global := str(to_validation.get("globalPath"))
+		if FileAccess.file_exists(to_path) or DirAccess.dir_exists_absolute(to_global):
+			return NiuaMcpFilesystemResult.error("destination already exists: %s (pass overwrite:true to replace)" % to_path, "conflict")
+
 	var parent_error := NiuaMcpPathUtils.ensure_parent_directory(to_path)
 	if parent_error != OK:
 		return NiuaMcpFilesystemResult.error("failed to create parent directory for %s: %s" % [to_path, parent_error])

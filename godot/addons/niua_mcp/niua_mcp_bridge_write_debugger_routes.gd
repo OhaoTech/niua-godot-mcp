@@ -8,6 +8,7 @@ const HANDLERS := {
 	"_toggle_debugger_profiler": true,
 	"_send_debugger_message": true,
 	"_set_runtime_node_property": true,
+	"_send_runtime_input": true,
 	"_capture_runtime_screenshot": true,
 	"_install_runtime_probe": true
 }
@@ -52,6 +53,10 @@ func _send_debugger_message(body: Dictionary) -> Dictionary:
 
 func _set_runtime_node_property(body: Dictionary) -> Dictionary:
 	return NiuaMcpDebuggerRuntimeOperations.set_runtime_node_property(_context.debugger_probe(), body)
+
+
+func _send_runtime_input(body: Dictionary) -> Dictionary:
+	return NiuaMcpDebuggerRuntimeOperations.send_runtime_input(_context.debugger_probe(), body)
 
 
 func _capture_runtime_screenshot(_body: Dictionary) -> Dictionary:

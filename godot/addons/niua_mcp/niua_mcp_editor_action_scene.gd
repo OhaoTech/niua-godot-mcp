@@ -30,7 +30,7 @@ static func save_scene(editor: EditorInterface) -> Dictionary:
 	if root == null:
 		return NiuaMcpEditorActionUtils.error("no edited scene is open")
 	if str(root.scene_file_path).is_empty():
-		return NiuaMcpEditorActionUtils.error("current scene has never been saved; use save_scene_as with a res:// path")
+		return NiuaMcpEditorActionUtils.error("current scene has never been saved; use save_scene_as with a res:// path", "unsaved_scene")
 
 	var save_error := editor.save_scene()
 	if save_error != OK:
@@ -42,6 +42,13 @@ static func save_all_scenes(editor: EditorInterface) -> Dictionary:
 	var availability := NiuaMcpEditorActionUtils.require_editor_method(editor, "save_all_scenes")
 	if not availability.get("ok", false):
 		return availability
+
+	# save_all_scenes() pops a modal "Save As" dialog for any untitled open
+	# scene, which an agent cannot dismiss. Refuse when the current scene is
+	# untitled; save it to a res:// path first (save_scene_as).
+	var root := editor.get_edited_scene_root()
+	if root != null and str(root.scene_file_path).is_empty():
+		return NiuaMcpEditorActionUtils.error("current scene has never been saved; use save_scene_as with a res:// path before save_all_scenes", "unsaved_scene")
 
 	editor.save_all_scenes()
 	return NiuaMcpEditorActionUtils.action_data({})

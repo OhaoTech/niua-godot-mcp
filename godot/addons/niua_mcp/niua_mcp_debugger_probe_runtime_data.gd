@@ -3,10 +3,12 @@ extends RefCounted
 
 const NiuaMcpDebuggerProbeRuntimeCore = preload("niua_mcp_debugger_probe_runtime_core.gd")
 const NiuaMcpDebuggerProbeRuntimeDataUtils = preload("niua_mcp_debugger_probe_runtime_data_utils.gd")
+const NiuaMcpDebuggerProbeRuntimeInputData = preload("niua_mcp_debugger_probe_runtime_input_data.gd")
 const NiuaMcpDebuggerProbeRuntimeNodeData = preload("niua_mcp_debugger_probe_runtime_node_data.gd")
 const NiuaMcpDebuggerProbeRuntimeScreenshotData = preload("niua_mcp_debugger_probe_runtime_screenshot_data.gd")
 
 var _core = NiuaMcpDebuggerProbeRuntimeCore.new()
+var _input_data = NiuaMcpDebuggerProbeRuntimeInputData.new()
 var _node_data = NiuaMcpDebuggerProbeRuntimeNodeData.new()
 var _screenshots = NiuaMcpDebuggerProbeRuntimeScreenshotData.new()
 
@@ -35,6 +37,10 @@ func store_runtime_screenshot(data: Array, session_id: int, record_event: Callab
 	_screenshots.store_runtime_screenshot(data, session_id, record_event)
 
 
+func store_runtime_input_result(data: Array, session_id: int, record_event: Callable) -> void:
+	_input_data.store_runtime_input_result(data, session_id, record_event)
+
+
 func runtime_node_properties(session_ids: Array[int], node_path: String, request_id: String = "") -> Array:
 	return _node_data.runtime_node_properties(session_ids, node_path, request_id)
 
@@ -45,6 +51,10 @@ func runtime_node_property_set_result(request_id: String) -> Array:
 
 func runtime_screenshot_result(request_id: String) -> Array:
 	return _screenshots.runtime_screenshot_result(request_id)
+
+
+func runtime_input_send_result(request_id: String) -> Array:
+	return _input_data.runtime_input_send_result(request_id)
 
 
 func runtime_payload(data: Array) -> Dictionary:

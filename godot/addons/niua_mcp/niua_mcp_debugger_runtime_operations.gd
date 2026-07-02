@@ -4,6 +4,7 @@ extends RefCounted
 const NiuaMcpDebuggerControlOperations = preload("niua_mcp_debugger_control_operations.gd")
 const NiuaMcpRuntimeStateOperations = preload("niua_mcp_runtime_state_operations.gd")
 const NiuaMcpRuntimeNodeOperations = preload("niua_mcp_runtime_node_operations.gd")
+const NiuaMcpRuntimeInputOperations = preload("niua_mcp_runtime_input_operations.gd")
 const NiuaMcpRuntimeScreenshotOperations = preload("niua_mcp_runtime_screenshot_operations.gd")
 const NiuaMcpRuntimeProbeInstaller = preload("niua_mcp_runtime_probe_installer.gd")
 
@@ -58,6 +59,14 @@ static func set_runtime_node_property(debugger_probe, body: Dictionary) -> Dicti
 
 static func runtime_node_property_set_result(debugger_probe, query: Dictionary) -> Dictionary:
 	return NiuaMcpRuntimeNodeOperations.runtime_node_property_set_result(debugger_probe, query)
+
+
+static func send_runtime_input(debugger_probe, body: Dictionary) -> Dictionary:
+	return NiuaMcpRuntimeInputOperations.send_runtime_input(debugger_probe, body)
+
+
+static func runtime_input_send_result(debugger_probe, query: Dictionary) -> Dictionary:
+	return NiuaMcpRuntimeInputOperations.runtime_input_send_result(debugger_probe, query)
 
 
 static func capture_runtime_screenshot(debugger_probe) -> Dictionary:

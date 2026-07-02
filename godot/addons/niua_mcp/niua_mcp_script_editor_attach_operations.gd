@@ -53,19 +53,29 @@ static func attach_script(editor: EditorInterface, body: Dictionary, resolve_nod
 		return NiuaMcpScriptEditorAuthoringUtils.error("script failed to reload %s: %s" % [script_path, reload_error])
 
 	node.set_script(script)
+	# set_script() silently no-ops when the script's base type is incompatible
+	# with the node, which would otherwise report a successful attach on a node
+	# that actually has no script. Confirm it took.
+	if node.get_script() != script:
+		return NiuaMcpScriptEditorAuthoringUtils.error("script %s could not be attached to a %s node (incompatible base type?)" % [script_path, node.get_class()], "attach_failed")
 
 	var inspected := false
 	if editor.has_method("inspect_object"):
 		editor.inspect_object(node)
 		inspected = true
 
+	# The script is already attached; a failed post-attach save must NOT be
+	# reported as a total failure (it would look like the attach failed).
+	# Surface the save problem as a soft warning instead.
 	var saved := false
+	var save_error := ""
 	if bool(body.get("saveScene", false)):
 		var save_result_raw = save_current_scene.call({})
 		var save_result := NiuaMcpScriptEditorAuthoringUtils.callback_dictionary_result(save_result_raw, "save_current_scene")
-		if not save_result.get("ok", false):
-			return save_result
-		saved = true
+		if save_result.get("ok", false):
+			saved = true
+		else:
+			save_error = str(save_result.get("error", "failed to save scene"))
 
 	var root_raw = edited_scene_root.call()
 	var root := root_raw as Node if root_raw is Node else null
@@ -80,6 +90,7 @@ static func attach_script(editor: EditorInterface, body: Dictionary, resolve_nod
 			"created": created,
 			"reloadError": reload_error,
 			"inspected": inspected,
-			"saved": saved
+			"saved": saved,
+			"saveError": save_error
 		}
 	}

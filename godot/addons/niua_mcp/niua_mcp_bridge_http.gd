@@ -23,7 +23,10 @@ static func read_request(peer: StreamPeerTCP, max_body_bytes: int = NiuaMcpPaylo
 						"request body exceeds NIUA MCP payload limit: %d bytes > %d bytes. Reduce the request size or raise NIUA_MCP_MAX_PAYLOAD_BYTES." % [length, max_body_bytes],
 						"payload_too_large"
 					)
-				if request.length() >= header_end + 4 + length:
+				# Compare BYTE length (Content-Length is bytes) against the body's
+				# byte size, not request.length() which is a UTF-8 character count.
+				# Char-vs-byte mismatch froze the editor ~1s on non-ASCII bodies.
+				if request.substr(header_end + 4).to_utf8_buffer().size() >= length:
 					break
 		OS.delay_msec(2)
 

@@ -101,6 +101,7 @@ test("debugger schemas delegate control probe and runtime modules", async () => 
   assert.match(runtime, /export const RUNTIME_NODE_PROPERTIES_SCHEMA/);
   assert.match(runtime, /export const SET_RUNTIME_NODE_PROPERTY_SCHEMA/);
   assert.match(runtime, /export const RUNTIME_SCREENSHOT_SCHEMA/);
+  assert.match(runtime, /export const SEND_RUNTIME_INPUT_SCHEMA/);
   assert.match(runtime, /nodePath: \{/);
   assert.match(runtime, /timeoutMsec: \{/);
 });
@@ -156,6 +157,75 @@ test("get_runtime_events handler forwards filters through the bridge", async () 
 
     assert.equal(seenUrl, "/runtime/events?limit=7&kinds=session_started%2Cruntime_state&sinceMsec=42");
     assert.equal(payload.data.events[0].kind, "runtime_state");
+  });
+});
+
+test("send_runtime_input schema declares explicit typed action, hold, and mouse-motion params", () => {
+  const schema = toolByName("send_runtime_input").inputSchema;
+
+  assert.equal(schema.type, "object");
+  assert.equal(schema.additionalProperties, false);
+  assert.equal(schema.properties.actions.type, "array");
+  assert.equal(schema.properties.actions.items.type, "object");
+  assert.equal(schema.properties.actions.items.properties.action.type, "string");
+  assert.equal(schema.properties.actions.items.properties.pressed.type, "boolean");
+  assert.equal(schema.properties.actions.items.properties.strength.type, "number");
+  assert.deepEqual(schema.properties.actions.items.required, ["action", "pressed"]);
+  assert.equal(schema.properties.holdMs.type, "number");
+  assert.equal(schema.properties.mouseMotion.type, "object");
+  assert.equal(schema.properties.mouseMotion.properties.dx.type, "number");
+  assert.equal(schema.properties.mouseMotion.properties.dy.type, "number");
+  assert.deepEqual(schema.properties.mouseMotion.required, ["dx", "dy"]);
+});
+
+test("send_runtime_input handler forwards actions and mouse motion through the bridge", async () => {
+  let receivedBody = null;
+  const seenUrls = [];
+
+  await withJsonBridge(async (req, res) => {
+    seenUrls.push(req.url);
+    const chunks = [];
+    for await (const chunk of req) {
+      chunks.push(chunk);
+    }
+    receivedBody = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+
+    res.setHeader("content-type", "application/json");
+    res.end(JSON.stringify({
+      ok: true,
+      data: {
+        pending: false,
+        available: true,
+        requestId: "send_input:1",
+        responses: [
+          {
+            ok: true,
+            applied: {
+              actions: [{ action: "jump", pressed: true, strength: 1 }],
+              mouseMotion: { dx: 5, dy: -3 },
+              heldMs: null
+            }
+          }
+        ]
+      }
+    }));
+  }, async (port) => {
+    const result = await toolByName("send_runtime_input").handler({
+      port,
+      actions: [{ action: "jump", pressed: true }],
+      mouseMotion: { dx: 5, dy: -3 },
+      timeoutMsec: 10,
+      pollIntervalMsec: 1
+    });
+    const payload = parseToolText(result);
+
+    assert.equal(seenUrls[0], "/runtime/input/send");
+    assert.deepEqual(receivedBody, {
+      actions: [{ action: "jump", pressed: true }],
+      mouseMotion: { dx: 5, dy: -3 }
+    });
+    assert.equal(payload.data.responses[0].applied.mouseMotion.dx, 5);
+    assert.equal(payload.data.responses[0].applied.heldMs, null);
   });
 });
 

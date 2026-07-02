@@ -104,6 +104,7 @@ test("Godot MCP server handles initialize, listing, and version tool calls", asy
       "get_runtime_node_properties",
       "set_runtime_node_property",
       "capture_runtime_screenshot",
+      "send_runtime_input",
       "upsert_animation",
       "list_animations",
       "play_animation",
