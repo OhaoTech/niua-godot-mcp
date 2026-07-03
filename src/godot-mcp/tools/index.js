@@ -59,6 +59,7 @@ import { UI_TOOL_DEFINITIONS } from "./ui/index.js";
 import { VIEWPORT_TOOL_DEFINITIONS } from "./viewport/index.js";
 import { VIEWPORT2D_TOOL_DEFINITIONS } from "./viewport/viewport2d/index.js";
 import { PLAYABLE2D_WORKFLOW_TOOL_DEFINITIONS } from "./workflows/playable2d/index.js";
+import { RECIPE_WORKFLOW_TOOL_DEFINITIONS } from "./workflows/recipes/index.js";
 import {
   PLAYABLE3D_WORKFLOW_TOOL_DEFINITIONS,
   create3DCharacterController,
@@ -100,6 +101,7 @@ export const GODOT_MCP_TOOLS = [
   ...NODE3D_TOOL_DEFINITIONS,
   ...PLAYABLE2D_WORKFLOW_TOOL_DEFINITIONS,
   ...PLAYABLE3D_WORKFLOW_TOOL_DEFINITIONS,
+  ...RECIPE_WORKFLOW_TOOL_DEFINITIONS,
   ...COMMON_NODE_MUTATION_TOOL_DEFINITIONS,
   ...INSPECTOR_TOOL_DEFINITIONS,
   ...MATERIAL_ASSIGNMENT_TOOL_DEFINITIONS,

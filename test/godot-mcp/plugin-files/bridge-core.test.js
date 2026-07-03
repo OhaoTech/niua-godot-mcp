@@ -28,7 +28,7 @@ test("Godot plugin entrypoint starts and stops the bridge", async () => {
   assert.match(plugin, /bridge\.stop\(\)/);
 });
 
-test("Godot bridge exposes read endpoints", async () => {
+test("Godot bridge exposes Milestone 0A read endpoints", async () => {
   const bridge = await readBridgeWriteSurface();
   const readRoutes = await readAddonFile("niua_mcp_bridge_read_routes.gd");
   const server = await readAddonFile("niua_mcp_bridge_server.gd");
@@ -238,7 +238,7 @@ test("Godot bridge read routes live in their own route module", async () => {
   assert.match(editorRoutes, /func _health\(\) -> Dictionary:/);
   assert.match(editorRoutes, /func _editor_state\(\) -> Dictionary:/);
   assert.match(editorRoutes, /func _logs_response\(\) -> Dictionary:/);
-  assert.match(sceneRoutes, /func _scene_tree\(\) -> Dictionary:/);
+  assert.match(sceneRoutes, /func _scene_tree\(query: Dictionary\) -> Dictionary:/);
   assert.match(sceneRoutes, /func _open_scene_tabs\(\) -> Dictionary:/);
   assert.match(filesystemRoutes, /func _filesystem_state\(\) -> Dictionary:/);
   assert.match(filesystemRoutes, /func _read_text_file\(query: Dictionary\) -> Dictionary:/);

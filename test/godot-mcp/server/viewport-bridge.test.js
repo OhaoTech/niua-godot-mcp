@@ -38,8 +38,8 @@ test("Godot MCP server forwards capture_viewport_screenshot calls to the editor 
         }
       });
 
-      assert.match(response.result.content[0].text, /"viewport": "2d"/);
-      assert.match(response.result.content[0].text, /"mimeType": "image\/png"/);
+      assert.match(response.result.content[0].text, /"viewport":"2d"/);
+      assert.match(response.result.content[0].text, /"mimeType":"image\/png"/);
     } finally {
       await server.close();
     }
@@ -81,7 +81,7 @@ test("Godot MCP server forwards get_viewport_state calls to the editor bridge", 
       });
 
       assert.equal(seenUrl, "/viewport/state?viewport=3d&index=1");
-      assert.match(response.result.content[0].text, /"viewport": "3d"/);
+      assert.match(response.result.content[0].text, /"viewport":"3d"/);
     } finally {
       await server.close();
     }
@@ -215,7 +215,7 @@ test("Godot MCP server forwards send_viewport_input calls to the editor bridge",
           }
         ]
       });
-      assert.match(response.result.content[0].text, /"eventsSent": 2/);
+      assert.match(response.result.content[0].text, /"eventsSent":2/);
     } finally {
       await server.close();
     }

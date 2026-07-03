@@ -47,7 +47,7 @@ test("Godot MCP server forwards replace_in_scripts calls to the editor bridge", 
         }
       });
 
-      assert.match(response.result.content[0].text, /"totalReplacements": 2/);
+      assert.match(response.result.content[0].text, /"totalReplacements":2/);
       assert.deepEqual(receivedBody, {
         search: "old_name",
         replacement: "new_name",

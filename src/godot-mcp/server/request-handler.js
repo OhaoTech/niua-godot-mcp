@@ -34,7 +34,8 @@ export async function handleRequest(message) {
           {
             uri,
             mimeType: "application/json",
-            text: `${JSON.stringify(resource, null, 2)}\n`
+            // Compact on purpose — resources land in agent context like tool results.
+            text: `${JSON.stringify(resource)}\n`
           }
         ]
       };

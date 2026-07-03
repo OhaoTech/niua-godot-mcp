@@ -55,7 +55,9 @@ export const FILESYSTEM_TOOL_MANIFEST = [
           recursive: {
             default: false,
             type: "boolean"
-          }
+          },
+          maxDepth: {},
+          exclude: { array: "csv", trim: true }
         }
       }
     },

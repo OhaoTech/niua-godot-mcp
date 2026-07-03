@@ -1,0 +1,60 @@
+flowchart TD
+  Client["MCP Client<br/>Claude / Codex"]
+
+  subgraph Server["Node.js stdio MCP server"]
+    direction TB
+    Stdio["stdio.js<br/>buffer stdin, split NDJSON frames"]
+    Req["request-handler.js<br/>JSON-RPC method router"]
+    Catalog["tool-catalog.js<br/>callTool then TOOL_REGISTRY"]
+    Profiles["tool-profiles.js<br/>v1 allowlist / full"]
+    Handler["generated handler<br/>local | adapter | bridge"]
+    BClient["GodotBridgeClient<br/>splitBridgeArgs, token, verifyProjectIdentity"]
+  end
+
+  subgraph Domains["Manifest tool domains (~26)"]
+    direction TB
+    Dm1["scene, nodes-2d, nodes-3d, nodes-common"]
+    Dm2["scripts, resources, filesystem, import"]
+    Dm3["animation, audio, ui, particles"]
+    Dm4["navigation, multiplayer, localization"]
+    Dm5["run, runtime, debugger, viewport, inspector"]
+    Dm6["project, project-settings, export"]
+    Dm7["playable2d + playable3d workflows"]
+  end
+
+  subgraph Bridge["Editor bridge - HTTP/1.1 on 127.0.0.1:9174"]
+    direction TB
+    Http["niua_mcp_bridge_http<br/>parse, token auth (x-niua-mcp-token), 64 MiB cap"]
+    GRoute["niua_mcp_bridge_router<br/>READ then WRITE routes, method check"]
+  end
+
+  subgraph Addon["NIUA Godot addon - @tool, editor main thread (_process)"]
+    direction TB
+    Reads["Read routes<br/>~12 domains, ~38 GET"]
+    Writes["Write routes<br/>~16 domains, ~100 POST"]
+    EIface["EditorInterface / SceneTree<br/>res:// validation"]
+    RProbe["Runtime probe<br/>EngineDebugger channel to live game"]
+  end
+
+  Client -->|"stdin: NDJSON JSON-RPC"| Stdio
+  Stdio --> Req
+  Req -->|"tools/call"| Catalog
+  Req -->|"resources/read"| BClient
+  Catalog --> Handler
+  Profiles -. filters .-> Catalog
+  Domains -. generate tool defs + client methods .-> Catalog
+  Domains -. bridge methods .-> BClient
+  Handler --> BClient
+  BClient -->|"HTTP + token"| Http
+  Http --> GRoute
+  GRoute -->|"GET"| Reads
+  GRoute -->|"POST"| Writes
+  Reads --> EIface
+  Writes --> EIface
+  Reads -.->|"/runtime/*"| RProbe
+  Writes -.->|"/runtime/*"| RProbe
+  EIface -->|"JSON: ok + data"| Http
+  RProbe -->|"correlated reply"| Http
+  Http -->|"HTTP response"| BClient
+  BClient -->|"toolResult"| Stdio
+  Stdio -->|"stdout: NDJSON result"| Client

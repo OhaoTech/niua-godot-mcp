@@ -33,8 +33,8 @@ test("Godot MCP server forwards list_export_presets calls to the editor bridge",
         arguments: {}
       });
 
-      assert.match(response.result.content[0].text, /"name": "Linux"/);
-      assert.match(response.result.content[0].text, /"platform": "Linux"/);
+      assert.match(response.result.content[0].text, /"name":"Linux"/);
+      assert.match(response.result.content[0].text, /"platform":"Linux"/);
     } finally {
       await server.close();
     }
@@ -81,12 +81,12 @@ test("Godot MCP server forwards upsert_export_preset calls to the editor bridge"
           platform: "Linux",
           exportPath: "build/game.x86_64",
           options: {
-            "binary_format/embed_pck": false
+            "binary_format/embed_pck":false
           }
         }
       });
 
-      assert.match(response.result.content[0].text, /"name": "Linux"/);
+      assert.match(response.result.content[0].text, /"name":"Linux"/);
       assert.equal(receivedBody.name, "Linux");
       assert.equal(receivedBody.platform, "Linux");
     } finally {

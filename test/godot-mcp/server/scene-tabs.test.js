@@ -147,9 +147,9 @@ test("Godot MCP server forwards get_open_scene_tabs calls to the editor bridge",
       });
 
       assert.match(response.result.content[0].text, /"tabs"/);
-      assert.match(response.result.content[0].text, /"currentIndex": 0/);
-      assert.match(response.result.content[0].text, /"unsaved": true/);
-      assert.match(response.result.content[0].text, /"historyVersion": 12/);
+      assert.match(response.result.content[0].text, /"currentIndex":0/);
+      assert.match(response.result.content[0].text, /"unsaved":true/);
+      assert.match(response.result.content[0].text, /"historyVersion":12/);
     } finally {
       await server.close();
     }

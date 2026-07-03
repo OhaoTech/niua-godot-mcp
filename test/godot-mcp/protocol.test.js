@@ -49,5 +49,5 @@ test("normalizeBridgeResponse normalizes bridge errors", () => {
 test("toolResult serializes JSON as MCP text content", () => {
   const result = toolResult({ ok: true, value: 1 });
   assert.equal(result.content[0].type, "text");
-  assert.match(result.content[0].text, /"value": 1/);
+  assert.match(result.content[0].text, /"value":1/);
 });

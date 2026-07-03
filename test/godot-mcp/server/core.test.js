@@ -179,6 +179,7 @@ test("Godot MCP server handles initialize, listing, and version tool calls", asy
       "create_2d_trigger_zone",
       "create_3d_playable_blockout",
       "create_3d_character_controller",
+      "apply_scene_recipe",
       "create_node_with_script",
       "rename_node",
       "delete_node",

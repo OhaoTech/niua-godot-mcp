@@ -70,8 +70,8 @@ test("Godot MCP server forwards get_runtime_node_properties calls to the editor 
         }
       });
 
-      assert.match(response.result.content[0].text, /"nodePath": "\/root\/RuntimeSmoke"/);
-      assert.match(response.result.content[0].text, /"value": "RuntimeSmoke"/);
+      assert.match(response.result.content[0].text, /"nodePath":"\/root\/RuntimeSmoke"/);
+      assert.match(response.result.content[0].text, /"value":"RuntimeSmoke"/);
       assert.deepEqual(seenUrls, [
         "/runtime/node/properties?nodePath=%2Froot%2FRuntimeSmoke&refresh=true",
         "/runtime/node/properties?nodePath=%2Froot%2FRuntimeSmoke&refresh=false&requestId=node_properties%3A1"
@@ -152,8 +152,8 @@ test("Godot MCP server forwards set_runtime_node_property calls to the editor br
         }
       });
 
-      assert.match(response.result.content[0].text, /"set": true/);
-      assert.match(response.result.content[0].text, /"value": "RuntimeSmokeRenamed"/);
+      assert.match(response.result.content[0].text, /"set":true/);
+      assert.match(response.result.content[0].text, /"value":"RuntimeSmokeRenamed"/);
       assert.deepEqual(seenRequests, [
         { method: "POST", url: "/runtime/node/property/set" },
         { method: "GET", url: "/runtime/node/property/set/result?requestId=set_node_property%3A1" }
@@ -236,8 +236,8 @@ test("Godot MCP server forwards send_runtime_input calls to the editor bridge", 
         }
       });
 
-      assert.match(response.result.content[0].text, /"heldMs": 1000/);
-      assert.match(response.result.content[0].text, /"action": "move_forward"/);
+      assert.match(response.result.content[0].text, /"heldMs":1000/);
+      assert.match(response.result.content[0].text, /"action":"move_forward"/);
       assert.deepEqual(seenRequests, [
         { method: "POST", url: "/runtime/input/send" },
         { method: "GET", url: "/runtime/input/send/result?requestId=send_input%3A1" }
@@ -311,8 +311,8 @@ test("Godot MCP server forwards capture_runtime_screenshot calls to the editor b
         }
       });
 
-      assert.match(response.result.content[0].text, /"mimeType": "image\/png"/);
-      assert.match(response.result.content[0].text, /"encoding": "base64"/);
+      assert.match(response.result.content[0].text, /"mimeType":"image\/png"/);
+      assert.match(response.result.content[0].text, /"encoding":"base64"/);
       assert.deepEqual(seenRequests, [
         { method: "POST", url: "/runtime/screenshot" },
         { method: "GET", url: "/runtime/screenshot/result?requestId=runtime_screenshot%3A1" }

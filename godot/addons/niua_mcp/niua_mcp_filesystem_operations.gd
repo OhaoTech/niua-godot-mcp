@@ -87,8 +87,8 @@ static func delete_entry(body: Dictionary) -> Dictionary:
 	return NiuaMcpFilesystemMutationOperations.delete_entry(body)
 
 
-static func directory_entries(path: String, recursive: bool) -> Array:
-	return NiuaMcpFilesystemReadOperations.directory_entries(path, recursive)
+static func directory_entries(path: String, recursive: bool, exclude: PackedStringArray = PackedStringArray(), max_depth: int = 0, depth: int = 1) -> Array:
+	return NiuaMcpFilesystemReadOperations.directory_entries(path, recursive, exclude, max_depth, depth)
 
 
 static func error(message: String, code: String = "bad_request") -> Dictionary:

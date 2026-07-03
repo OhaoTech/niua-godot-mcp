@@ -9,7 +9,7 @@ Generated from the manifest-backed tool catalog. Do not edit by hand; run `npm r
 | --- | --- | --- | --- |
 | `get_editor_state` | full | Read current visible Godot editor state from the NIUA editor plugin bridge. | host:string, port:number, expectedProjectRoot:string |
 | `get_project_info` | v1, full | Read the active Godot project root and project metadata from the editor bridge. | host:string, port:number, expectedProjectRoot:string |
-| `get_scene_tree` | v1, full | Read the current scene tree from the visible Godot editor. | host:string, port:number, expectedProjectRoot:string |
+| `get_scene_tree` | v1, full | Read the current scene tree from the visible Godot editor. | host:string, port:number, expectedProjectRoot:string, maxDepth:number, pathFilter:string |
 | `get_open_scene_tabs` | full | Read ordered open scene tabs and the current visible Godot scene tab. | host:string, port:number, expectedProjectRoot:string |
 | `get_selection` | full | Read the current editor selection from the visible Godot editor, including per-node parent, owner, sibling, group, and metadata-key context. | host:string, port:number, expectedProjectRoot:string |
 | `set_selection` | full | Replace the visible Godot editor node selection with one or more scene-tree nodes. | host:string, port:number, expectedProjectRoot:string, nodePaths*:array |

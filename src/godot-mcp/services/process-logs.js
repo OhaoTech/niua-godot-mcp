@@ -25,8 +25,15 @@ export function serializeProjectProcessLogs(entry, maxLines) {
     signal: entry.signal,
     bridge: entry.bridge,
     stdout: entry.stdout.slice(-maxLines),
-    stderr: entry.stderr.slice(-maxLines)
+    stderr: entry.stderr.slice(-maxLines),
+    stdoutTotalLines: entry.stdoutTotalLines ?? entry.stdout.length,
+    stderrTotalLines: entry.stderrTotalLines ?? entry.stderr.length
   };
+}
+
+export function clearProjectProcessLogs(entry) {
+  entry.stdout.length = 0;
+  entry.stderr.length = 0;
 }
 
 export function appendProcessOutput(entry, stream, chunk) {
@@ -35,6 +42,8 @@ export function appendProcessOutput(entry, stream, chunk) {
     .map((line) => line.trimEnd())
     .filter(Boolean);
 
+  const totalKey = `${stream}TotalLines`;
+  entry[totalKey] = (entry[totalKey] ?? 0) + lines.length;
   entry[stream].push(...lines);
   if (entry[stream].length > 100) {
     entry[stream].splice(0, entry[stream].length - 100);

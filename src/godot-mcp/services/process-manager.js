@@ -8,6 +8,7 @@ export {
 } from "./process-store.js";
 export {
   appendProcessOutput,
+  clearProjectProcessLogs,
   selectedProcessLogEntries,
   serializeProjectProcessLogs
 } from "./process-logs.js";

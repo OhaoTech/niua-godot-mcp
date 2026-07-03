@@ -20,8 +20,8 @@ func handles(handler: String) -> bool:
 	return HANDLERS.has(handler)
 
 
-func _scene_tree() -> Dictionary:
-	return NiuaMcpEditorStateOperations.scene_tree(_context.current_scene_path(), _context.edited_scene_root())
+func _scene_tree(query: Dictionary) -> Dictionary:
+	return NiuaMcpEditorStateOperations.scene_tree(_context.current_scene_path(), _context.edited_scene_root(), query)
 
 
 func _open_scene_tabs() -> Dictionary:

@@ -51,7 +51,7 @@ test("Godot MCP server forwards run settings and main scene calls to the editor 
         name: "get_run_settings",
         arguments: {}
       });
-      assert.match(settingsResponse.result.content[0].text, /"mainScene": "res:\/\/scenes\/main\.tscn"/);
+      assert.match(settingsResponse.result.content[0].text, /"mainScene":"res:\/\/scenes\/main\.tscn"/);
 
       const setResponse = await server.request("tools/call", {
         name: "set_main_scene",
@@ -61,7 +61,7 @@ test("Godot MCP server forwards run settings and main scene calls to the editor 
         }
       });
 
-      assert.match(setResponse.result.content[0].text, /"saved": true/);
+      assert.match(setResponse.result.content[0].text, /"saved":true/);
       assert.deepEqual(receivedBody, {
         path: "res://scenes/main.tscn",
         save: true
@@ -96,7 +96,7 @@ test("Godot MCP server exposes run settings as a resource", async () => {
         uri: "godot://run/settings"
       });
 
-      assert.match(resourceResponse.result.contents[0].text, /"mainScene": "res:\/\/scenes\/main\.tscn"/);
+      assert.match(resourceResponse.result.contents[0].text, /"mainScene":"res:\/\/scenes\/main\.tscn"/);
     } finally {
       await server.close();
     }
@@ -139,7 +139,7 @@ test("Godot MCP server forwards run_custom_scene calls to the editor bridge", as
         }
       });
 
-      assert.match(response.result.content[0].text, /"playing": true/);
+      assert.match(response.result.content[0].text, /"playing":true/);
       assert.deepEqual(receivedBody, {
         path: "res://scenes/smoke.tscn",
         saveBeforeRun: true
@@ -239,7 +239,7 @@ test("Godot MCP server forwards reload_running_scene calls to the editor bridge"
       });
 
       assert.deepEqual(receivedBody, { saveBeforeRun: true });
-      assert.match(response.result.content[0].text, /"requestedReload": true/);
+      assert.match(response.result.content[0].text, /"requestedReload":true/);
     } finally {
       await server.close();
     }

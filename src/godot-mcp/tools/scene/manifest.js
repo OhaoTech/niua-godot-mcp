@@ -23,6 +23,22 @@ const SET_SELECTION_SCHEMA = {
   additionalProperties: false
 };
 
+const SCENE_TREE_SCHEMA = {
+  type: "object",
+  properties: {
+    ...CONNECTION_PROPERTIES,
+    maxDepth: {
+      type: "number",
+      description: "Maximum tree depth to return. 0 or omitted means the full tree; truncated nodes report childrenTruncated."
+    },
+    pathFilter: {
+      type: "string",
+      description: "Only return the subtree rooted at this node path under the scene root."
+    }
+  },
+  additionalProperties: false
+};
+
 const FOCUS_NODE_SCHEMA = {
   type: "object",
   properties: {
@@ -121,19 +137,25 @@ export const SCENE_TOOL_MANIFEST = [
     description: "Read the current scene tree from the visible Godot editor.",
     profile: "full",
     category: "scene",
-    inputSchema: BRIDGE_INPUT_SCHEMA,
+    inputSchema: SCENE_TREE_SCHEMA,
     bridge: {
       owner: "scene",
       clientMethod: "getSceneTree",
       endpoint: "/scene/tree",
       method: "GET",
-      request: "none"
+      request: "query",
+      query: {
+        fields: {
+          maxDepth: {},
+          pathFilter: { omitEmpty: true }
+        }
+      }
     },
     godotRoute: {
       side: "read",
       endpoint: "/scene/tree",
       handler: "_scene_tree",
-      arg: "none"
+      arg: "query"
     },
     conformance: {
       happy: "read the current scene tree",

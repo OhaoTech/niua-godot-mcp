@@ -47,7 +47,7 @@ test("Godot MCP server forwards paint_tile_map_layer_terrain calls to the editor
         }
       });
 
-      assert.match(response.result.content[0].text, /"paintedCount": 2/);
+      assert.match(response.result.content[0].text, /"paintedCount":2/);
       assert.deepEqual(receivedBody, {
         nodePath: "World/GroundLayer",
         mode: "connect",

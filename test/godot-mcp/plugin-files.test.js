@@ -948,7 +948,8 @@ test("Godot node snapshots live in their own Godot module", async () => {
   assert.match(snapshots, /static func node_groups\(node: Node\) -> Array:/);
   assert.match(snapshots, /static func node_metadata_keys\(node: Node\) -> Array:/);
   assert.match(snapshots, /static func node_path_for_response\(node: Node, root: Node\) -> String:/);
-  assert.match(snapshots, /static func serialize_node\(node: Node, root: Node\) -> Dictionary:/);
+  assert.match(snapshots, /static func serialize_node\(node: Node, root: Node, max_depth: int = 0, depth: int = 0\) -> Dictionary:/);
+  assert.match(snapshots, /childrenTruncated/);
   assert.match(snapshots, /static func sibling_order\(parent: Node\) -> Array:/);
   assert.match(snapshots, /selectedIndex/);
   assert.match(snapshots, /ownerSceneFilePath/);
@@ -1292,7 +1293,7 @@ test("Godot filesystem operations live in their own Godot module", async () => {
   assert.match(filesystem, /static func batch_operations\(body: Dictionary\) -> Dictionary:/);
   assert.match(filesystem, /static func batch_operation_message\(operation: Dictionary\) -> String:/);
   assert.match(filesystem, /static func delete_entry\(body: Dictionary\) -> Dictionary:/);
-  assert.match(filesystem, /static func directory_entries\(path: String, recursive: bool\) -> Array:/);
+  assert.match(filesystem, /static func directory_entries\(path: String, recursive: bool, exclude: PackedStringArray = PackedStringArray\(\), max_depth: int = 0, depth: int = 1\) -> Array:/);
   assert.match(filesystemCopyOperations, /copy_absolute/);
   assert.match(filesystemBatchOperations, /continueOnError/);
   assert.match(filesystemBatchOperations, /dryRun/);
@@ -1346,7 +1347,7 @@ test("Godot filesystem operations delegate focused domain modules", async () => 
   assert.match(facade, /static func batch_operations\(body: Dictionary\) -> Dictionary:/);
   assert.match(facade, /static func batch_operation_message\(operation: Dictionary\) -> String:/);
   assert.match(facade, /static func delete_entry\(body: Dictionary\) -> Dictionary:/);
-  assert.match(facade, /static func directory_entries\(path: String, recursive: bool\) -> Array:/);
+  assert.match(facade, /static func directory_entries\(path: String, recursive: bool, exclude: PackedStringArray = PackedStringArray\(\), max_depth: int = 0, depth: int = 1\) -> Array:/);
   assert.doesNotMatch(facade, /get_selected_paths/);
   assert.doesNotMatch(facade, /directory\.list_dir_begin/);
   assert.doesNotMatch(facade, /FileAccess\.open/);
@@ -1365,7 +1366,7 @@ test("Godot filesystem operations delegate focused domain modules", async () => 
   assert.match(state, /get_scanning_progress/);
   assert.match(read, /static func list_filesystem\(query: Dictionary\) -> Dictionary:/);
   assert.match(read, /static func read_text_file\(query: Dictionary\) -> Dictionary:/);
-  assert.match(read, /static func directory_entries\(path: String, recursive: bool\) -> Array:/);
+  assert.match(read, /static func directory_entries\(path: String, recursive: bool, exclude: PackedStringArray = PackedStringArray\(\), max_depth: int = 0, depth: int = 1\) -> Array:/);
   assert.match(read, /directory\.list_dir_begin/);
   assert.match(read, /FileAccess\.open\(path, FileAccess\.READ\)/);
   assert.match(mutation, /static func create_folder\(body: Dictionary\) -> Dictionary:/);
@@ -2963,12 +2964,14 @@ test("Godot run operations live in their own Godot module", async () => {
 });
 
 test("Godot run operations delegate focused domain modules", async () => {
+	const bridge = await readAddonFile("niua_mcp_bridge.gd");
 	const facade = await readAddonFile("niua_mcp_run_operations.gd");
 	const utils = await readAddonFile("niua_mcp_run_utils.gd");
 	const settings = await readAddonFile("niua_mcp_run_settings_operations.gd");
 	const control = await readAddonFile("niua_mcp_run_control_operations.gd");
 	const sideEffects = await readAddonFile("niua_mcp_run_side_effects.gd");
 
+	assert.doesNotMatch(bridge, /ensure_headless_run_args/);
 	assert.match(facade, /preload\("niua_mcp_run_settings_operations\.gd"\)/);
 	assert.match(facade, /preload\("niua_mcp_run_control_operations\.gd"\)/);
 	assert.match(facade, /preload\("niua_mcp_run_side_effects\.gd"\)/);

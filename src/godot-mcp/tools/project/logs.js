@@ -1,6 +1,7 @@
 import { splitBridgeArgs } from "../../server/context.js";
 import { normalizeBoundedInteger } from "../../shared/numbers.js";
 import {
+  clearProjectProcessLogs,
   selectedProcessLogEntries,
   serializeProjectProcessLogs
 } from "../../services/process-manager.js";
@@ -60,9 +61,17 @@ export async function getGodotOutputLogs(args = {}) {
     }
   }
 
-  const processLogs = includeProcess
-    ? selectedProcessLogEntries(payload).map((entry) => serializeProjectProcessLogs(entry, maxLines))
-    : [];
+  const clearAfterRead = payload.clearAfterRead === true;
+  let processLogs = [];
+  if (includeProcess) {
+    const entries = selectedProcessLogEntries(payload);
+    processLogs = entries.map((entry) => serializeProjectProcessLogs(entry, maxLines));
+    if (clearAfterRead) {
+      for (const entry of entries) {
+        clearProjectProcessLogs(entry);
+      }
+    }
+  }
 
   return {
     ok: true,

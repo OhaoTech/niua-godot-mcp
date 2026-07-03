@@ -1,17 +1,22 @@
 // Tool-surface profiles for the Godot MCP server.
 //
-// Why: the full catalog consumes a large slab of every agent session's
-// context window, and this MCP often coexists in one session with other
-// MCP servers. The default `v1` profile advertises only the compact,
-// run-proven core tools; `full` exposes everything. Nothing is deleted —
-// `full` is always available via NIUA_MCP_PROFILE=full.
+// Why: the full catalog (135+ tools) consumes a large slab of every agent
+// session's context window, and this MCP must coexist in one session with
+// the NIUA MCP and a Blender MCP (docs/godot-mcp/v1-tool-surface.md). The
+// default `v1` profile advertises only the tools proven necessary by the
+// Slice 0 acceptance run; `full` exposes everything. Nothing is deleted —
+// a tool earns promotion into v1 by being needed during a real run
+// (a docs/godot-mcp/slice-0-findings.md entry is the admission ticket).
+
+import { dispatchToolsFromCatalog } from "./dispatch-profile.js";
 
 export const TOOL_PROFILE_ENV_VAR = "NIUA_MCP_PROFILE";
 export const DEFAULT_TOOL_PROFILE = "v1";
-export const TOOL_PROFILES = Object.freeze(["v1", "full"]);
+export const TOOL_PROFILES = Object.freeze(["v1", "full", "dispatch"]);
 
-// The v1 cut: the compact core tools proven necessary to import assets,
-// assemble a playable scene, run it, and observe it through a real editor.
+// Composition = the v1 cut from docs/godot-mcp/v1-tool-surface.md,
+// reconciled against the tools the Slice 0 acceptance run actually called
+// (runs/slice-0-acceptance-2026-06-11T11-02-47-609Z/slice0-run-report.json).
 export const V1_TOOL_NAMES = Object.freeze([
   // Project / setup
   "get_godot_version",
@@ -52,6 +57,9 @@ export const V1_TOOL_NAMES = Object.freeze([
   "create_mesh_instance_3d",
   "create_static_body_3d",
   "create_character_body_3d",
+  // Workflows — apply_scene_recipe is the token-efficiency workhorse: one call
+  // executes a whole recipe file, so small-profile sessions stay small.
+  "apply_scene_recipe",
   // Run / observe
   "set_main_scene",
   "run_main_scene",
@@ -79,6 +87,10 @@ export function resolveToolProfile(value = process.env[TOOL_PROFILE_ENV_VAR]) {
 export function selectProfileTools(tools, profile) {
   if (profile === "full") {
     return tools;
+  }
+
+  if (profile === "dispatch") {
+    return dispatchToolsFromCatalog(tools);
   }
 
   const available = new Set(tools.map((tool) => tool.name));

@@ -101,7 +101,7 @@ test("Godot MCP server forwards create_node_with_script calls to the editor brid
       });
 
       assert.equal(response.result.content[0].type, "text");
-      assert.match(response.result.content[0].text, /"attached": true/);
+      assert.match(response.result.content[0].text, /"attached":true/);
       assert.deepEqual(receivedBody, {
         type: "Node3D",
         name: "Player",
@@ -153,7 +153,7 @@ test("Godot MCP server forwards reorder_node calls to the editor bridge", async 
       });
 
       assert.equal(response.result.content[0].type, "text");
-      assert.match(response.result.content[0].text, /"siblingOrder": \[/);
+      assert.match(response.result.content[0].text, /"siblingOrder":\[/);
       assert.deepEqual(receivedBody, {
         nodePath: "Third",
         index: 0

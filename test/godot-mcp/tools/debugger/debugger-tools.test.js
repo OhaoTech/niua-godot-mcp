@@ -60,7 +60,9 @@ test("debugger runtime tools are generated from the manifest", async () => {
   const manifest = await readDebuggerSource("manifest.js");
 
   assert.match(index, /toolDefinitionsFromManifest\(DEBUGGER_CONTROL_TOOL_MANIFEST\)/);
-  assert.match(index, /toolDefinitionsFromManifest\(DEBUGGER_RUNTIME_TOOL_MANIFEST\)/);
+  assert.match(index, /toolDefinitionsFromManifest\(DEBUGGER_RUNTIME_TOOL_MANIFEST, \{/);
+  assert.match(index, /captureRuntimeScreenshot/);
+  assert.match(index, /getRuntimeNodeProperties/);
   assert.match(index, /DEBUGGER_CONTROL_TOOL_DEFINITIONS\.concat\(DEBUGGER_RUNTIME_TOOL_DEFINITIONS\)/);
   assert.doesNotMatch(index, /DEBUGGER_TOOL_DEFINITIONS = \[/);
   assert.doesNotMatch(index, /toolResult/);

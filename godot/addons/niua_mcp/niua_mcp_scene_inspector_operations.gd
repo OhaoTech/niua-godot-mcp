@@ -13,6 +13,15 @@ static func inspector_properties(editor: EditorInterface, query: Dictionary) -> 
 	if node == null:
 		return NiuaMcpSceneGraphUtils.error("inspector node not found", "not_found")
 
+	# Token diet: compact name/type/value entries by default; verbose=true restores
+	# the full editor metadata. A "properties" CSV allowlist narrows to named props.
+	var verbose := str(query.get("verbose", "false")).to_lower() == "true"
+	var allowlist := PackedStringArray()
+	var raw_allowlist := str(query.get("properties", ""))
+	if not raw_allowlist.is_empty():
+		for raw_name in raw_allowlist.split(",", false):
+			allowlist.append(raw_name.strip_edges())
+
 	var properties := []
 	for property in node.get_property_list():
 		var usage := int(property.get("usage", 0))
@@ -26,6 +35,8 @@ static func inspector_properties(editor: EditorInterface, query: Dictionary) -> 
 		var property_name := str(property.get("name", ""))
 		if property_name.is_empty():
 			continue
+		if not allowlist.is_empty() and not allowlist.has(property_name):
+			continue
 
 		var section_kind := "property"
 		if is_category:
@@ -36,6 +47,9 @@ static func inspector_properties(editor: EditorInterface, query: Dictionary) -> 
 			section_kind = "subgroup"
 
 		var is_section := section_kind != "property"
+		if is_section and not verbose:
+			continue
+
 		var value = null
 		var value_type := "Nil"
 		var can_revert := false
@@ -46,6 +60,14 @@ static func inspector_properties(editor: EditorInterface, query: Dictionary) -> 
 			can_revert = node.property_can_revert(property_name)
 			if can_revert:
 				revert_value = NiuaMcpVariantCodec.variant_to_json(node.property_get_revert(property_name))
+
+		if not verbose:
+			properties.append({
+				"name": property_name,
+				"type": value_type,
+				"value": NiuaMcpVariantCodec.variant_to_json(value)
+			})
+			continue
 
 		properties.append({
 			"name": property_name,
@@ -72,6 +94,7 @@ static func inspector_properties(editor: EditorInterface, query: Dictionary) -> 
 		"data": {
 			"nodePath": NiuaMcpSceneGraphContext.node_path_for_response(editor, node),
 			"type": node.get_class(),
+			"verbose": verbose,
 			"properties": properties
 		}
 	}

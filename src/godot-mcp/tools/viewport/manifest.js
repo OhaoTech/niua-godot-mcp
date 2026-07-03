@@ -1,6 +1,6 @@
-import { BRIDGE_INPUT_SCHEMA } from "../shared/bridge-schema.js";
 import {
   EDITOR_MAIN_SCREEN_SCHEMA,
+  EDITOR_SCREENSHOT_SCHEMA,
   INVOKE_EDITOR_ACTION_SCHEMA,
   VIEWPORT_CAMERA_SCHEMA,
   VIEWPORT_INPUT_SCHEMA,
@@ -10,16 +10,19 @@ import {
 export const VIEWPORT_TOOL_MANIFEST = [
   {
     name: "capture_editor_screenshot",
-    description: "Capture a PNG screenshot of the visible Godot editor. Returns available=false when the active renderer cannot expose editor pixels, such as headless mode.",
+    description: "Capture a PNG screenshot of the visible Godot editor. Pass savePath to write the PNG to disk and keep large base64 payloads out of the tool result. Returns available=false when the active renderer cannot expose editor pixels, such as headless mode.",
     profile: "full",
     category: "viewport",
-    inputSchema: BRIDGE_INPUT_SCHEMA,
+    inputSchema: EDITOR_SCREENSHOT_SCHEMA,
     bridge: {
       owner: "editor",
       clientMethod: "captureEditorScreenshot",
       endpoint: "/editor/screenshot",
       method: "GET",
       request: "none"
+    },
+    adapter: {
+      handler: "captureEditorScreenshot"
     },
     godotRoute: {
       side: "read",
@@ -37,7 +40,7 @@ export const VIEWPORT_TOOL_MANIFEST = [
   },
   {
     name: "capture_viewport_screenshot",
-    description: "Capture a PNG screenshot from the Godot editor 2D or 3D viewport. Returns available=false when the active renderer cannot expose viewport pixels, such as headless mode.",
+    description: "Capture a PNG screenshot from the Godot editor 2D or 3D viewport. Pass savePath to write the PNG to disk and keep large base64 payloads out of the tool result. Returns available=false when the active renderer cannot expose viewport pixels, such as headless mode.",
     profile: "full",
     category: "viewport",
     inputSchema: VIEWPORT_SCREENSHOT_SCHEMA,
@@ -53,6 +56,9 @@ export const VIEWPORT_TOOL_MANIFEST = [
           index: { default: 0 }
         }
       }
+    },
+    adapter: {
+      handler: "captureViewportScreenshot"
     },
     godotRoute: {
       side: "read",

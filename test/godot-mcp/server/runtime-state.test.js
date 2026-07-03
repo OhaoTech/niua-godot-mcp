@@ -42,7 +42,7 @@ test("Godot MCP server forwards install_runtime_probe calls to the editor bridge
         }
       });
 
-      assert.match(response.result.content[0].text, /"autoloadName": "NiuaMcpRuntimeProbe"/);
+      assert.match(response.result.content[0].text, /"autoloadName":"NiuaMcpRuntimeProbe"/);
       assert.deepEqual(receivedBody, { save: true });
     } finally {
       await server.close();
@@ -85,13 +85,13 @@ test("Godot MCP server forwards get_runtime_state calls to the editor bridge", a
         name: "get_runtime_state",
         arguments: {}
       });
-      assert.match(toolResponse.result.content[0].text, /"currentScene": "res:\/\/scenes\/main\.tscn"/);
+      assert.match(toolResponse.result.content[0].text, /"currentScene":"res:\/\/scenes\/main\.tscn"/);
 
       const resourceResponse = await server.request("resources/read", {
         uri: "godot://runtime/state",
         arguments: {}
       });
-      assert.match(resourceResponse.result.contents[0].text, /"hasRuntimeState": true/);
+      assert.match(resourceResponse.result.contents[0].text, /"hasRuntimeState":true/);
     } finally {
       await server.close();
     }
@@ -164,13 +164,13 @@ test("Godot MCP server forwards get_runtime_events calls to the editor bridge", 
           sinceMsec: 500
         }
       });
-      assert.match(toolResponse.result.content[0].text, /"currentScene": "res:\/\/scenes\/main\.tscn"/);
+      assert.match(toolResponse.result.content[0].text, /"currentScene":"res:\/\/scenes\/main\.tscn"/);
 
       const resourceResponse = await server.request("resources/read", {
         uri: "godot://runtime/events",
         arguments: {}
       });
-      assert.match(resourceResponse.result.contents[0].text, /"kind": "session_started"/);
+      assert.match(resourceResponse.result.contents[0].text, /"kind":"session_started"/);
       assert.deepEqual(seenUrls, [
         "/runtime/events?limit=10&kinds=runtime_state&sinceMsec=500",
         "/runtime/events"

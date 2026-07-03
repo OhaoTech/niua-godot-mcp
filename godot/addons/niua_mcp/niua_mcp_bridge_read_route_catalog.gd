@@ -47,7 +47,7 @@ const ROUTES := {
 	"/health": { "handler": "_health" },
 	"/project/info": { "handler": "_project_info" },
 	"/editor/state": { "handler": "_editor_state" },
-	"/scene/tree": { "handler": "_scene_tree" },
+	"/scene/tree": { "handler": "_scene_tree", "arg": "query" },
 	"/scene/tabs": { "handler": "_open_scene_tabs" },
 	"/selection": { "handler": "_selection" },
 	"/logs": { "handler": "_logs_response" },

@@ -39,7 +39,7 @@ test("Godot MCP server forwards validate_script calls to the editor bridge", asy
         }
       });
 
-      assert.match(response.result.content[0].text, /"valid": true/);
+      assert.match(response.result.content[0].text, /"valid":true/);
     } finally {
       await server.close();
     }

@@ -35,7 +35,7 @@ test("Godot MCP server forwards get_filesystem_dock_state calls to the editor br
       });
 
       assert.match(response.result.content[0].text, /"selectedPaths"/);
-      assert.match(response.result.content[0].text, /"currentDirectory": "res:\/\/scripts"/);
+      assert.match(response.result.content[0].text, /"currentDirectory":"res:\/\/scripts"/);
     } finally {
       await server.close();
     }
@@ -78,7 +78,7 @@ test("Godot MCP server forwards write_text_file calls to the editor bridge", asy
         }
       });
 
-      assert.match(response.result.content[0].text, /"path": "res:\/\/scripts\/player.gd"/);
+      assert.match(response.result.content[0].text, /"path":"res:\/\/scripts\/player.gd"/);
       assert.deepEqual(receivedBody, {
         path: "res://scripts/player.gd",
         content: "extends Node\n"
@@ -125,7 +125,7 @@ test("Godot MCP server forwards write_binary_file calls to the editor bridge", a
         }
       });
 
-      assert.match(response.result.content[0].text, /"path": "res:\/\/assets\/shrine.glb"/);
+      assert.match(response.result.content[0].text, /"path":"res:\/\/assets\/shrine.glb"/);
       assert.deepEqual(receivedBody, {
         path: "res://assets/shrine.glb",
         contentBase64: "Z2xiAA=="
@@ -181,7 +181,7 @@ test("Godot MCP server forwards copy_filesystem_entry calls to the editor bridge
         }
       });
 
-      assert.match(response.result.content[0].text, /"toPath": "res:\/\/scripts\/hero_copy.gd"/);
+      assert.match(response.result.content[0].text, /"toPath":"res:\/\/scripts\/hero_copy.gd"/);
       assert.deepEqual(receivedBody, {
         fromPath: "res://scripts/hero.gd",
         toPath: "res://scripts/hero_copy.gd",
@@ -263,7 +263,7 @@ test("Godot MCP server forwards batch_filesystem_operations calls to the editor 
         }
       });
 
-      assert.match(response.result.content[0].text, /"okCount": 2/);
+      assert.match(response.result.content[0].text, /"okCount":2/);
       assert.deepEqual(receivedBody, {
         operations: [
           {

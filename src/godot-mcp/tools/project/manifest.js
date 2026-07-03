@@ -239,7 +239,7 @@ export const PROJECT_DISCOVERY_TOOL_MANIFEST = [
 export const PROJECT_LOG_TOOL_MANIFEST = [
   {
     name: "get_output_logs",
-    description: "Read recent Godot bridge logs, runtime log events, and stdout/stderr captured from local Godot editor processes launched by this MCP server.",
+    description: "Read recent Godot bridge logs, runtime log events, and stdout/stderr captured from local Godot editor processes launched by this MCP server. Pass clearAfterRead: true to empty the process buffers after reading, so the next call only shows fresh output.",
     profile: "v1",
     category: "project-management",
     implementation: "local",

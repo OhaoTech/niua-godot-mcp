@@ -80,7 +80,7 @@ test("Godot MCP server forwards get_script_symbols calls to the editor bridge", 
       assert.equal(seenUrl, "/script/symbols?path=res%3A%2F%2Fscripts%2Fplayer.gd");
       assert.match(response.result.content[0].text, /"methods"/);
       assert.match(response.result.content[0].text, /"_ready"/);
-      assert.match(response.result.content[0].text, /"MAX_SPEED": 42/);
+      assert.match(response.result.content[0].text, /"MAX_SPEED":42/);
     } finally {
       await server.close();
     }
@@ -118,8 +118,8 @@ test("Godot MCP server forwards get_script_cursor_state calls to the editor brid
       });
 
       assert.equal(seenUrl, "/script/cursor/state");
-      assert.match(response.result.content[0].text, /"cursorAvailable": true/);
-      assert.match(response.result.content[0].text, /"lineOneBased": 3/);
+      assert.match(response.result.content[0].text, /"cursorAvailable":true/);
+      assert.match(response.result.content[0].text, /"lineOneBased":3/);
     } finally {
       await server.close();
     }
@@ -171,7 +171,7 @@ test("Godot MCP server forwards goto_script_line calls to the editor bridge", as
         line: 13,
         column: 2
       });
-      assert.match(response.result.content[0].text, /"editorLine": 13/);
+      assert.match(response.result.content[0].text, /"editorLine":13/);
     } finally {
       await server.close();
     }

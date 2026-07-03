@@ -25,7 +25,7 @@ test("Godot editor state operations live in their own Godot module", async () =>
   assert.match(operations, /static func health\(running: bool, host: String, port: int, read_endpoints: Array, write_endpoints: Array\) -> Dictionary:/);
   assert.match(operations, /static func project_info\(\) -> Dictionary:/);
   assert.match(operations, /static func editor_state\(current_scene: String, open_scenes: Array, main_screen: Dictionary, selection: Array, logs: Array\) -> Dictionary:/);
-  assert.match(operations, /static func scene_tree\(current_scene: String, root: Node\) -> Dictionary:/);
+  assert.match(operations, /static func scene_tree\(current_scene: String, root: Node, query: Dictionary = \{\}\) -> Dictionary:/);
   assert.match(operations, /ProjectSettings\.globalize_path\("res:\/\/"\)/);
   assert.match(operations, /ProjectSettings\.get_setting/);
   assert.match(operations, /Engine\.get_version_info/);

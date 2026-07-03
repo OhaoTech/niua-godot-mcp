@@ -12,7 +12,6 @@ const NiuaMcpBridgeRouter = preload("niua_mcp_bridge_router.gd")
 const NiuaMcpBridgeServer = preload("niua_mcp_bridge_server.gd")
 const NiuaMcpBridgeWriteRoutes = preload("niua_mcp_bridge_write_routes.gd")
 const NiuaMcpImportEventTracker = preload("niua_mcp_import_event_tracker.gd")
-const NiuaMcpRunUtils = preload("niua_mcp_run_utils.gd")
 const READ_ENDPOINTS := NiuaMcpBridgeRouter.READ_ENDPOINTS
 const WRITE_ENDPOINTS := NiuaMcpBridgeRouter.WRITE_ENDPOINTS
 
@@ -33,10 +32,6 @@ func start(plugin: EditorPlugin, port: int = DEFAULT_PORT, token: String = "") -
 	_port = port
 	_read_routes.configure(_editor, _server, _memory, _debugger_probe_host, _import_event_tracker, DEFAULT_HOST, _port, READ_ENDPOINTS, WRITE_ENDPOINTS)
 	_write_routes.configure(_editor, _debugger_probe_host, _memory)
-
-	# Display-less host: persist headless run args once at startup so any
-	# later play call (any route, any frame) spawns a game that can boot.
-	NiuaMcpRunUtils.ensure_headless_run_args()
 
 	var error := _server.start(DEFAULT_HOST, _port, token)
 	if error != OK:

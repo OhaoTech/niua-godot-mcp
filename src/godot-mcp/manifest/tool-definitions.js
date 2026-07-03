@@ -7,6 +7,7 @@ export function toolDefinitionsFromManifest(manifest, { adapterHandlers = {}, lo
   return manifest.map((entry) => ({
     name: entry.name,
     description: entry.description,
+    category: entry.category,
     inputSchema: entry.inputSchema,
     async handler(args = {}) {
       if (manifestImplementation(entry) === "local") {

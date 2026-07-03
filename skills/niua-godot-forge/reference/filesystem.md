@@ -8,7 +8,7 @@ Generated from the manifest-backed tool catalog. Do not edit by hand; run `npm r
 | Tool | Profiles | Description | Arguments |
 | --- | --- | --- | --- |
 | `get_filesystem_dock_state` | full | Read visible Godot FileSystem dock selection, current path/current directory, and scan progress. | host:string, port:number, expectedProjectRoot:string |
-| `list_filesystem` | v1, full | List Godot FileSystem dock entries under a res:// path. | host:string, port:number, expectedProjectRoot:string, path:string, recursive:boolean |
+| `list_filesystem` | v1, full | List Godot FileSystem dock entries under a res:// path. | host:string, port:number, expectedProjectRoot:string, path:string, recursive:boolean, maxDepth:number, exclude:array |
 | `create_folder` | v1, full | Create a folder under the Godot project res:// filesystem. | host:string, port:number, expectedProjectRoot:string, path*:string |
 | `read_text_file` | v1, full | Read a UTF-8 text file from the Godot project res:// filesystem. | host:string, port:number, expectedProjectRoot:string, path*:string |
 | `write_text_file` | v1, full | Write a UTF-8 text file under the Godot project res:// filesystem. | host:string, port:number, expectedProjectRoot:string, path*:string, content*:string, refreshAfterWrite:boolean |

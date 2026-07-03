@@ -15,7 +15,9 @@ export const INSPECTOR_TOOL_MANIFEST = [
       request: "query",
       query: {
         fields: {
-          nodePath: { default: "" }
+          nodePath: { default: "" },
+          properties: { array: "csv", trim: true },
+          verbose: { type: "boolean" }
         }
       }
     },

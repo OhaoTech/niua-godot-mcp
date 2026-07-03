@@ -24,7 +24,7 @@ test("Godot MCP server forwards set_import_options calls to the editor bridge", 
           path: "res://assets/ship.glb",
           importMetadataPath: "res://assets/ship.glb.import",
           updatedOptions: {
-            "nodes/root_type": "CharacterBody3D"
+            "nodes/root_type":"CharacterBody3D"
           },
           reimport: {
             requested: true,
@@ -46,7 +46,7 @@ test("Godot MCP server forwards set_import_options calls to the editor bridge", 
         arguments: {
           path: "res://assets/ship.glb",
           options: {
-            "nodes/root_type": "CharacterBody3D"
+            "nodes/root_type":"CharacterBody3D"
           },
           reimport: true
         }
@@ -56,7 +56,7 @@ test("Godot MCP server forwards set_import_options calls to the editor bridge", 
       assert.deepEqual(receivedBody, {
         path: "res://assets/ship.glb",
         options: {
-          "nodes/root_type": "CharacterBody3D"
+          "nodes/root_type":"CharacterBody3D"
         },
         reimport: true
       });
@@ -143,7 +143,7 @@ test("Godot MCP server forwards reimport_assets calls to the editor bridge", asy
         }
       });
 
-      assert.match(response.result.content[0].text, /"reimported": true/);
+      assert.match(response.result.content[0].text, /"reimported":true/);
       assert.deepEqual(receivedBody, {
         paths: ["res://assets/ship.glb"]
       });

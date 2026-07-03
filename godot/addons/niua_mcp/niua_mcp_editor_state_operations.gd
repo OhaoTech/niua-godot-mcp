@@ -44,11 +44,24 @@ static func editor_state(current_scene: String, open_scenes: Array, main_screen:
 	}
 
 
-static func scene_tree(current_scene: String, root: Node) -> Dictionary:
+static func scene_tree(current_scene: String, root: Node, query: Dictionary = {}) -> Dictionary:
+	var max_depth := str(query.get("maxDepth", "0")).to_int()
+	var path_filter := str(query.get("pathFilter", ""))
+
+	var subtree_root := root
+	if root != null and not path_filter.is_empty():
+		subtree_root = root.get_node_or_null(NodePath(path_filter))
+		if subtree_root == null:
+			return {
+				"ok": false,
+				"error": "pathFilter node not found: %s" % path_filter,
+				"errorCode": "not_found"
+			}
+
 	return {
 		"ok": true,
 		"data": {
 			"currentScene": current_scene,
-			"root": NiuaMcpNodeSnapshot.serialize_node(root, root) if root != null else null
+			"root": NiuaMcpNodeSnapshot.serialize_node(subtree_root, root, max_depth) if subtree_root != null else null
 		}
 	}

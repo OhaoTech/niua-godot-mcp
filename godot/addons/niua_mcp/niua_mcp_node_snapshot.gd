@@ -44,18 +44,28 @@ static func node_path_for_response(node: Node, root: Node) -> String:
 	return str(root.get_path_to(node))
 
 
-static func serialize_node(node: Node, root: Node) -> Dictionary:
-	var children := []
-	for child in node.get_children():
-		children.append(serialize_node(child, root))
-
-	return {
+static func serialize_node(node: Node, root: Node, max_depth: int = 0, depth: int = 0) -> Dictionary:
+	# max_depth 0 = unlimited. At the limit children are elided and
+	# "childrenTruncated" carries the count, so large scenes can be read
+	# shallowly without paying for the whole tree (token diet).
+	var result := {
 		"name": node.name,
 		"path": node_path_for_response(node, root),
 		"type": node.get_class(),
-		"sceneFilePath": node.scene_file_path,
-		"children": children
+		"sceneFilePath": node.scene_file_path
 	}
+
+	if max_depth > 0 and depth >= max_depth:
+		result["children"] = []
+		if node.get_child_count() > 0:
+			result["childrenTruncated"] = node.get_child_count()
+		return result
+
+	var children := []
+	for child in node.get_children():
+		children.append(serialize_node(child, root, max_depth, depth + 1))
+	result["children"] = children
+	return result
 
 
 static func sibling_order(parent: Node) -> Array:

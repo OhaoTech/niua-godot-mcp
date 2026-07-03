@@ -504,7 +504,11 @@ test("viewport manifest preserves bridge tools and adapter metadata", () => {
     VIEWPORT_TOOL_MANIFEST
       .filter((entry) => entry.adapter)
       .map((entry) => [entry.name, entry.adapter.handler]),
-    [["send_viewport_input", "sendViewportInput"]]
+    [
+      ["capture_editor_screenshot", "captureEditorScreenshot"],
+      ["capture_viewport_screenshot", "captureViewportScreenshot"],
+      ["send_viewport_input", "sendViewportInput"]
+    ]
   );
   assert.ok(VIEWPORT_TOOL_MANIFEST.every((entry) => entry.category === "viewport"));
 });

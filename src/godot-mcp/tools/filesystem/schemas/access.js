@@ -11,6 +11,17 @@ export const FILESYSTEM_LIST_SCHEMA = {
     recursive: {
       type: "boolean",
       description: "Whether to include nested descendants. Defaults to false."
+    },
+    maxDepth: {
+      type: "number",
+      description: "Maximum directory depth for recursive listings. 0 or omitted means unlimited."
+    },
+    exclude: {
+      type: "array",
+      description: "Path substrings to exclude, such as [\"addons\", \".godot\"].",
+      items: {
+        type: "string"
+      }
     }
   },
   additionalProperties: false

@@ -1,5 +1,8 @@
 export { VIEWPORT_TARGET_PROPERTIES } from "./schemas/shared.js";
-export { VIEWPORT_SCREENSHOT_SCHEMA } from "./schemas/screenshot.js";
+export {
+  EDITOR_SCREENSHOT_SCHEMA,
+  VIEWPORT_SCREENSHOT_SCHEMA
+} from "./schemas/screenshot.js";
 export { VIEWPORT_CAMERA_SCHEMA } from "./schemas/camera.js";
 export { VIEWPORT_INPUT_SCHEMA } from "./schemas/input.js";
 export {

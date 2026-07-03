@@ -42,7 +42,7 @@ test("Godot MCP server forwards rename_node calls to the editor bridge", async (
         }
       });
 
-      assert.match(response.result.content[0].text, /"nodePath": "Hero"/);
+      assert.match(response.result.content[0].text, /"nodePath":"Hero"/);
       assert.deepEqual(receivedBody, {
         nodePath: "Player",
         newName: "Hero"
@@ -91,7 +91,7 @@ test("Godot MCP server forwards create_node calls to the editor bridge", async (
       });
 
       assert.equal(response.result.content[0].type, "text");
-      assert.match(response.result.content[0].text, /"nodePath": "Player"/);
+      assert.match(response.result.content[0].text, /"nodePath":"Player"/);
       assert.deepEqual(receivedBody, {
         type: "Node3D",
         name: "Player",

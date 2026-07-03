@@ -67,10 +67,10 @@ test("Godot MCP server forwards get_project_settings calls to the editor bridge"
         }
       });
 
-      assert.match(response.result.content[0].text, /"query": "config"/);
-      assert.match(response.result.content[0].text, /"settingCount": 1/);
-      assert.match(response.result.content[0].text, /"category": "application"/);
-      assert.match(response.result.content[0].text, /"path": "application\/config"/);
+      assert.match(response.result.content[0].text, /"query":"config"/);
+      assert.match(response.result.content[0].text, /"settingCount":1/);
+      assert.match(response.result.content[0].text, /"category":"application"/);
+      assert.match(response.result.content[0].text, /"path":"application\/config"/);
     } finally {
       await server.close();
     }
@@ -114,7 +114,7 @@ test("Godot MCP server forwards set_project_setting calls to the editor bridge",
         }
       });
 
-      assert.match(response.result.content[0].text, /"value": "Neon Racer"/);
+      assert.match(response.result.content[0].text, /"value":"Neon Racer"/);
       assert.deepEqual(receivedBody, {
         name: "application/config/name",
         value: "Neon Racer",

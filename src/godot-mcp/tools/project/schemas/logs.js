@@ -23,6 +23,10 @@ export const OUTPUT_LOGS_SCHEMA = {
     maxLines: {
       type: "number",
       description: "Maximum recent lines per process stream to return. Defaults to 100."
+    },
+    clearAfterRead: {
+      type: "boolean",
+      description: "When true, empty the captured stdout/stderr buffers of the selected processes after this read, so the next call only returns lines produced after this one. stdoutTotalLines/stderrTotalLines keep counting monotonically. Defaults to false."
     }
   },
   additionalProperties: false

@@ -1,6 +1,7 @@
 import {
   CONNECTION_PROPERTIES
 } from "../../shared/bridge-schema.js";
+import { SAVE_PATH_PROPERTY } from "../../shared/screenshot-io.js";
 
 export const RUNTIME_EVENTS_SCHEMA = {
   type: "object",
@@ -30,6 +31,11 @@ export const RUNTIME_NODE_PROPERTIES_SCHEMA = {
     nodePath: {
       type: "string",
       description: "Runtime node path, for example /root/Player. Defaults to /root."
+    },
+    properties: {
+      type: "array",
+      items: { type: "string" },
+      description: "Optional property-name allowlist, for example [\"hp\", \"score\"]. When set, only matching properties are returned instead of the full ~100-entry dump; totalPropertyCount reports the unfiltered count."
     },
     timeoutMsec: {
       type: "number",
@@ -75,6 +81,7 @@ export const RUNTIME_SCREENSHOT_SCHEMA = {
   type: "object",
   properties: {
     ...CONNECTION_PROPERTIES,
+    ...SAVE_PATH_PROPERTY,
     timeoutMsec: {
       type: "number",
       description: "How long the MCP client should poll for the runtime screenshot response. Defaults to 3000."

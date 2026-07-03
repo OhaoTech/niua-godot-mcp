@@ -1,17 +1,19 @@
+// These three properties repeat in EVERY tool schema (173x), so every character
+// here is multiplied across the whole advertised catalog. Keep them terse.
 export const BRIDGE_INPUT_SCHEMA = {
   type: "object",
   properties: {
     host: {
       type: "string",
-      description: "Godot editor bridge host. Defaults to 127.0.0.1."
+      description: "Bridge host (default 127.0.0.1)."
     },
     port: {
       type: "number",
-      description: "Godot editor bridge port. Defaults to 9174."
+      description: "Bridge port (default 9174)."
     },
     expectedProjectRoot: {
       type: "string",
-      description: "Absolute Godot project root expected on the bridge. Mutating/run tools fail if the connected editor reports a different project."
+      description: "Absolute project root the bridge must match; mismatch fails mutating/run tools."
     }
   },
   additionalProperties: false

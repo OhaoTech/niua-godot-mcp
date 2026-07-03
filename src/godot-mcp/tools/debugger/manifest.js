@@ -216,7 +216,7 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
   },
   {
     name: "get_runtime_node_properties",
-    description: "Inspect runtime node properties from the running Godot game through the NIUA runtime probe.",
+    description: "Inspect runtime node properties from the running Godot game through the NIUA runtime probe. Pass properties: [\"hp\", \"score\"] to return only those properties instead of the full ~100-entry dump.",
     profile: "full",
     category: "debugger",
     inputSchema: RUNTIME_NODE_PROPERTIES_SCHEMA,
@@ -238,6 +238,9 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
           requestId: {}
         }
       }
+    },
+    adapter: {
+      handler: "getRuntimeNodeProperties"
     },
     godotRoute: {
       side: "read",
@@ -283,7 +286,7 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
   },
   {
     name: "capture_runtime_screenshot",
-    description: "Capture a PNG screenshot from the running Godot game through the NIUA runtime probe. Returns available=false when the runtime renderer cannot expose pixels, such as headless mode.",
+    description: "Capture a PNG screenshot from the running Godot game through the NIUA runtime probe. Pass savePath to write the PNG to disk and keep large base64 payloads out of the tool result. Returns available=false when the runtime renderer cannot expose pixels, such as headless mode.",
     profile: "v1",
     category: "debugger",
     inputSchema: RUNTIME_SCREENSHOT_SCHEMA,
@@ -293,6 +296,9 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
       method: "POST",
       request: "body",
       generate: false
+    },
+    adapter: {
+      handler: "captureRuntimeScreenshot"
     },
     godotRoute: {
       side: "write",

@@ -36,11 +36,13 @@ export function normalizeBridgeResponse(response) {
 }
 
 export function toolResult(value) {
+  // Compact JSON on purpose: pretty-printing added ~37% whitespace to every
+  // tool result, and callers are agents parsing JSON, not humans reading it.
   return {
     content: [
       {
         type: "text",
-        text: `${JSON.stringify(value, null, 2)}\n`
+        text: `${JSON.stringify(value)}\n`
       }
     ]
   };

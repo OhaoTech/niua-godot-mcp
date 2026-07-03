@@ -7,5 +7,5 @@ Generated from the manifest-backed tool catalog. Do not edit by hand; run `npm r
 
 | Tool | Profiles | Description | Arguments |
 | --- | --- | --- | --- |
-| `get_inspector_properties` | v1, full | Read inspector-style editable properties for a selected or addressed node. | host:string, port:number, expectedProjectRoot:string, nodePath:string |
+| `get_inspector_properties` | v1, full | Read inspector-style editable properties for a selected or addressed node. | host:string, port:number, expectedProjectRoot:string, nodePath:string, properties:array, verbose:boolean |
 | `set_node_property` | v1, full | Set a property on a node in the current edited Godot scene. | host:string, port:number, expectedProjectRoot:string, nodePath*:string, property*:string, value*:any |

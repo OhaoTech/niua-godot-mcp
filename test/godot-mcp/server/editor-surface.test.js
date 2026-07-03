@@ -42,7 +42,7 @@ test("Godot MCP server forwards set_editor_main_screen calls to the editor bridg
       });
 
       assert.deepEqual(receivedBody, { screen: "Script" });
-      assert.match(response.result.content[0].text, /"screen": "Script"/);
+      assert.match(response.result.content[0].text, /"screen":"Script"/);
     } finally {
       await server.close();
     }
@@ -90,7 +90,7 @@ test("Godot MCP server forwards invoke_editor_action calls to the editor bridge"
         action: "select_file",
         params: { path: "res://scenes/main.tscn" }
       });
-      assert.match(response.result.content[0].text, /"invoked": true/);
+      assert.match(response.result.content[0].text, /"invoked":true/);
     } finally {
       await server.close();
     }
@@ -126,8 +126,8 @@ test("Godot MCP server forwards capture_editor_screenshot calls to the editor br
         arguments: {}
       });
 
-      assert.match(response.result.content[0].text, /"mimeType": "image\/png"/);
-      assert.match(response.result.content[0].text, /"available": true/);
+      assert.match(response.result.content[0].text, /"mimeType":"image\/png"/);
+      assert.match(response.result.content[0].text, /"available":true/);
     } finally {
       await server.close();
     }

@@ -7,6 +7,17 @@ export const INSPECTOR_PROPERTIES_SCHEMA = {
     nodePath: {
       type: "string",
       description: "Path under the edited scene root. Empty string means current editor selection."
+    },
+    properties: {
+      type: "array",
+      description: "Only return these property names. Omit for all editable properties.",
+      items: {
+        type: "string"
+      }
+    },
+    verbose: {
+      type: "boolean",
+      description: "Include full editor metadata (hints, usage flags, sections, revert values). Defaults to false: compact name/type/value entries."
     }
   },
   additionalProperties: false
