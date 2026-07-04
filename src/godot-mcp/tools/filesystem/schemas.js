@@ -1,7 +1,8 @@
 export { BRIDGE_INPUT_SCHEMA, CONNECTION_PROPERTIES } from "../shared/bridge-schema.js";
 export {
   FILESYSTEM_LIST_SCHEMA,
-  FILESYSTEM_PATH_SCHEMA
+  FILESYSTEM_PATH_SCHEMA,
+  READ_TEXT_FILE_SCHEMA
 } from "./schemas/access.js";
 export {
   WRITE_BINARY_FILE_SCHEMA,

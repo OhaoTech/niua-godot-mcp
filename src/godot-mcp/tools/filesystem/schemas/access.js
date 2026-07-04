@@ -39,3 +39,24 @@ export const FILESYSTEM_PATH_SCHEMA = {
   required: ["path"],
   additionalProperties: false
 };
+
+export const READ_TEXT_FILE_SCHEMA = {
+  type: "object",
+  properties: {
+    ...CONNECTION_PROPERTIES,
+    path: {
+      type: "string",
+      description: "Godot project path under res://."
+    },
+    lineStart: {
+      type: "integer",
+      description: "1-based first line to return. Out-of-range fails naming totalLines."
+    },
+    lineCount: {
+      type: "integer",
+      description: "Number of lines to return from lineStart. Omitted = through end of file."
+    }
+  },
+  required: ["path"],
+  additionalProperties: false
+};

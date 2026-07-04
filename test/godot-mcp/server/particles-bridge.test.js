@@ -29,7 +29,7 @@ test("Godot MCP server exposes Particles tools only under the full profile", asy
         name: "Emitter"
       }
     });
-    assert.match(blocked.error.message, /not in the "v1" tool profile/);
+    assert.match(blocked.error.message, /not in the "core" tool profile/);
   } finally {
     await fullServer.close();
     await v1Server.close();

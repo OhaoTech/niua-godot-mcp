@@ -5,6 +5,7 @@ import {
   FILESYSTEM_LIST_SCHEMA,
   FILESYSTEM_PATH_SCHEMA,
   MOVE_FILESYSTEM_ENTRY_SCHEMA,
+  READ_TEXT_FILE_SCHEMA,
   WRITE_BINARY_FILE_SCHEMA,
   WRITE_TEXT_FILE_SCHEMA
 } from "./schemas.js";
@@ -14,6 +15,7 @@ export const FILESYSTEM_TOOL_MANIFEST = [
     name: "get_filesystem_dock_state",
     description: "Read visible Godot FileSystem dock selection, current path/current directory, and scan progress.",
     profile: "full",
+    tier: "standard",
     category: "filesystem",
     inputSchema: BRIDGE_INPUT_SCHEMA,
     bridge: {
@@ -38,8 +40,9 @@ export const FILESYSTEM_TOOL_MANIFEST = [
   },
   {
     name: "list_filesystem",
-    description: "List Godot FileSystem dock entries under a res:// path.",
+    description: "List Godot FileSystem dock entries under a res:// path. Entries are sorted by name ascending within each directory (directories and files interleaved); recursive listings expand each subdirectory depth-first in that order.",
     profile: "full",
+    tier: "essential",
     category: "filesystem",
     inputSchema: FILESYSTEM_LIST_SCHEMA,
     bridge: {
@@ -79,6 +82,7 @@ export const FILESYSTEM_TOOL_MANIFEST = [
     name: "create_folder",
     description: "Create a folder under the Godot project res:// filesystem.",
     profile: "full",
+    tier: "essential",
     category: "filesystem",
     inputSchema: FILESYSTEM_PATH_SCHEMA,
     bridge: {
@@ -104,10 +108,11 @@ export const FILESYSTEM_TOOL_MANIFEST = [
   },
   {
     name: "read_text_file",
-    description: "Read a UTF-8 text file from the Godot project res:// filesystem.",
+    description: "Read a UTF-8 text file from the Godot project res:// filesystem. Optional lineStart (1-based) + lineCount return only that line range; totalLines is always reported.",
     profile: "full",
+    tier: "essential",
     category: "filesystem",
-    inputSchema: FILESYSTEM_PATH_SCHEMA,
+    inputSchema: READ_TEXT_FILE_SCHEMA,
     bridge: {
       clientMethod: "readTextFile",
       endpoint: "/filesystem/file/read",
@@ -115,7 +120,9 @@ export const FILESYSTEM_TOOL_MANIFEST = [
       request: "query",
       query: {
         fields: {
-          path: {}
+          path: {},
+          lineStart: {},
+          lineCount: {}
         }
       }
     },
@@ -137,6 +144,7 @@ export const FILESYSTEM_TOOL_MANIFEST = [
     name: "write_text_file",
     description: "Write a UTF-8 text file under the Godot project res:// filesystem.",
     profile: "full",
+    tier: "essential",
     category: "filesystem",
     inputSchema: WRITE_TEXT_FILE_SCHEMA,
     bridge: {
@@ -164,6 +172,7 @@ export const FILESYSTEM_TOOL_MANIFEST = [
     name: "write_binary_file",
     description: "Write a base64-encoded binary file under the Godot project res:// filesystem.",
     profile: "full",
+    tier: "essential",
     category: "filesystem",
     inputSchema: WRITE_BINARY_FILE_SCHEMA,
     bridge: {
@@ -191,6 +200,7 @@ export const FILESYSTEM_TOOL_MANIFEST = [
     name: "move_filesystem_entry",
     description: "Move or rename a file or folder under the Godot project res:// filesystem.",
     profile: "full",
+    tier: "standard",
     category: "filesystem",
     inputSchema: MOVE_FILESYSTEM_ENTRY_SCHEMA,
     bridge: {
@@ -218,6 +228,7 @@ export const FILESYSTEM_TOOL_MANIFEST = [
     name: "copy_filesystem_entry",
     description: "Copy a file or folder under the Godot project res:// filesystem.",
     profile: "full",
+    tier: "standard",
     category: "filesystem",
     inputSchema: COPY_FILESYSTEM_ENTRY_SCHEMA,
     bridge: {
@@ -245,6 +256,7 @@ export const FILESYSTEM_TOOL_MANIFEST = [
     name: "batch_filesystem_operations",
     description: "Run ordered copy, move, and delete operations under the Godot project res:// filesystem.",
     profile: "full",
+    tier: "standard",
     category: "filesystem",
     inputSchema: BATCH_FILESYSTEM_OPERATIONS_SCHEMA,
     bridge: {
@@ -272,6 +284,7 @@ export const FILESYSTEM_TOOL_MANIFEST = [
     name: "delete_filesystem_entry",
     description: "Delete a file or empty folder under the Godot project res:// filesystem.",
     profile: "full",
+    tier: "standard",
     category: "filesystem",
     inputSchema: FILESYSTEM_PATH_SCHEMA,
     bridge: {

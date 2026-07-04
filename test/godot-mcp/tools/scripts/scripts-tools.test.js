@@ -90,7 +90,9 @@ test("SCRIPT_TOOL_DEFINITIONS exposes script tool descriptors", () => {
 
   assert.deepEqual(SCRIPT_TOOL_DEFINITIONS.map((tool) => tool.name), [
     "read_script",
+    "search_in_scripts",
     "write_script",
+    "edit_script",
     "open_script",
     "validate_script",
     "diagnose_script",

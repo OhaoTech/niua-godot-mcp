@@ -11,7 +11,7 @@ const NiuaMcpVariantCodec = preload("niua_mcp_variant_codec.gd")
 static func inspector_properties(editor: EditorInterface, query: Dictionary) -> Dictionary:
 	var node := NiuaMcpSceneGraphContext.node_for_inspector(editor, str(query.get("nodePath", "")))
 	if node == null:
-		return NiuaMcpSceneGraphUtils.error("inspector node not found", "not_found")
+		return NiuaMcpSceneGraphUtils.error("inspector node not found (call get_scene_tree to list valid node paths)", "not_found")
 
 	# Token diet: compact name/type/value entries by default; verbose=true restores
 	# the full editor metadata. A "properties" CSV allowlist narrows to named props.

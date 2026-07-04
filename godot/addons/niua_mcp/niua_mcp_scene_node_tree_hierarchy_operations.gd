@@ -9,13 +9,13 @@ static func reparent_node(editor: EditorInterface, body: Dictionary) -> Dictiona
 	var node := NiuaMcpSceneNodeContext.resolve_node(editor, str(body.get("nodePath", "")))
 	var root := NiuaMcpSceneNodeContext.edited_scene_root(editor)
 	if node == null:
-		return NiuaMcpSceneNodeContext.error("node not found: %s" % str(body.get("nodePath", "")), "not_found")
+		return NiuaMcpSceneNodeContext.error("node not found: %s (call get_scene_tree to list valid node paths)" % str(body.get("nodePath", "")), "not_found")
 	if node == root:
 		return NiuaMcpSceneNodeContext.error("cannot reparent the edited scene root")
 
 	var new_parent := NiuaMcpSceneNodeContext.resolve_node(editor, str(body.get("newParentPath", "")))
 	if new_parent == null:
-		return NiuaMcpSceneNodeContext.error("new parent not found: %s" % str(body.get("newParentPath", "")), "not_found")
+		return NiuaMcpSceneNodeContext.error("new parent not found: %s (call get_scene_tree to list valid node paths)" % str(body.get("newParentPath", "")), "not_found")
 	if node == new_parent or node.is_ancestor_of(new_parent):
 		return NiuaMcpSceneNodeContext.error("cannot reparent a node under itself or its descendants")
 
@@ -46,12 +46,14 @@ static func reparent_node(editor: EditorInterface, body: Dictionary) -> Dictiona
 
 	var node_path := NiuaMcpSceneNodeContext.node_path_for_response(editor, node)
 
+	# Read-back guarantee: parentPath is derived from node.get_parent() after
+	# the move, not from the requested new_parent.
 	return {
 		"ok": true,
 		"data": {
 			"previousPath": previous_path,
 			"nodePath": node_path,
-			"parentPath": NiuaMcpSceneNodeContext.node_path_for_response(editor, new_parent)
+			"parentPath": NiuaMcpSceneNodeContext.node_path_for_response(editor, node.get_parent())
 		}
 	}
 
@@ -60,7 +62,7 @@ static func reorder_node(editor: EditorInterface, body: Dictionary) -> Dictionar
 	var node := NiuaMcpSceneNodeContext.resolve_node(editor, str(body.get("nodePath", "")))
 	var root := NiuaMcpSceneNodeContext.edited_scene_root(editor)
 	if node == null:
-		return NiuaMcpSceneNodeContext.error("node not found: %s" % str(body.get("nodePath", "")), "not_found")
+		return NiuaMcpSceneNodeContext.error("node not found: %s (call get_scene_tree to list valid node paths)" % str(body.get("nodePath", "")), "not_found")
 	if node == root:
 		return NiuaMcpSceneNodeContext.error("cannot reorder the edited scene root")
 

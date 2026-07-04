@@ -12,6 +12,7 @@ export const IMPORT_TOOL_MANIFEST = [
     name: "import_project_assets",
     description: "Run a local Godot CLI import pass for an allowlisted project when the visible editor Import dock cannot safely import new source assets.",
     profile: "full",
+    tier: "standard",
     category: "import",
     implementation: "local",
     inputSchema: IMPORT_PROJECT_ASSETS_SCHEMA,
@@ -28,8 +29,9 @@ export const IMPORT_TOOL_MANIFEST = [
   },
   {
     name: "list_imported_assets",
-    description: "List assets with Godot .import metadata under a res:// folder.",
+    description: "List assets with Godot .import metadata under a res:// folder. Assets are listed in sorted name order per directory, depth-first.",
     profile: "full",
+    tier: "essential",
     category: "import",
     inputSchema: IMPORT_ASSETS_SCHEMA,
     bridge: {
@@ -62,6 +64,7 @@ export const IMPORT_TOOL_MANIFEST = [
     name: "get_import_metadata",
     description: "Read Godot .import sidecar metadata for an imported asset.",
     profile: "full",
+    tier: "standard",
     category: "import",
     inputSchema: FILESYSTEM_PATH_SCHEMA,
     bridge: {
@@ -93,6 +96,7 @@ export const IMPORT_TOOL_MANIFEST = [
     name: "get_import_diagnostics",
     description: "Diagnose Godot import sidecar health, generated target files, dependencies, and stale source metadata for an asset.",
     profile: "full",
+    tier: "essential",
     category: "import",
     inputSchema: FILESYSTEM_PATH_SCHEMA,
     bridge: {
@@ -124,6 +128,7 @@ export const IMPORT_TOOL_MANIFEST = [
     name: "set_import_options",
     description: "Update Godot import-dock options in an asset .import sidecar and optionally reimport the asset.",
     profile: "full",
+    tier: "standard",
     category: "import",
     inputSchema: SET_IMPORT_OPTIONS_SCHEMA,
     bridge: {
@@ -151,6 +156,7 @@ export const IMPORT_TOOL_MANIFEST = [
     name: "reimport_assets",
     description: "Ask the visible Godot editor to reimport one or more project assets.",
     profile: "full",
+    tier: "essential",
     category: "import",
     inputSchema: REIMPORT_ASSETS_SCHEMA,
     bridge: {
@@ -190,6 +196,7 @@ export const IMPORT_TOOL_MANIFEST = [
     name: "get_import_events",
     description: "Read recent Godot Import dock and EditorFileSystem import/reimport events.",
     profile: "full",
+    tier: "standard",
     category: "import",
     inputSchema: IMPORT_EVENTS_SCHEMA,
     bridge: {

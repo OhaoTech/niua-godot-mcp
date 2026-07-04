@@ -35,16 +35,23 @@ static func upsert_animation(editor: EditorInterface, body: Dictionary, path_val
 	var library := _default_animation_library(player)
 	if library.has_animation(animation_name):
 		library.remove_animation(animation_name)
-	library.add_animation(animation_name, animation)
+	var add_error := library.add_animation(animation_name, animation)
+	if add_error != OK or not library.has_animation(animation_name):
+		return _error("failed to store animation %s in the player's animation library: error %s (is the animation name a valid library key?)" % [animation_name, add_error])
+
+	# Read-back guarantee: report the animation the library actually stores —
+	# length, loop mode, and track count come from the stored resource, not
+	# from the request or the locally assembled object.
+	var stored: Animation = library.get_animation(animation_name)
 
 	return {
 		"ok": true,
 		"data": {
 			"playerPath": NiuaMcpSceneGraphContext.node_path_for_response(editor, player),
 			"animation": animation_name,
-			"length": animation.length,
-			"loopMode": str(body.get("loopMode", "none")),
-			"trackCount": animation.get_track_count(),
+			"length": stored.length,
+			"loopMode": _loop_mode_name(stored.loop_mode),
+			"trackCount": stored.get_track_count(),
 			"createdPlayer": bool(player_result.get("created", false))
 		}
 	}
@@ -282,6 +289,16 @@ static func _loop_mode(loop_mode: String) -> int:
 			return Animation.LOOP_PINGPONG
 		_:
 			return Animation.LOOP_NONE
+
+
+static func _loop_mode_name(loop_mode: int) -> String:
+	match loop_mode:
+		Animation.LOOP_LINEAR:
+			return "linear"
+		Animation.LOOP_PINGPONG:
+			return "pingpong"
+		_:
+			return "none"
 
 
 static func _track_type(track_type: String) -> int:

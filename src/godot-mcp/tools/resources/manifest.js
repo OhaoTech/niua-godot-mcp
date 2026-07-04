@@ -14,6 +14,7 @@ export const RESOURCE_TOOL_MANIFEST = [
     name: "open_resource",
     description: "Open a scene/resource/script in the visible Godot editor.",
     profile: "full",
+    tier: "standard",
     category: "resources",
     inputSchema: FILESYSTEM_PATH_SCHEMA,
     bridge: {
@@ -42,6 +43,7 @@ export const RESOURCE_TOOL_MANIFEST = [
     name: "focus_resource",
     description: "Reveal and inspect a resource path in the visible Godot editor when supported by the local editor API.",
     profile: "full",
+    tier: "standard",
     category: "resources",
     inputSchema: FILESYSTEM_PATH_SCHEMA,
     bridge: {
@@ -70,6 +72,7 @@ export const RESOURCE_TOOL_MANIFEST = [
     name: "create_resource",
     description: "Create and save a Godot Resource-derived asset under res://, such as a material .tres.",
     profile: "full",
+    tier: "standard",
     category: "resources",
     inputSchema: CREATE_RESOURCE_SCHEMA,
     bridge: {
@@ -98,6 +101,7 @@ export const RESOURCE_TOOL_MANIFEST = [
     name: "save_resource",
     description: "Load, update, and save an existing Godot Resource asset under res://.",
     profile: "full",
+    tier: "standard",
     category: "resources",
     inputSchema: SAVE_RESOURCE_SCHEMA,
     bridge: {
@@ -126,6 +130,7 @@ export const RESOURCE_TOOL_MANIFEST = [
     name: "create_sprite_frames",
     description: "Create a SpriteFrames resource from named animations and existing Texture2D frame resources.",
     profile: "full",
+    tier: "standard",
     category: "resources",
     inputSchema: CREATE_SPRITE_FRAMES_SCHEMA,
     bridge: {
@@ -157,6 +162,7 @@ export const RESOURCE_TOOL_MANIFEST = [
     name: "create_tile_set",
     description: "Create a TileSet resource from existing Texture2D atlases, explicit tile coordinates, and generated atlas grids.",
     profile: "full",
+    tier: "standard",
     category: "resources",
     inputSchema: CREATE_TILE_SET_SCHEMA,
     bridge: {
@@ -188,6 +194,7 @@ export const RESOURCE_TOOL_MANIFEST = [
     name: "create_material",
     description: "Create a StandardMaterial3D asset from practical material fields and optionally assign it to a scene node.",
     profile: "full",
+    tier: "standard",
     category: "resources",
     inputSchema: CREATE_MATERIAL_SCHEMA,
     bridge: {
@@ -220,6 +227,7 @@ export const RESOURCE_TOOL_MANIFEST = [
     name: "create_shader_material",
     description: "Create a Shader resource plus ShaderMaterial resource, set shader uniform values, and optionally assign it to a scene node.",
     profile: "full",
+    tier: "standard",
     category: "resources",
     inputSchema: CREATE_SHADER_MATERIAL_SCHEMA,
     bridge: {
@@ -251,6 +259,7 @@ export const RESOURCE_TOOL_MANIFEST = [
     name: "assign_material",
     description: "Assign a saved Godot Material resource to a scene node material override or mesh surface.",
     profile: "full",
+    tier: "standard",
     category: "resources",
     inputSchema: ASSIGN_MATERIAL_SCHEMA,
     bridge: {

@@ -7,6 +7,7 @@ const RUNTIME_STATE_MESSAGE := "niua_mcp:runtime_state"
 const RUNTIME_LOG_MESSAGE := "niua_mcp:runtime_log"
 const NODE_PROPERTIES_MESSAGE := "niua_mcp:node_properties"
 const NODE_PROPERTY_SET_MESSAGE := "niua_mcp:node_property_set"
+const NODE_METHOD_CALL_RESULT_MESSAGE := "niua_mcp:node_method_call_result"
 const RUNTIME_SCREENSHOT_RESULT_MESSAGE := "niua_mcp:runtime_screenshot_result"
 const RUNTIME_INPUT_RESULT_MESSAGE := "niua_mcp:runtime_input_result"
 const MAX_CHILDREN_PER_NODE := 64

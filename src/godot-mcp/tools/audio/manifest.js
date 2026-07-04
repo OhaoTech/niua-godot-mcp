@@ -11,6 +11,7 @@ export const AUDIO_TOOL_MANIFEST = [
     name: "list_audio_buses",
     description: "Read Godot's current audio bus layout, including effects, volume, mute, and send routing.",
     profile: "full",
+    tier: "standard",
     category: "audio",
     inputSchema: LIST_AUDIO_BUSES_SCHEMA,
     bridge: {
@@ -37,6 +38,7 @@ export const AUDIO_TOOL_MANIFEST = [
     name: "upsert_audio_bus",
     description: "Create, rename, route, mute, or set volume for an audio bus, then persist the bus layout.",
     profile: "full",
+    tier: "standard",
     category: "audio",
     inputSchema: UPSERT_AUDIO_BUS_SCHEMA,
     bridge: {
@@ -64,6 +66,7 @@ export const AUDIO_TOOL_MANIFEST = [
     name: "remove_audio_bus",
     description: "Remove a non-Master audio bus and persist the bus layout.",
     profile: "full",
+    tier: "standard",
     category: "audio",
     inputSchema: REMOVE_AUDIO_BUS_SCHEMA,
     bridge: {
@@ -91,6 +94,7 @@ export const AUDIO_TOOL_MANIFEST = [
     name: "upsert_audio_bus_effect",
     description: "Add or update a curated AudioEffectReverb or AudioEffectLimiter on an audio bus.",
     profile: "full",
+    tier: "standard",
     category: "audio",
     inputSchema: UPSERT_AUDIO_BUS_EFFECT_SCHEMA,
     bridge: {
@@ -118,6 +122,7 @@ export const AUDIO_TOOL_MANIFEST = [
     name: "create_audio_stream_player",
     description: "Create an AudioStreamPlayer with an AudioStreamGenerator stream and route it to a named bus.",
     profile: "full",
+    tier: "standard",
     category: "audio",
     inputSchema: CREATE_AUDIO_STREAM_PLAYER_SCHEMA,
     bridge: {

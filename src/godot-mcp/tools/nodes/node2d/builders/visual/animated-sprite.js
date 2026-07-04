@@ -29,8 +29,7 @@ export async function createAnimatedSprite2D(args = {}) {
         error: createdSpriteFrames.error,
         data: {
           type: "AnimatedSprite2D",
-          spriteFramesPath,
-          createdSpriteFrames
+          spriteFramesPath
         }
       };
     }
@@ -48,9 +47,7 @@ export async function createAnimatedSprite2D(args = {}) {
         type: "AnimatedSprite2D",
         spriteFramesPath,
         properties,
-        spriteFrames: createdSpriteFrames?.data ?? null,
-        createdSpriteFrames,
-        createdNode
+        spriteFrames: createdSpriteFrames?.data ?? null
       }
     };
   }
@@ -62,9 +59,7 @@ export async function createAnimatedSprite2D(args = {}) {
       spriteFramesPath,
       properties,
       spriteFrames: createdSpriteFrames?.data ?? null,
-      node: createdNode.data,
-      createdSpriteFrames,
-      createdNode
+      node: createdNode.data
     }
   };
 }

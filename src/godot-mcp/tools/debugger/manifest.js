@@ -1,5 +1,6 @@
 import { BRIDGE_INPUT_SCHEMA } from "../shared/bridge-schema.js";
 import {
+  CALL_RUNTIME_NODE_METHOD_SCHEMA,
   DEBUGGER_BREAKPOINT_SCHEMA,
   DEBUGGER_MESSAGE_SCHEMA,
   DEBUGGER_PROFILER_SCHEMA,
@@ -7,6 +8,7 @@ import {
   RUNTIME_EVENTS_SCHEMA,
   RUNTIME_NODE_PROPERTIES_SCHEMA,
   RUNTIME_SCREENSHOT_SCHEMA,
+  RUNTIME_STATE_SCHEMA,
   SEND_RUNTIME_INPUT_SCHEMA,
   SET_RUNTIME_NODE_PROPERTY_SCHEMA
 } from "./schemas.js";
@@ -16,6 +18,7 @@ export const DEBUGGER_CONTROL_TOOL_MANIFEST = [
     name: "get_debugger_state",
     description: "Read Godot debugger-panel state: sessions, breakpoints, recent debugger events, and performance monitors.",
     profile: "full",
+    tier: "standard",
     category: "debugger",
     inputSchema: BRIDGE_INPUT_SCHEMA,
     bridge: {
@@ -42,6 +45,7 @@ export const DEBUGGER_CONTROL_TOOL_MANIFEST = [
     name: "set_debugger_breakpoint",
     description: "Set or clear a Godot debugger breakpoint in a GDScript file.",
     profile: "full",
+    tier: "standard",
     category: "debugger",
     inputSchema: DEBUGGER_BREAKPOINT_SCHEMA,
     bridge: {
@@ -69,6 +73,7 @@ export const DEBUGGER_CONTROL_TOOL_MANIFEST = [
     name: "toggle_debugger_profiler",
     description: "Enable or disable a Godot debugger profiler on active editor debugger sessions.",
     profile: "full",
+    tier: "standard",
     category: "debugger",
     inputSchema: DEBUGGER_PROFILER_SCHEMA,
     bridge: {
@@ -96,6 +101,7 @@ export const DEBUGGER_CONTROL_TOOL_MANIFEST = [
     name: "send_debugger_message",
     description: "Send a low-level Godot debugger message to editor debugger sessions through the public debugger API.",
     profile: "full",
+    tier: "standard",
     category: "debugger",
     inputSchema: DEBUGGER_MESSAGE_SCHEMA,
     bridge: {
@@ -126,6 +132,7 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
     name: "install_runtime_probe",
     description: "Enable the NIUA runtime probe as a Godot autoload for runtime inspection workflows.",
     profile: "v1",
+    tier: "essential",
     category: "debugger",
     inputSchema: INSTALL_RUNTIME_PROBE_SCHEMA,
     bridge: {
@@ -152,22 +159,29 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
   },
   {
     name: "get_runtime_state",
-    description: "Read runtime scene-tree state captured from NIUA runtime probe debugger messages.",
+    description: "Read runtime scene-tree state captured from NIUA runtime probe debugger messages. Pass maxDepth to keep large runtime trees shallow (truncated nodes report childrenTruncated) and pathFilter to serialize only the subtree rooted at a live node path.",
     profile: "full",
+    tier: "standard",
     category: "debugger",
-    inputSchema: BRIDGE_INPUT_SCHEMA,
+    inputSchema: RUNTIME_STATE_SCHEMA,
     bridge: {
       clientMethod: "getRuntimeState",
       endpoint: "/runtime/state",
       method: "GET",
-      request: "none",
-      generate: false
+      request: "query",
+      generate: false,
+      query: {
+        fields: {
+          maxDepth: {},
+          pathFilter: { omitEmpty: true }
+        }
+      }
     },
     godotRoute: {
       side: "read",
       endpoint: "/runtime/state",
       handler: "_runtime_state",
-      arg: "none"
+      arg: "query"
     },
     conformance: {
       happy: "read the latest runtime scene-tree snapshot",
@@ -181,6 +195,7 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
     name: "get_runtime_events",
     description: "Read filtered runtime/debugger events captured by the NIUA Godot debugger probe without requesting a fresh runtime snapshot.",
     profile: "full",
+    tier: "standard",
     category: "debugger",
     inputSchema: RUNTIME_EVENTS_SCHEMA,
     bridge: {
@@ -218,6 +233,7 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
     name: "get_runtime_node_properties",
     description: "Inspect runtime node properties from the running Godot game through the NIUA runtime probe. Pass properties: [\"hp\", \"score\"] to return only those properties instead of the full ~100-entry dump.",
     profile: "full",
+    tier: "standard",
     category: "debugger",
     inputSchema: RUNTIME_NODE_PROPERTIES_SCHEMA,
     bridge: {
@@ -260,6 +276,7 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
     name: "set_runtime_node_property",
     description: "Set a live runtime node property in the running Godot game through the NIUA runtime probe.",
     profile: "full",
+    tier: "standard",
     category: "debugger",
     inputSchema: SET_RUNTIME_NODE_PROPERTY_SCHEMA,
     bridge: {
@@ -288,6 +305,7 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
     name: "capture_runtime_screenshot",
     description: "Capture a PNG screenshot from the running Godot game through the NIUA runtime probe. Pass savePath to write the PNG to disk and keep large base64 payloads out of the tool result. Returns available=false when the runtime renderer cannot expose pixels, such as headless mode.",
     profile: "v1",
+    tier: "essential",
     category: "debugger",
     inputSchema: RUNTIME_SCREENSHOT_SCHEMA,
     bridge: {
@@ -319,6 +337,7 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
     name: "send_runtime_input",
     description: "Inject input into the running Godot game through the NIUA runtime probe: press or release input-map actions (for example move_forward, jump) with an optional timed hold, and feed relative mouse-look motion. Lets an agent script a playthrough and verify gameplay without a human.",
     profile: "full",
+    tier: "standard",
     category: "debugger",
     inputSchema: SEND_RUNTIME_INPUT_SCHEMA,
     bridge: {
@@ -341,6 +360,35 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
     },
     docs: {
       summary: "Injects input-map actions and mouse-look motion into the running Godot game through the NIUA runtime probe."
+    }
+  },
+  {
+    name: "call_runtime_node_method",
+    description: "Call a method on a live node in the running Godot game through the NIUA runtime probe (node.callv). Completes the runtime verification surface: read properties + write properties + inject input + call methods. The node must exist and expose the method; the return value is serialized back (Objects as class name + path only).",
+    profile: "v1",
+    tier: "essential",
+    category: "debugger",
+    inputSchema: CALL_RUNTIME_NODE_METHOD_SCHEMA,
+    bridge: {
+      clientMethod: "callRuntimeNodeMethod",
+      endpoint: "/runtime/node/method/call",
+      method: "POST",
+      request: "body",
+      generate: false
+    },
+    godotRoute: {
+      side: "write",
+      endpoint: "/runtime/node/method/call",
+      handler: "_call_runtime_node_method",
+      arg: "body",
+      methodError: "runtime node method call requires POST"
+    },
+    conformance: {
+      happy: "call a method on a live runtime node through the probe and return its result",
+      error: "surface timeout, missing node, or unknown method failures with a recovery hint"
+    },
+    docs: {
+      summary: "Calls a method on a live node in the running Godot game through the NIUA runtime probe."
     }
   }
 ];

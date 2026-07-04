@@ -30,8 +30,7 @@ export async function createLight3D(args = {}) {
       data: {
         kind: lightKind.kind,
         type: lightKind.type,
-        properties,
-        created
+        properties
       }
     };
   }
@@ -42,8 +41,7 @@ export async function createLight3D(args = {}) {
       kind: lightKind.kind,
       type: lightKind.type,
       properties,
-      node: created.data,
-      created
+      node: created.data
     }
   };
 }
@@ -71,8 +69,7 @@ export async function createCamera3D(args = {}) {
       error: created.error,
       data: {
         type: "Camera3D",
-        properties,
-        created
+        properties
       }
     };
   }
@@ -82,8 +79,7 @@ export async function createCamera3D(args = {}) {
     data: {
       type: "Camera3D",
       properties,
-      node: created.data,
-      created
+      node: created.data
     }
   };
 }

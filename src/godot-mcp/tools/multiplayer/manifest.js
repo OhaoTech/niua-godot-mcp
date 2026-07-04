@@ -10,6 +10,7 @@ export const MULTIPLAYER_TOOL_MANIFEST = [
     name: "create_enet_multiplayer_script",
     description: "Generate and attach a minimal ENet host/join script for localhost multiplayer probes.",
     profile: "full",
+    tier: "standard",
     category: "multiplayer",
     inputSchema: CREATE_ENET_MULTIPLAYER_SCRIPT_SCHEMA,
     bridge: {
@@ -37,6 +38,7 @@ export const MULTIPLAYER_TOOL_MANIFEST = [
     name: "create_multiplayer_spawner",
     description: "Create a MultiplayerSpawner with spawn path, limit, and optional spawnable scenes.",
     profile: "full",
+    tier: "standard",
     category: "multiplayer",
     inputSchema: CREATE_MULTIPLAYER_SPAWNER_SCHEMA,
     bridge: {
@@ -64,6 +66,7 @@ export const MULTIPLAYER_TOOL_MANIFEST = [
     name: "create_multiplayer_synchronizer",
     description: "Create a MultiplayerSynchronizer with a SceneReplicationConfig for selected property paths.",
     profile: "full",
+    tier: "standard",
     category: "multiplayer",
     inputSchema: CREATE_MULTIPLAYER_SYNCHRONIZER_SCHEMA,
     bridge: {
@@ -91,6 +94,7 @@ export const MULTIPLAYER_TOOL_MANIFEST = [
     name: "create_multiplayer_state_script",
     description: "Generate and attach a small Node script exposing one synchronized string property.",
     profile: "full",
+    tier: "standard",
     category: "multiplayer",
     inputSchema: CREATE_MULTIPLAYER_STATE_SCRIPT_SCHEMA,
     bridge: {

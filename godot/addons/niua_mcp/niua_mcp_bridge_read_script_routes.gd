@@ -6,6 +6,7 @@ const NiuaMcpScriptFileOperations = preload("niua_mcp_script_file_operations.gd"
 
 const HANDLERS := {
 	"_read_script": true,
+	"_search_in_scripts": true,
 	"_validate_script": true,
 	"_script_symbols": true,
 	"_script_editor_state": true,
@@ -25,6 +26,10 @@ func handles(handler: String) -> bool:
 
 func _read_script(query: Dictionary) -> Dictionary:
 	return NiuaMcpScriptFileOperations.read_script(query)
+
+
+func _search_in_scripts(query: Dictionary) -> Dictionary:
+	return NiuaMcpScriptFileOperations.search_in_scripts(query)
 
 
 func _validate_script(query: Dictionary) -> Dictionary:

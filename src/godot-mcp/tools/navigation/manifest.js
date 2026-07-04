@@ -10,6 +10,7 @@ export const NAVIGATION_TOOL_MANIFEST = [
     name: "create_navigation_region_3d",
     description: "Create a NavigationRegion3D with a NavigationMesh resource and practical agent/bake settings.",
     profile: "full",
+    tier: "standard",
     category: "navigation",
     inputSchema: CREATE_NAVIGATION_REGION_3D_SCHEMA,
     bridge: {
@@ -37,6 +38,7 @@ export const NAVIGATION_TOOL_MANIFEST = [
     name: "bake_navigation_mesh_3d",
     description: "Bake the NavigationMesh for a NavigationRegion3D from scene geometry.",
     profile: "full",
+    tier: "standard",
     category: "navigation",
     inputSchema: BAKE_NAVIGATION_MESH_3D_SCHEMA,
     bridge: {
@@ -73,6 +75,7 @@ export const NAVIGATION_TOOL_MANIFEST = [
     name: "create_navigation_agent_3d",
     description: "Create a NavigationAgent3D under an actor node with practical path-following settings.",
     profile: "full",
+    tier: "standard",
     category: "navigation",
     inputSchema: CREATE_NAVIGATION_AGENT_3D_SCHEMA,
     bridge: {
@@ -100,6 +103,7 @@ export const NAVIGATION_TOOL_MANIFEST = [
     name: "create_navigation_target_follow_script",
     description: "Generate and attach a CharacterBody3D script template that follows a target through a NavigationAgent3D.",
     profile: "full",
+    tier: "standard",
     category: "navigation",
     inputSchema: CREATE_NAVIGATION_TARGET_FOLLOW_SCRIPT_SCHEMA,
     bridge: {

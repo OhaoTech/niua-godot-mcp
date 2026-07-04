@@ -2,13 +2,15 @@
 
 Generated from the manifest-backed tool catalog. Do not edit by hand; run `npm run godot:mcp:docs`.
 
-- Tools: 13 (5 in v1, 8 full-only)
+- Tools: 15 (7 in v1, 8 full-only)
 - Argument names with `*` are required.
 
 | Tool | Profiles | Description | Arguments |
 | --- | --- | --- | --- |
-| `read_script` | v1, full | Read a GDScript file from the Godot project. | host:string, port:number, expectedProjectRoot:string, path*:string |
+| `read_script` | v1, full | Read a GDScript file from the Godot project. Optional lineStart (1-based) + lineCount return only that line range; totalLines is always reported. | host:string, port:number, expectedProjectRoot:string, path*:string, lineStart:integer, lineCount:integer |
+| `search_in_scripts` | v1, full | Search .gd files under a res:// prefix for plain-text (or Godot RegEx) matches. Returns matched lines only (trimmed to 160 chars) in sorted file order then line order; maxResults defaults to 50 (cap 200) with truncated:true when hit. Zero matches is a success. | host:string, port:number, expectedProjectRoot:string, query*:string, regex:boolean, pathPrefix:string, exclude:array, maxResults:integer, caseSensitive:boolean |
 | `write_script` | v1, full | Write a GDScript file under res:// and refresh the Godot editor filesystem. | host:string, port:number, expectedProjectRoot:string, path*:string, content*:string, refreshAfterWrite:boolean |
+| `edit_script` | v1, full | Replace exact oldText with newText in a res:// GDScript file. oldText must be unique unless replaceAll:true; the edited file is parse-checked by default and valid:false means the edit WAS applied but the script no longer parses — fix or revert. replacements and totalLines are read back from disk. | host:string, port:number, expectedProjectRoot:string, path*:string, oldText*:string, newText*:string, replaceAll:boolean, validate:boolean |
 | `open_script` | full | Open a GDScript file in the visible Godot editor. | host:string, port:number, expectedProjectRoot:string, path*:string |
 | `validate_script` | full | Validate that a GDScript file can be loaded by Godot. | host:string, port:number, expectedProjectRoot:string, path*:string |
 | `diagnose_script` | v1, full | Run Godot's GDScript parser for a res:// script and return structured diagnostics. | projectRoot*:string, path*:string, timeoutMs:number |
@@ -17,6 +19,6 @@ Generated from the manifest-backed tool catalog. Do not edit by hand; run `npm r
 | `get_script_editor_state` | full | Read visible Godot Script Editor state including current script, open scripts, and breakpoints. | host:string, port:number, expectedProjectRoot:string |
 | `get_script_cursor_state` | full | Read active Godot Script Editor caret, selection, and visible-line metadata. | host:string, port:number, expectedProjectRoot:string |
 | `goto_script_line` | full | Open a script in the visible Godot Script Editor and focus a 1-based line number. | host:string, port:number, expectedProjectRoot:string, path*:string, line*:number, column:number, grabFocus:boolean |
-| `replace_in_scripts` | full | Preview or apply a capped literal replacement across GDScript files in the Godot project. | host:string, port:number, expectedProjectRoot:string, search*:string, replacement*:string, paths:array, rootPath:string, caseSensitive:boolean, dryRun:boolean, maxFiles:integer, maxReplacements:integer |
+| `replace_in_scripts` | full | Preview or apply a capped literal replacement across GDScript files in the Godot project. When scanning by rootPath, files are visited in sorted name order per directory, so the maxFiles cap is deterministic. | host:string, port:number, expectedProjectRoot:string, search*:string, replacement*:string, paths:array, rootPath:string, caseSensitive:boolean, dryRun:boolean, maxFiles:integer, maxReplacements:integer |
 | `create_script` | v1, full | Create a GDScript file using supplied content or a generated template with optional class_name. | host:string, port:number, expectedProjectRoot:string, path*:string, baseType:string, template:enum(extends_only\|node_lifecycle\|node_process\|tool_node), className:string, content:string, overwrite:boolean |
 | `attach_script` | v1, full | Attach a GDScript file to a node in the current edited Godot scene. | host:string, port:number, expectedProjectRoot:string, nodePath*:string, scriptPath*:string, createIfMissing:boolean, baseType:string, template:enum(extends_only\|node_lifecycle\|node_process\|tool_node), className:string, content:string, saveScene:boolean |

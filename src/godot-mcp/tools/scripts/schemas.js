@@ -1,5 +1,6 @@
 export {
   FILESYSTEM_PATH_SCHEMA,
+  READ_TEXT_FILE_SCHEMA,
   WRITE_TEXT_FILE_SCHEMA
 } from "../filesystem/schemas.js";
 
@@ -18,5 +19,7 @@ export {
 } from "./schemas/editor.js";
 
 export {
-  REPLACE_IN_SCRIPTS_SCHEMA
+  EDIT_SCRIPT_SCHEMA,
+  REPLACE_IN_SCRIPTS_SCHEMA,
+  SEARCH_IN_SCRIPTS_SCHEMA
 } from "./schemas/refactor.js";

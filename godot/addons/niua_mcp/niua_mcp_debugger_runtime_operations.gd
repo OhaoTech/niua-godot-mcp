@@ -5,6 +5,7 @@ const NiuaMcpDebuggerControlOperations = preload("niua_mcp_debugger_control_oper
 const NiuaMcpRuntimeStateOperations = preload("niua_mcp_runtime_state_operations.gd")
 const NiuaMcpRuntimeNodeOperations = preload("niua_mcp_runtime_node_operations.gd")
 const NiuaMcpRuntimeInputOperations = preload("niua_mcp_runtime_input_operations.gd")
+const NiuaMcpRuntimeMethodOperations = preload("niua_mcp_runtime_method_operations.gd")
 const NiuaMcpRuntimeScreenshotOperations = preload("niua_mcp_runtime_screenshot_operations.gd")
 const NiuaMcpRuntimeProbeInstaller = preload("niua_mcp_runtime_probe_installer.gd")
 
@@ -41,8 +42,8 @@ static func send_debugger_message(debugger_probe, editor: EditorInterface, body:
 	return NiuaMcpDebuggerControlOperations.send_debugger_message(debugger_probe, editor, body)
 
 
-static func runtime_state(debugger_probe) -> Dictionary:
-	return NiuaMcpRuntimeStateOperations.runtime_state(debugger_probe)
+static func runtime_state(debugger_probe, query: Dictionary) -> Dictionary:
+	return NiuaMcpRuntimeStateOperations.runtime_state(debugger_probe, query)
 
 
 static func runtime_events(debugger_probe, query: Dictionary) -> Dictionary:
@@ -59,6 +60,14 @@ static func set_runtime_node_property(debugger_probe, body: Dictionary) -> Dicti
 
 static func runtime_node_property_set_result(debugger_probe, query: Dictionary) -> Dictionary:
 	return NiuaMcpRuntimeNodeOperations.runtime_node_property_set_result(debugger_probe, query)
+
+
+static func call_runtime_node_method(debugger_probe, body: Dictionary) -> Dictionary:
+	return NiuaMcpRuntimeMethodOperations.call_runtime_node_method(debugger_probe, body)
+
+
+static func runtime_node_method_call_result(debugger_probe, query: Dictionary) -> Dictionary:
+	return NiuaMcpRuntimeMethodOperations.runtime_node_method_call_result(debugger_probe, query)
 
 
 static func send_runtime_input(debugger_probe, body: Dictionary) -> Dictionary:

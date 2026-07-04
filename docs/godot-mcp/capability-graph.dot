@@ -1,0 +1,91 @@
+digraph capability_graph {
+  rankdir=TB;
+  compound=true;
+  fontname="Helvetica";
+  fontsize=12;
+  node [fontname="Helvetica", fontsize=11, shape=box, style="rounded,filled", fillcolor=white, margin="0.15,0.08"];
+  edge [fontname="Helvetica", fontsize=9, color="#555555"];
+  bgcolor="#fcfcfc";
+
+  // ============ THE SINGLE SOURCE OF TRUTH ============
+  subgraph cluster_graph {
+    label="THE CAPABILITY GRAPH — single source of truth";
+    style="rounded,filled"; fillcolor="#fff7e6"; color="#e8a33d"; fontsize=13;
+
+    manifests [label="Tool manifests (26 domains, 178 ops)\nname · schema · category · tier · safety · docs\n(today: authored — tomorrow: reflection-derived)", fillcolor="#ffefcc"];
+    graphmod [label="capability-graph.js\ndomains · category→domain map\nstandalone set · profile names/aliases", fillcolor="#ffefcc"];
+    catalog [label="Assembled catalog\nGODOT_MCP_TOOLS\n(one generator: MCP defs + HTTP client\n+ Godot route table — sides cannot drift)", fillcolor="#ffe4b3"];
+
+    manifests -> catalog [label="toolDefinitionsFromManifest"];
+    graphmod -> catalog [style=dashed];
+  }
+
+  // ============ COMPUTED PROJECTIONS ============
+  subgraph cluster_projections {
+    label="COMPUTED PROJECTIONS — never hand-maintained";
+    style="rounded,filled"; fillcolor="#e8f4ff"; color="#3d7ee8"; fontsize=13;
+
+    core [label="core (default)\n= leaves where tier: essential\n48 tools ≈ 11K tok", fillcolor="#d6eaff"];
+    full [label="full\n= all leaves, flat\n178 tools ≈ 53K tok", fillcolor="#d6eaff"];
+    compact [label="compact\n= graph collapsed at depth 1\n13 routers ≈ 4K tok (−92%)", fillcolor="#d6eaff"];
+    describe [label="describe_tools — universal navigation\nroot map → domain → one schema\nO(log n) discovery, ANY profile, ANY client", fillcolor="#bfe0ff", penwidth=2];
+  }
+
+  catalog -> core [label="filter(tier)"];
+  catalog -> full;
+  catalog -> compact [label="collapse(domains)"];
+  catalog -> describe [label="reads full graph"];
+
+  // ============ SEMANTIC LAYERS ============
+  subgraph cluster_layers {
+    label="SEMANTIC LAYERS — agents work high, descend rarely";
+    style="rounded,filled"; fillcolor="#f0e8ff"; color="#8a5fe0"; fontsize=13;
+
+    l3 [label="L3 · knowledge — the tool teaches\ninitialize.instructions · errors carry the fix\ndescribe-on-demand · skills", fillcolor="#e5d8ff"];
+    l2 [label="L2 · macros — many ops, one call\napply_scene_recipe · batch_scene_operations\n(intermediate results never enter context)", fillcolor="#dccbff"];
+    l1 [label="L1 · task tools — curated builders\ncreate_character_body_3d · edit_script(+parse truth)\nsearch_in_scripts", fillcolor="#d2bdff"];
+    l0 [label="L0 · raw operations\nset_node_property · route table\n(the reflection-derivable layer)", fillcolor="#c8b0ff"];
+
+    l3 -> l2 -> l1 -> l0 [style=dashed, label="descend only when needed", fontsize=8];
+  }
+
+  describe -> l3 [lhead=cluster_layers, label="agent enters here"];
+
+  // ============ RUNTIME PATH ============
+  subgraph cluster_runtime {
+    label="RUNTIME PATH — protocol layer / app layer split";
+    style="rounded,filled"; fillcolor="#e8ffe8"; color="#3da33d"; fontsize=13;
+
+    client [label="MCP client (Claude · Cursor · Codex)\ngets instructions at initialize", fillcolor="#d2f5d2"];
+    server [label="Node stdio server\nprojection · registry · compact JSON envelope\n{ok,data} | {ok,error,errorCode+hint}", fillcolor="#d2f5d2"];
+    bridge [label="HTTP bridge — 127.0.0.1 + token\n(trust boundary; res:// confined)", fillcolor="#c2ecc2"];
+    addon [label="Godot addon — main-thread ops\nTRUTH: read-backs after every mutation\ncoercion by declared type · deterministic output", fillcolor="#b2e3b2"];
+    editor [label="Godot editor\n(scenes · scripts · resources)", fillcolor="#a2daa2"];
+    probe [label="Runtime probe (EngineDebugger)\nread · write · input · call\n= agent can PLAY the game", fillcolor="#a2daa2"];
+
+    client -> server [label="JSON-RPC / NDJSON"];
+    server -> bridge;
+    bridge -> addon;
+    addon -> editor;
+    addon -> probe [label="debugger channel"];
+  }
+
+  l0 -> server [ltail=cluster_layers, label="calls resolve through"];
+  core -> server [style=dotted]; compact -> server [style=dotted];
+
+  // ============ ENFORCEMENT RING ============
+  subgraph cluster_enforcement {
+    label="ENFORCEMENT — quality that cannot regress";
+    style="rounded,filled"; fillcolor="#ffe8e8"; color="#d04a4a"; fontsize=13;
+
+    ci [label="CI contracts (891 tests)\noutput shapes · errorCode registry\ntoken budgets · projection coverage\nread-back + determinism pins", fillcolor="#ffd6d6"];
+    gate [label="LIVE conformance gate (real editor)\nfull = release arbiter · records baseline\ndelta = change-mapped slices for dev loop", fillcolor="#ffc4c4"];
+  }
+
+  ci -> catalog [style=dashed, label="pins", constraint=false];
+  gate -> addon [style=dashed, label="proves live", constraint=false];
+
+  // ============ FUTURE ============
+  future [label="ENGINE #2+ (Unreal · Unity · DaVinci)\nL0 generated from app reflection (UFunction / RNA / ClassDB)\neverything above L0 reused unchanged — THE STACK IS THE PRODUCT", shape=box, style="rounded,filled,dashed", fillcolor="#f5f5f5", color="#888888", fontsize=11];
+  manifests -> future [style=dashed, dir=back, label="same seam", constraint=false];
+}

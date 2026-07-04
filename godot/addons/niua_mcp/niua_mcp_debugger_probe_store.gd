@@ -50,6 +50,10 @@ func store_runtime_screenshot(data: Array, session_id: int) -> void:
 	_runtime.store_runtime_screenshot(data, session_id, Callable(self, "record_event"))
 
 
+func store_runtime_node_method_call(data: Array, session_id: int) -> void:
+	_runtime.store_runtime_node_method_call(data, session_id, Callable(self, "record_event"))
+
+
 func store_runtime_input_result(data: Array, session_id: int) -> void:
 	_runtime.store_runtime_input_result(data, session_id, Callable(self, "record_event"))
 
@@ -64,6 +68,10 @@ func runtime_node_property_set_result(request_id: String) -> Array:
 
 func runtime_screenshot_result(request_id: String) -> Array:
 	return _runtime.runtime_screenshot_result(request_id)
+
+
+func runtime_node_method_call_result(request_id: String) -> Array:
+	return _runtime.runtime_node_method_call_result(request_id)
 
 
 func runtime_input_send_result(request_id: String) -> Array:

@@ -17,7 +17,7 @@ static func set_node_property_with_side_effects(editor: EditorInterface, body: D
 static func set_node_property(editor: EditorInterface, body: Dictionary, path_validator: Callable) -> Dictionary:
 	var node := NiuaMcpSceneGraphContext.resolve_node(editor, str(body.get("nodePath", "")))
 	if node == null:
-		return NiuaMcpSceneGraphUtils.error("node not found: %s" % str(body.get("nodePath", "")), "not_found")
+		return NiuaMcpSceneGraphUtils.error("node not found: %s (call get_scene_tree to list valid node paths)" % str(body.get("nodePath", "")), "not_found")
 
 	var property_name := str(body.get("property", ""))
 	if property_name.is_empty():
@@ -26,7 +26,7 @@ static func set_node_property(editor: EditorInterface, body: Dictionary, path_va
 	# Object.set() silently no-ops on an unknown property, so a typo or wrong
 	# casing would otherwise return ok:true having changed nothing. Reject it.
 	if not NiuaMcpSceneGraphUtils.object_has_property(node, property_name):
-		return NiuaMcpSceneGraphUtils.error("node has no property '%s': %s" % [property_name, str(body.get("nodePath", ""))], "unknown_property")
+		return NiuaMcpSceneGraphUtils.error("node has no property '%s': %s (call get_inspector_properties on this node to list valid properties)" % [property_name, str(body.get("nodePath", ""))], "unknown_property")
 
 	var raw_value = body.get("value")
 	var declared_type := NiuaMcpSceneGraphUtils.property_type(node, property_name)
@@ -45,7 +45,7 @@ static func set_node_property(editor: EditorInterface, body: Dictionary, path_va
 	# resolve to an Object (unresolved res:// path, unknown type) would otherwise be
 	# written as null and reported as success. Reject it so the failure is visible.
 	if declared_type == TYPE_OBJECT and raw_value != null and not (decoded is Object):
-		return NiuaMcpSceneGraphUtils.error("could not resolve a value for Object/Resource property '%s' (does the res:// path exist and load?)" % property_name, "invalid_value")
+		return NiuaMcpSceneGraphUtils.error("could not resolve a value for Object/Resource property '%s'; check the res:// path with list_filesystem or create it with create_resource first" % property_name, "invalid_value")
 
 	node.set(property_name, decoded)
 

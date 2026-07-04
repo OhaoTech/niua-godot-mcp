@@ -28,7 +28,7 @@ test("Godot MCP server exposes Multiplayer tools only under the full profile", a
       name: "create_multiplayer_spawner",
       arguments: { parentPath: "" }
     });
-    assert.match(blocked.error.message, /not in the "v1" tool profile/);
+    assert.match(blocked.error.message, /not in the "core" tool profile/);
   } finally {
     await fullServer.close();
     await v1Server.close();

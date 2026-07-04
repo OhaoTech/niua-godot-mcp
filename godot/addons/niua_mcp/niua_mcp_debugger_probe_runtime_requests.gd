@@ -4,6 +4,7 @@ extends RefCounted
 const SNAPSHOT_MESSAGE := "niua_mcp:snapshot"
 const NODE_PROPERTIES_MESSAGE := "niua_mcp:node_properties"
 const SET_NODE_PROPERTY_MESSAGE := "niua_mcp:set_node_property"
+const CALL_NODE_METHOD_MESSAGE := "niua_mcp:call_node_method"
 const RUNTIME_SCREENSHOT_MESSAGE := "niua_mcp:runtime_screenshot"
 const SEND_INPUT_MESSAGE := "niua_mcp:send_input"
 
@@ -15,17 +16,22 @@ func next_runtime_request_id(prefix: String) -> String:
 	return "%s:%d:%d" % [prefix, Time.get_ticks_msec(), _runtime_request_counter]
 
 
-func send_runtime_snapshot_request(debugger_probe: EditorDebuggerPlugin, session_ids: Array[int], record_event: Callable) -> Array:
+func send_runtime_snapshot_request(debugger_probe: EditorDebuggerPlugin, session_ids: Array[int], max_depth: int, path_filter: String, record_event: Callable) -> Array:
 	var requested_sessions := []
 	for session_id in session_ids:
 		var session := debugger_probe.get_session(session_id)
 		if session == null or not session.is_active():
 			continue
 
-		session.send_message(SNAPSHOT_MESSAGE, [])
+		session.send_message(SNAPSHOT_MESSAGE, [{
+			"maxDepth": max_depth,
+			"pathFilter": path_filter
+		}])
 		requested_sessions.append(session_id)
 
 	_record(record_event, "runtime_snapshot_requested", {
+		"maxDepth": max_depth,
+		"pathFilter": path_filter,
 		"requestedSessions": requested_sessions
 	})
 	return requested_sessions
@@ -70,6 +76,30 @@ func send_runtime_node_property_set_request(debugger_probe: EditorDebuggerPlugin
 	_record(record_event, "runtime_node_property_set_requested", {
 		"nodePath": node_path,
 		"property": property_name,
+		"requestId": request_id,
+		"requestedSessions": requested_sessions
+	})
+	return requested_sessions
+
+
+func send_runtime_node_method_call_request(debugger_probe: EditorDebuggerPlugin, session_ids: Array[int], node_path: String, method_name: String, args: Array, request_id: String, record_event: Callable) -> Array:
+	var requested_sessions := []
+	for session_id in session_ids:
+		var session := debugger_probe.get_session(session_id)
+		if session == null or not session.is_active():
+			continue
+
+		session.send_message(CALL_NODE_METHOD_MESSAGE, [{
+			"requestId": request_id,
+			"nodePath": node_path,
+			"method": method_name,
+			"args": args
+		}])
+		requested_sessions.append(session_id)
+
+	_record(record_event, "runtime_node_method_call_requested", {
+		"nodePath": node_path,
+		"method": method_name,
 		"requestId": request_id,
 		"requestedSessions": requested_sessions
 	})

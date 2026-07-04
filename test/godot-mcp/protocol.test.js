@@ -46,6 +46,32 @@ test("normalizeBridgeResponse normalizes bridge errors", () => {
   });
 });
 
+test("normalizeBridgeResponse forwards the addon errorCode", () => {
+  assert.deepEqual(
+    normalizeBridgeResponse({ ok: false, error: "node not found: Player", errorCode: "not_found" }),
+    {
+      ok: false,
+      error: "node not found: Player",
+      errorCode: "not_found",
+      data: null
+    }
+  );
+});
+
+test("normalizeBridgeResponse omits errorCode when the bridge sent none", () => {
+  // Empty or non-string errorCodes never surface as a key at all.
+  assert.deepEqual(normalizeBridgeResponse({ ok: false, error: "boom", errorCode: "" }), {
+    ok: false,
+    error: "boom",
+    data: null
+  });
+  assert.deepEqual(normalizeBridgeResponse({ ok: false, error: "boom", errorCode: 7 }), {
+    ok: false,
+    error: "boom",
+    data: null
+  });
+});
+
 test("toolResult serializes JSON as MCP text content", () => {
   const result = toolResult({ ok: true, value: 1 });
   assert.equal(result.content[0].type, "text");

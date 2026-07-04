@@ -9,8 +9,7 @@ export function buildArea2DCreateFailure({
     error: createdArea.error,
     data: {
       type: AREA2D_TYPE,
-      properties,
-      createdArea
+      properties
     }
   };
 }
@@ -32,12 +31,7 @@ export function buildArea2DWithoutCollisionResult({
       collisionNodeProperties: null,
       shape: null,
       collision: null,
-      visual: null,
-      createdArea,
-      createdShape: null,
-      createdCollision: null,
-      collisionResult: null,
-      visualResult: null
+      visual: null
     }
   };
 }
@@ -47,6 +41,7 @@ export function buildArea2DCollisionFailure({
   createdArea,
   collisionResult
 }) {
+  const collisionData = collisionResult?.data ?? {};
   return {
     ok: false,
     error: collisionResult.error,
@@ -54,8 +49,12 @@ export function buildArea2DCollisionFailure({
       type: AREA2D_TYPE,
       properties,
       area: createdArea.data,
-      createdArea,
-      collisionResult
+      collisionShapeKind: collisionData.shapeKind ?? null,
+      collisionShapeClassName: collisionData.shapeClassName ?? null,
+      collisionShapePath: collisionData.shapePath ?? null,
+      collisionShapeProperties: collisionData.shapeProperties ?? null,
+      collisionNodeProperties: collisionData.nodeProperties ?? null,
+      shape: collisionData.shape ?? null
     }
   };
 }
@@ -73,9 +72,14 @@ export function buildArea2DVisualFailure({
       type: AREA2D_TYPE,
       properties,
       area: createdArea.data,
-      createdArea,
-      collisionResult,
-      visualResult
+      collisionShapeKind: collisionResult.data.shapeKind,
+      collisionShapeClassName: collisionResult.data.shapeClassName,
+      collisionShapePath: collisionResult.data.shapePath,
+      collisionShapeProperties: collisionResult.data.shapeProperties,
+      collisionNodeProperties: collisionResult.data.nodeProperties,
+      shape: collisionResult.data.shape,
+      collision: collisionResult.data.node,
+      visual: visualResult.data ?? null
     }
   };
 }
@@ -100,12 +104,7 @@ export function buildArea2DSuccess({
       collisionNodeProperties: collisionResult.data.nodeProperties,
       shape: collisionResult.data.shape,
       collision: collisionResult.data.node,
-      visual: visualResult?.data?.node ?? null,
-      createdArea,
-      createdShape: collisionResult.data.createdShape,
-      createdCollision: collisionResult.data.createdNode,
-      collisionResult,
-      visualResult
+      visual: visualResult?.data?.node ?? null
     }
   };
 }

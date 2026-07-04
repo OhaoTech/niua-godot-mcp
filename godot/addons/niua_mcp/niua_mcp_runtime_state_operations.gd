@@ -2,14 +2,19 @@
 extends RefCounted
 
 
-static func runtime_state(debugger_probe) -> Dictionary:
+static func runtime_state(debugger_probe, query: Dictionary) -> Dictionary:
+	# Token diet: maxDepth bounds the requested runtime snapshot depth
+	# (0 = unlimited); truncated nodes report childrenTruncated. pathFilter
+	# serializes only the subtree rooted at a live node path.
+	var max_depth := str(query.get("maxDepth", "0")).to_int()
+	var path_filter := str(query.get("pathFilter", ""))
 	var probe_state := {
 		"sessions": [],
 		"events": []
 	}
 	var requested_sessions := []
 	if debugger_probe != null:
-		requested_sessions = debugger_probe.send_runtime_snapshot_request()
+		requested_sessions = debugger_probe.send_runtime_snapshot_request(max_depth, path_filter)
 		probe_state = debugger_probe.runtime_state()
 
 	var sessions: Array = probe_state.get("sessions", [])

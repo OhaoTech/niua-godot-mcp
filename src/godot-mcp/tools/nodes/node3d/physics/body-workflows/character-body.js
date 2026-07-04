@@ -5,7 +5,6 @@ export async function createCharacterBody3D(args = {}) {
   return createPhysicsOwner3D(args, {
     type: "CharacterBody3D",
     buildProperties: buildCharacterBody3DProperties,
-    ownerDataKey: "character",
-    createdOwnerKey: "createdCharacter"
+    ownerDataKey: "character"
   });
 }

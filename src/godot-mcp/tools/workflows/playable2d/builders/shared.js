@@ -26,9 +26,7 @@ export function vector2ToComponents(value, fieldName) {
 export function appendBlockoutStep(steps, name, result) {
   steps.push({
     name,
-    ok: result.ok === true,
-    error: result.error ?? null,
-    data: result.data ?? null
+    ok: result.ok === true
   });
 }
 
@@ -39,7 +37,7 @@ export function blockoutFailure(failedStep, result, data) {
     data: {
       ...data,
       failedStep,
-      failedResult: result
+      failedData: result.data ?? null
     }
   };
 }

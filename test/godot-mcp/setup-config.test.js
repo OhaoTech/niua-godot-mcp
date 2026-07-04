@@ -9,7 +9,7 @@ import {
   parseSetupArgs
 } from "../../src/godot-mcp/setup/config.js";
 
-test("parseSetupArgs defaults to a dry-run v1 setup", () => {
+test("parseSetupArgs defaults to a dry-run core setup", () => {
   const options = parseSetupArgs([
     "--client",
     "claude",
@@ -22,7 +22,7 @@ test("parseSetupArgs defaults to a dry-run v1 setup", () => {
 
   assert.equal(options.client, "claude");
   assert.equal(options.projectRoot, "/tmp/niua-games");
-  assert.equal(options.profile, "v1");
+  assert.equal(options.profile, "core");
   assert.equal(options.godotBin, "godot-custom");
   assert.equal(options.write, false);
   assert.equal(options.smoke, true);
@@ -40,7 +40,7 @@ test("mcpServerConfig uses absolute node and server paths", () => {
   assert.equal(config.command, "/usr/bin/node");
   assert.deepEqual(config.args, ["/repo/src/godot-mcp/server.js"]);
   assert.deepEqual(config.env, {
-    NIUA_MCP_PROFILE: "v1",
+    NIUA_MCP_PROFILE: "core",
     GODOT_BIN: "godot",
     GODOT_MCP_ALLOWED_PROJECT_ROOTS: "/home/example/Godot"
   });

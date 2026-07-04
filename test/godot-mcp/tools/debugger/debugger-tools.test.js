@@ -99,9 +99,11 @@ test("debugger schemas delegate control probe and runtime modules", async () => 
   assert.match(probe, /export const INSTALL_RUNTIME_PROBE_SCHEMA/);
   assert.match(probe, /save: \{/);
 
+  assert.match(runtime, /export const RUNTIME_STATE_SCHEMA/);
   assert.match(runtime, /export const RUNTIME_EVENTS_SCHEMA/);
   assert.match(runtime, /export const RUNTIME_NODE_PROPERTIES_SCHEMA/);
   assert.match(runtime, /export const SET_RUNTIME_NODE_PROPERTY_SCHEMA/);
+  assert.match(runtime, /export const CALL_RUNTIME_NODE_METHOD_SCHEMA/);
   assert.match(runtime, /export const RUNTIME_SCREENSHOT_SCHEMA/);
   assert.match(runtime, /export const SEND_RUNTIME_INPUT_SCHEMA/);
   assert.match(runtime, /nodePath: \{/);
@@ -135,6 +137,51 @@ test("set_debugger_breakpoint handler forwards payload through the bridge", asyn
       line: 12,
       enabled: false
     });
+  });
+});
+
+test("get_runtime_state schema declares the maxDepth and pathFilter diet controls", () => {
+  const schema = toolByName("get_runtime_state").inputSchema;
+
+  assert.equal(schema.type, "object");
+  assert.equal(schema.additionalProperties, false);
+  assert.equal(schema.properties.maxDepth.type, "number");
+  assert.match(schema.properties.maxDepth.description, /0 or omitted/);
+  assert.equal(schema.properties.pathFilter.type, "string");
+  assert.match(schema.properties.pathFilter.description, /subtree/);
+});
+
+test("get_runtime_state handler forwards maxDepth and pathFilter through the bridge", async () => {
+  const seenUrls = [];
+
+  await withJsonBridge((req, res) => {
+    seenUrls.push(req.url);
+    res.setHeader("content-type", "application/json");
+    res.end(JSON.stringify({
+      ok: true,
+      data: { available: true, sessionCount: 0, sessions: [], events: [] }
+    }));
+  }, async (port) => {
+    const shallow = await toolByName("get_runtime_state").handler({
+      port,
+      maxDepth: 2
+    });
+    assert.equal(parseToolText(shallow).data.available, true);
+
+    const filtered = await toolByName("get_runtime_state").handler({
+      port,
+      pathFilter: "/root/Player"
+    });
+    assert.equal(parseToolText(filtered).data.available, true);
+
+    const full = await toolByName("get_runtime_state").handler({ port });
+    assert.equal(parseToolText(full).data.available, true);
+
+    assert.deepEqual(seenUrls, [
+      "/runtime/state?maxDepth=2",
+      "/runtime/state?pathFilter=%2Froot%2FPlayer",
+      "/runtime/state"
+    ]);
   });
 });
 
@@ -228,6 +275,73 @@ test("send_runtime_input handler forwards actions and mouse motion through the b
     });
     assert.equal(payload.data.responses[0].applied.mouseMotion.dx, 5);
     assert.equal(payload.data.responses[0].applied.heldMs, null);
+  });
+});
+
+test("call_runtime_node_method schema declares explicit typed params", () => {
+  const schema = toolByName("call_runtime_node_method").inputSchema;
+
+  assert.equal(schema.type, "object");
+  assert.equal(schema.additionalProperties, false);
+  assert.equal(schema.properties.nodePath.type, "string");
+  assert.equal(schema.properties.method.type, "string");
+  assert.equal(schema.properties.args.type, "array");
+  assert.equal(schema.properties.timeoutMsec.type, "number");
+  assert.equal(schema.properties.pollIntervalMsec.type, "number");
+  assert.deepEqual(schema.required, ["nodePath", "method"]);
+});
+
+test("call_runtime_node_method handler forwards node path, method, and args through the bridge", async () => {
+  let receivedBody = null;
+  const seenUrls = [];
+
+  await withJsonBridge(async (req, res) => {
+    seenUrls.push(req.url);
+    const chunks = [];
+    for await (const chunk of req) {
+      chunks.push(chunk);
+    }
+    receivedBody = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+
+    res.setHeader("content-type", "application/json");
+    res.end(JSON.stringify({
+      ok: true,
+      data: {
+        pending: false,
+        available: true,
+        requestId: "call_node_method:1",
+        responses: [
+          {
+            sessionId: 0,
+            nodePath: "/root/Player",
+            method: "heal",
+            exists: true,
+            called: true,
+            returnValue: true,
+            returnType: "bool"
+          }
+        ]
+      }
+    }));
+  }, async (port) => {
+    const result = await toolByName("call_runtime_node_method").handler({
+      port,
+      nodePath: "/root/Player",
+      method: "heal",
+      args: [25],
+      timeoutMsec: 10,
+      pollIntervalMsec: 1
+    });
+    const payload = parseToolText(result);
+
+    assert.equal(seenUrls[0], "/runtime/node/method/call");
+    assert.deepEqual(receivedBody, {
+      nodePath: "/root/Player",
+      method: "heal",
+      args: [25]
+    });
+    assert.equal(payload.data.responses[0].called, true);
+    assert.equal(payload.data.responses[0].returnValue, true);
   });
 });
 

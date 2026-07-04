@@ -10,6 +10,7 @@ export const LOCALIZATION_TOOL_MANIFEST = [
     name: "create_csv_translation",
     description: "Create a locale CSV plus generated Translation resource, register it, and optionally activate the locale.",
     profile: "full",
+    tier: "standard",
     category: "localization",
     inputSchema: CREATE_CSV_TRANSLATION_SCHEMA,
     bridge: {
@@ -37,6 +38,7 @@ export const LOCALIZATION_TOOL_MANIFEST = [
     name: "register_translation_file",
     description: "Register a Translation resource path in Godot project localization settings.",
     profile: "full",
+    tier: "standard",
     category: "localization",
     inputSchema: REGISTER_TRANSLATION_FILE_SCHEMA,
     bridge: {
@@ -64,6 +66,7 @@ export const LOCALIZATION_TOOL_MANIFEST = [
     name: "set_locale",
     description: "Set Godot's active TranslationServer locale.",
     profile: "full",
+    tier: "standard",
     category: "localization",
     inputSchema: SET_LOCALE_SCHEMA,
     bridge: {
@@ -89,8 +92,9 @@ export const LOCALIZATION_TOOL_MANIFEST = [
   },
   {
     name: "get_localization_state",
-    description: "Read active locale, registered translation resources, loaded locales, and message counts.",
+    description: "Read active locale, registered translation resources, loaded locales, and message counts. loadedLocales and translations are sorted by locale; registeredTranslations keeps project-settings order.",
     profile: "full",
+    tier: "standard",
     category: "localization",
     inputSchema: GET_LOCALIZATION_STATE_SCHEMA,
     bridge: {

@@ -4,6 +4,7 @@ import {
   DEBUGGER_CONTROL_TOOL_MANIFEST,
   DEBUGGER_RUNTIME_TOOL_MANIFEST
 } from "../tools/debugger/manifest.js";
+import { DESCRIBE_TOOL_MANIFEST } from "../tools/describe/manifest.js";
 import { EXPORT_TOOL_MANIFEST } from "../tools/export/manifest.js";
 import { FILESYSTEM_TOOL_MANIFEST } from "../tools/filesystem/manifest.js";
 import { IMPORT_TOOL_MANIFEST } from "../tools/import/manifest.js";
@@ -43,6 +44,10 @@ export const MIGRATED_MANIFEST_DOMAINS = [
   {
     name: "debugger-runtime",
     manifest: DEBUGGER_RUNTIME_TOOL_MANIFEST
+  },
+  {
+    name: "describe",
+    manifest: DESCRIBE_TOOL_MANIFEST
   },
   {
     name: "export",

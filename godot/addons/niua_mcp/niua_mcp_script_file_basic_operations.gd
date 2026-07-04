@@ -10,7 +10,11 @@ static func read_script(query: Dictionary) -> Dictionary:
 	if not validation.get("ok", false):
 		return validation
 
-	return NiuaMcpFilesystemOperations.read_text_file({ "path": str(validation.get("path")) })
+	var read_query := { "path": str(validation.get("path")) }
+	for range_key in ["lineStart", "lineCount"]:
+		if query.has(range_key):
+			read_query[range_key] = query.get(range_key)
+	return NiuaMcpFilesystemOperations.read_text_file(read_query)
 
 
 static func write_script(body: Dictionary) -> Dictionary:

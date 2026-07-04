@@ -164,6 +164,89 @@ test("Godot MCP server forwards set_runtime_node_property calls to the editor br
   });
 });
 
+test("Godot MCP server forwards call_runtime_node_method calls to the editor bridge", async () => {
+  const seenRequests = [];
+
+  await withBridgeServer(async (req, res) => {
+    seenRequests.push({ method: req.method, url: req.url });
+
+    if (req.url === "/runtime/node/method/call" && req.method === "POST") {
+      const chunks = [];
+      for await (const chunk of req) {
+        chunks.push(chunk);
+      }
+      const body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+      assert.deepEqual(body, {
+        nodePath: "/root/RuntimeSmoke",
+        method: "take_damage",
+        args: [5, { type: "Vector3", x: 1, y: 2, z: 3 }]
+      });
+      res.setHeader("content-type", "application/json");
+      res.end(JSON.stringify({
+        ok: true,
+        data: {
+          available: true,
+          requestId: "call_node_method:1",
+          pending: true,
+          responses: []
+        }
+      }));
+      return;
+    }
+
+    if (req.url === "/runtime/node/method/call/result?requestId=call_node_method%3A1" && req.method === "GET") {
+      res.setHeader("content-type", "application/json");
+      res.end(JSON.stringify({
+        ok: true,
+        data: {
+          available: true,
+          requestId: "call_node_method:1",
+          pending: false,
+          responses: [
+            {
+              sessionId: 0,
+              nodePath: "/root/RuntimeSmoke",
+              method: "take_damage",
+              exists: true,
+              called: true,
+              returnValue: 95,
+              returnType: "int"
+            }
+          ]
+        }
+      }));
+      return;
+    }
+
+    res.statusCode = 404;
+    res.end(JSON.stringify({ ok: false, error: "not found" }));
+  }, async (port) => {
+    const server = createMcpProcess({ GODOT_MCP_PORT: String(port) });
+
+    try {
+      const response = await server.request("tools/call", {
+        name: "call_runtime_node_method",
+        arguments: {
+          nodePath: "/root/RuntimeSmoke",
+          method: "take_damage",
+          args: [5, { type: "Vector3", x: 1, y: 2, z: 3 }],
+          timeoutMsec: 1000,
+          pollIntervalMsec: 1
+        }
+      });
+
+      assert.match(response.result.content[0].text, /"called":true/);
+      assert.match(response.result.content[0].text, /"returnValue":95/);
+      assert.deepEqual(seenRequests, [
+        { method: "POST", url: "/runtime/node/method/call" },
+        { method: "GET", url: "/runtime/node/method/call/result?requestId=call_node_method%3A1" }
+      ]);
+    } finally {
+      await server.close();
+    }
+  });
+});
+
 test("Godot MCP server forwards send_runtime_input calls to the editor bridge", async () => {
   const seenRequests = [];
 

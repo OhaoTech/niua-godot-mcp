@@ -11,6 +11,7 @@ export const UI_TOOL_MANIFEST = [
     name: "create_ui_control",
     description: "Create a supported Godot Control node such as Label, Button, Panel, TextureRect, or common containers.",
     profile: "full",
+    tier: "standard",
     category: "ui",
     inputSchema: CREATE_UI_CONTROL_SCHEMA,
     bridge: {
@@ -38,6 +39,7 @@ export const UI_TOOL_MANIFEST = [
     name: "set_control_layout",
     description: "Set anchors, offsets, minimum size, and size flags on a Godot Control node.",
     profile: "full",
+    tier: "standard",
     category: "ui",
     inputSchema: SET_CONTROL_LAYOUT_SCHEMA,
     bridge: {
@@ -65,6 +67,7 @@ export const UI_TOOL_MANIFEST = [
     name: "create_ui_theme",
     description: "Create a Godot Theme resource with curated font-size, color, constant, and StyleBoxFlat entries.",
     profile: "full",
+    tier: "standard",
     category: "ui",
     inputSchema: CREATE_UI_THEME_SCHEMA,
     bridge: {
@@ -92,6 +95,7 @@ export const UI_TOOL_MANIFEST = [
     name: "apply_ui_theme_override",
     description: "Assign a Theme resource or per-node Control theme overrides such as font_size and font_color.",
     profile: "full",
+    tier: "standard",
     category: "ui",
     inputSchema: APPLY_UI_THEME_OVERRIDE_SCHEMA,
     bridge: {
@@ -119,6 +123,7 @@ export const UI_TOOL_MANIFEST = [
     name: "connect_ui_signal",
     description: "Connect a UI Control signal, for example Button.pressed, to a target script method.",
     profile: "full",
+    tier: "standard",
     category: "ui",
     inputSchema: CONNECT_UI_SIGNAL_SCHEMA,
     bridge: {

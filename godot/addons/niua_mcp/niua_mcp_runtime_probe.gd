@@ -2,6 +2,7 @@ extends Node
 
 const NiuaMcpRuntimeProbeInput = preload("niua_mcp_runtime_probe_input.gd")
 const NiuaMcpRuntimeProbeLogging = preload("niua_mcp_runtime_probe_logging.gd")
+const NiuaMcpRuntimeProbeNodeMethodCaller = preload("niua_mcp_runtime_probe_node_method_caller.gd")
 const NiuaMcpRuntimeProbeNodeProperties = preload("niua_mcp_runtime_probe_node_properties.gd")
 const NiuaMcpRuntimeProbeProtocol = preload("niua_mcp_runtime_probe_protocol.gd")
 const NiuaMcpRuntimeProbeScreenshot = preload("niua_mcp_runtime_probe_screenshot.gd")
@@ -13,6 +14,7 @@ const RUNTIME_READY_MESSAGE := NiuaMcpRuntimeProbeProtocol.RUNTIME_READY_MESSAGE
 const RUNTIME_STATE_MESSAGE := NiuaMcpRuntimeProbeProtocol.RUNTIME_STATE_MESSAGE
 const NODE_PROPERTIES_MESSAGE := NiuaMcpRuntimeProbeProtocol.NODE_PROPERTIES_MESSAGE
 const NODE_PROPERTY_SET_MESSAGE := NiuaMcpRuntimeProbeProtocol.NODE_PROPERTY_SET_MESSAGE
+const NODE_METHOD_CALL_RESULT_MESSAGE := NiuaMcpRuntimeProbeProtocol.NODE_METHOD_CALL_RESULT_MESSAGE
 const RUNTIME_SCREENSHOT_RESULT_MESSAGE := NiuaMcpRuntimeProbeProtocol.RUNTIME_SCREENSHOT_RESULT_MESSAGE
 const RUNTIME_INPUT_RESULT_MESSAGE := NiuaMcpRuntimeProbeProtocol.RUNTIME_INPUT_RESULT_MESSAGE
 
@@ -50,13 +52,17 @@ func log_error(message: String, data: Dictionary = {}) -> void:
 func _capture(message: String, _data: Array) -> bool:
 	match message:
 		"snapshot":
-			_send_debugger_message(RUNTIME_STATE_MESSAGE, NiuaMcpRuntimeProbeState.runtime_state(self, "snapshot"))
+			var snapshot_request := NiuaMcpRuntimeProbeProtocol.request_payload(_data)
+			_send_debugger_message(RUNTIME_STATE_MESSAGE, NiuaMcpRuntimeProbeState.runtime_state(self, "snapshot", int(snapshot_request.get("maxDepth", 0)), str(snapshot_request.get("pathFilter", ""))))
 			return true
 		"node_properties":
 			_send_debugger_message(NODE_PROPERTIES_MESSAGE, NiuaMcpRuntimeProbeNodeProperties.node_properties(self, NiuaMcpRuntimeProbeProtocol.request_payload(_data)))
 			return true
 		"set_node_property":
 			_send_debugger_message(NODE_PROPERTY_SET_MESSAGE, NiuaMcpRuntimeProbeNodeProperties.set_node_property(self, NiuaMcpRuntimeProbeProtocol.request_payload(_data)))
+			return true
+		"call_node_method":
+			_send_debugger_message(NODE_METHOD_CALL_RESULT_MESSAGE, NiuaMcpRuntimeProbeNodeMethodCaller.call_node_method(self, NiuaMcpRuntimeProbeProtocol.request_payload(_data)))
 			return true
 		"runtime_screenshot":
 			_send_debugger_message(RUNTIME_SCREENSHOT_RESULT_MESSAGE, NiuaMcpRuntimeProbeScreenshot.runtime_screenshot(self, NiuaMcpRuntimeProbeProtocol.request_payload(_data)))

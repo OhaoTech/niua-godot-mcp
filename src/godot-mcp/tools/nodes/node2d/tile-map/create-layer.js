@@ -31,8 +31,7 @@ export async function createTileMapLayer(args = {}) {
         error: createdTileSet.error,
         data: {
           type: "TileMapLayer",
-          tileSetPath,
-          createdTileSet
+          tileSetPath
         }
       };
     }
@@ -50,9 +49,7 @@ export async function createTileMapLayer(args = {}) {
         type: "TileMapLayer",
         tileSetPath,
         properties,
-        tileSet: createdTileSet?.data ?? null,
-        createdTileSet,
-        createdNode
+        tileSet: createdTileSet?.data ?? null
       }
     };
   }
@@ -74,10 +71,7 @@ export async function createTileMapLayer(args = {}) {
           tileSetPath,
           properties,
           tileSet: createdTileSet?.data ?? null,
-          node: createdNode.data,
-          createdTileSet,
-          createdNode,
-          cellsResult
+          node: createdNode.data
         }
       };
     }
@@ -91,10 +85,7 @@ export async function createTileMapLayer(args = {}) {
       properties,
       tileSet: createdTileSet?.data ?? null,
       node: createdNode.data,
-      cells: cellsResult?.data ?? null,
-      createdTileSet,
-      createdNode,
-      cellsResult
+      cells: cellsResult?.data ?? null
     }
   };
 }

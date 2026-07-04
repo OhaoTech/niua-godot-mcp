@@ -8,16 +8,24 @@ const TRANSLATIONS_SETTING := "internationalization/locale/translations"
 
 
 static func get_localization_state() -> Dictionary:
+	# Determinism (B6): the engine stores loaded translations in a hash set, so
+	# raw iteration order can differ run-to-run. loadedLocales and the
+	# translations list are sorted (locale ascending); registeredTranslations
+	# keeps project-settings order, which is meaningful state.
 	var translations := []
 	for translation in TranslationServer.get_translations():
 		if translation is Translation:
 			translations.append(_translation_snapshot(translation))
+	translations.sort_custom(func(left, right): return str(left.get("locale")) < str(right.get("locale")))
+
+	var loaded_locales := _packed_to_array(TranslationServer.get_loaded_locales())
+	loaded_locales.sort()
 
 	return {
 		"ok": true,
 		"data": {
 			"locale": TranslationServer.get_locale(),
-			"loadedLocales": _packed_to_array(TranslationServer.get_loaded_locales()),
+			"loadedLocales": loaded_locales,
 			"registeredTranslations": registered_translation_paths(),
 			"translations": translations
 		}

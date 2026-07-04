@@ -50,12 +50,57 @@ static func read_text_file(query: Dictionary) -> Dictionary:
 		return NiuaMcpFilesystemResult.error("failed to read file %s: %s" % [path, FileAccess.get_open_error()])
 
 	var content := file.get_as_text()
+	var total_lines := line_count(content)
+	# Token diet: lineStart (1-based) and lineCount bound the returned content
+	# to a line range; totalLines always reports the whole file.
+	if query.has("lineStart") or query.has("lineCount"):
+		return _ranged_text_response(path, content, total_lines, query)
+
 	return {
 		"ok": true,
 		"data": {
 			"path": path,
 			"content": content,
-			"bytes": content.to_utf8_buffer().size()
+			"bytes": content.to_utf8_buffer().size(),
+			"totalLines": total_lines
+		}
+	}
+
+
+static func line_count(content: String) -> int:
+	# Line semantics shared by ranged reads, search_in_scripts, and edit_script:
+	# "\n"-separated segments, ignoring one trailing newline (wc -l style).
+	if content.is_empty():
+		return 0
+	var count := content.split("\n").size()
+	if content.ends_with("\n"):
+		count -= 1
+	return count
+
+
+static func _ranged_text_response(path: String, content: String, total_lines: int, query: Dictionary) -> Dictionary:
+	var line_start := str(query.get("lineStart", "1")).to_int()
+	if line_start < 1 or line_start > total_lines:
+		return NiuaMcpFilesystemResult.error("lineStart %d is out of range for %s: totalLines is %d (pass 1 <= lineStart <= totalLines)" % [line_start, path, total_lines])
+
+	var remaining := total_lines - line_start + 1
+	var requested := remaining
+	if query.has("lineCount"):
+		requested = str(query.get("lineCount", "1")).to_int()
+		if requested < 1:
+			return NiuaMcpFilesystemResult.error("lineCount must be >= 1: %d" % requested)
+
+	var lines := content.split("\n")
+	var end_index := line_start - 1 + mini(requested, remaining)
+	var ranged := "\n".join(lines.slice(line_start - 1, end_index))
+	return {
+		"ok": true,
+		"data": {
+			"path": path,
+			"content": ranged,
+			"bytes": ranged.to_utf8_buffer().size(),
+			"totalLines": total_lines,
+			"lineStart": line_start
 		}
 	}
 
@@ -66,25 +111,40 @@ static func directory_entries(path: String, recursive: bool, exclude: PackedStri
 	if directory == null:
 		return entries
 
+	# Determinism (B6): DirAccess iteration order is filesystem-dependent, so
+	# entries are sorted name-ascending within each directory (directories and
+	# files interleaved). Recursive listings expand each subdirectory depth-first
+	# in that same order, so identical trees always produce identical responses.
+	for listed in sorted_directory_listing(directory):
+		var entry_name := str(listed.get("name"))
+		var entry_path := NiuaMcpPathUtils.join_res_path(path, entry_name)
+		if _excluded(entry_path, exclude):
+			continue
+		var is_directory := bool(listed.get("isDirectory"))
+		entries.append({
+			"name": entry_name,
+			"path": entry_path,
+			"type": "directory" if is_directory else "file"
+		})
+		if recursive and is_directory and (max_depth <= 0 or depth < max_depth):
+			entries.append_array(directory_entries(entry_path, true, exclude, max_depth, depth + 1))
+	return entries
+
+
+static func sorted_directory_listing(directory: DirAccess) -> Array:
+	var listed := []
 	directory.list_dir_begin()
 	var name := directory.get_next()
 	while not name.is_empty():
 		if not name.begins_with("."):
-			var entry_path := NiuaMcpPathUtils.join_res_path(path, name)
-			if _excluded(entry_path, exclude):
-				name = directory.get_next()
-				continue
-			var is_directory := directory.current_is_dir()
-			entries.append({
+			listed.append({
 				"name": name,
-				"path": entry_path,
-				"type": "directory" if is_directory else "file"
+				"isDirectory": directory.current_is_dir()
 			})
-			if recursive and is_directory and (max_depth <= 0 or depth < max_depth):
-				entries.append_array(directory_entries(entry_path, true, exclude, max_depth, depth + 1))
 		name = directory.get_next()
 	directory.list_dir_end()
-	return entries
+	listed.sort_custom(func(left, right): return str(left.get("name")) < str(right.get("name")))
+	return listed
 
 
 static func _excluded(entry_path: String, exclude: PackedStringArray) -> bool:

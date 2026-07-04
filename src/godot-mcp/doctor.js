@@ -338,7 +338,7 @@ Options:
   --host <host>         Bridge host, default 127.0.0.1
   --token <token>       Bridge auth token for /health
   --godot-bin <path>    Godot executable, default GODOT_BIN or godot
-  --profile <name>      Tool profile, v1 or full
+  --profile <name>      Tool profile: core, full, or compact (aliases: v1, dispatch)
   --timeout-ms <ms>     Per-check timeout, default 5000
   --json                Print JSON
 `;

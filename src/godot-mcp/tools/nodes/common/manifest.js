@@ -14,6 +14,7 @@ export const COMMON_NODE_TOOL_MANIFEST = [
     name: "search_node_types",
     description: "Search Godot ClassDB node types for Create Node dialog workflows, including instantiability, enabled-state, and inheritance metadata.",
     profile: "v1",
+    tier: "essential",
     category: "nodes-common",
     inputSchema: SEARCH_NODE_TYPES_SCHEMA,
     bridge: {
@@ -61,6 +62,7 @@ export const COMMON_NODE_TOOL_MANIFEST = [
     name: "create_node",
     description: "Create a node in the current edited Godot scene.",
     profile: "v1",
+    tier: "essential",
     category: "nodes-common",
     inputSchema: CREATE_NODE_SCHEMA,
     bridge: {
@@ -88,6 +90,7 @@ export const COMMON_NODE_TOOL_MANIFEST = [
     name: "create_node_with_script",
     description: "Create a Godot scene node and create or attach a GDScript in one editor operation.",
     profile: "full",
+    tier: "standard",
     category: "nodes-common",
     inputSchema: CREATE_NODE_WITH_SCRIPT_SCHEMA,
     bridge: {
@@ -115,6 +118,7 @@ export const COMMON_NODE_TOOL_MANIFEST = [
     name: "rename_node",
     description: "Rename a node in the current edited Godot scene.",
     profile: "full",
+    tier: "standard",
     category: "nodes-common",
     inputSchema: RENAME_NODE_SCHEMA,
     bridge: {
@@ -142,6 +146,7 @@ export const COMMON_NODE_TOOL_MANIFEST = [
     name: "delete_node",
     description: "Delete a non-root node from the current edited Godot scene.",
     profile: "v1",
+    tier: "essential",
     category: "nodes-common",
     inputSchema: DELETE_NODE_SCHEMA,
     bridge: {
@@ -169,6 +174,7 @@ export const COMMON_NODE_TOOL_MANIFEST = [
     name: "duplicate_node",
     description: "Duplicate a node in the current edited Godot scene.",
     profile: "full",
+    tier: "standard",
     category: "nodes-common",
     inputSchema: DUPLICATE_NODE_SCHEMA,
     bridge: {
@@ -196,6 +202,7 @@ export const COMMON_NODE_TOOL_MANIFEST = [
     name: "reparent_node",
     description: "Move a node under a new parent in the current edited Godot scene.",
     profile: "full",
+    tier: "standard",
     category: "nodes-common",
     inputSchema: REPARENT_NODE_SCHEMA,
     bridge: {
@@ -223,6 +230,7 @@ export const COMMON_NODE_TOOL_MANIFEST = [
     name: "reorder_node",
     description: "Move a node to a target sibling index under its current parent in the current edited Godot scene.",
     profile: "full",
+    tier: "standard",
     category: "nodes-common",
     inputSchema: REORDER_NODE_SCHEMA,
     bridge: {

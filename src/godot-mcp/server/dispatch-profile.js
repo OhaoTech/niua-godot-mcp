@@ -1,78 +1,21 @@
 import { toolResult } from "../protocol.js";
 import { CONNECTION_PROPERTIES } from "../tools/shared/bridge-schema.js";
+import {
+  DISPATCH_DOMAINS,
+  DOMAIN_BY_CATEGORY,
+  STANDALONE_TOOLS,
+  firstSentence
+} from "./capability-graph.js";
 
 // The dispatch profile collapses the flat catalog (~173 tools ≈ 56K tokens of
 // schemas injected per request on clients without deferred tool loading) into
 // ~13 action-routed domain tools (~95% schema-tax cut). Every catalog tool stays
 // reachable as an action; per-action schemas are served on demand through the
-// "describe" action (search-first, implemented server-side). See
-// docs/godot-mcp/token-efficiency-roadmap.md, Tier 3.
-
-const DISPATCH_DOMAINS = Object.freeze({
-  godot_project: {
-    categories: ["project-management", "project-settings", "runtime"],
-    summary: "Godot project lifecycle, discovery, settings, logs, and versions."
-  },
-  godot_scene: {
-    categories: ["scene"],
-    summary: "Scenes: create, open, save, tabs, tree reads, and selection."
-  },
-  godot_node: {
-    categories: ["nodes-common", "inspector"],
-    summary: "Scene nodes: create, rename, reparent, delete, properties, and inspector reads."
-  },
-  godot_builder: {
-    categories: ["nodes-2d", "nodes-3d"],
-    summary: "Curated 2D/3D node builders: meshes, bodies, areas, cameras, lights, sprites, tilemaps."
-  },
-  godot_script: {
-    categories: ["scripts"],
-    summary: "GDScript files: write, read, attach, validate, and diagnose."
-  },
-  godot_filesystem: {
-    categories: ["filesystem", "import"],
-    summary: "res:// filesystem operations and asset import pipeline."
-  },
-  godot_resource: {
-    categories: ["resources", "particles"],
-    summary: "Resources: materials, shaders, .tres assets, and GPU particles."
-  },
-  godot_run: {
-    categories: ["run", "export"],
-    summary: "Run scenes, read run status, and export project builds."
-  },
-  godot_debug: {
-    categories: ["debugger", "viewport"],
-    summary: "Debugger, runtime probe, runtime input, screenshots, and viewport control."
-  },
-  godot_animation: {
-    categories: ["animation"],
-    summary: "AnimationPlayer and AnimationTree authoring and playback."
-  },
-  godot_systems: {
-    categories: ["audio", "localization", "multiplayer", "navigation", "ui"],
-    summary: "Audio buses, localization, multiplayer, navigation, and UI controls/themes."
-  },
-  godot_workflows: {
-    categories: ["playable2d-workflow", "playable3d-workflow"],
-    summary: "High-level playable blockout and character-controller workflows."
-  }
-});
-
-// Tools that keep their own top-level schema in the dispatch profile.
-const STANDALONE_TOOLS = Object.freeze(new Set(["apply_scene_recipe"]));
+// "describe" action (search-first, implemented server-side). The domain map
+// itself lives in capability-graph.js — this module is the projection that
+// collapses it. See docs/godot-mcp/token-efficiency-roadmap.md, Tier 3.
 
 export function dispatchToolsFromCatalog(tools) {
-  const domainByCategory = new Map();
-  for (const [domain, spec] of Object.entries(DISPATCH_DOMAINS)) {
-    for (const category of spec.categories) {
-      if (domainByCategory.has(category)) {
-        throw new Error(`dispatch profile maps category twice: ${category}`);
-      }
-      domainByCategory.set(category, domain);
-    }
-  }
-
   const grouped = new Map();
   const standalone = [];
   for (const tool of tools) {
@@ -80,7 +23,7 @@ export function dispatchToolsFromCatalog(tools) {
       standalone.push(tool);
       continue;
     }
-    const domain = domainByCategory.get(tool.category);
+    const domain = DOMAIN_BY_CATEGORY[tool.category];
     if (!domain) {
       throw new Error(
         `dispatch profile has no domain for tool "${tool.name}" (category "${tool.category}")`
@@ -192,10 +135,4 @@ function describeDomain(domain, members, byAction, args) {
     description: target.description,
     inputSchema: target.inputSchema
   });
-}
-
-function firstSentence(text) {
-  const normalized = String(text ?? "").trim();
-  const stop = normalized.indexOf(". ");
-  return stop === -1 ? normalized : normalized.slice(0, stop + 1);
 }

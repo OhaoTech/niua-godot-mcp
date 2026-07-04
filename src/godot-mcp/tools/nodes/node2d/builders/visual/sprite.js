@@ -32,8 +32,7 @@ export async function createSprite2DWithClient(client, payload = {}) {
         data: {
           type: "Sprite2D",
           texturePath,
-          textureProperties,
-          createdTexture
+          textureProperties
         }
       };
     }
@@ -53,8 +52,7 @@ export async function createSprite2DWithClient(client, payload = {}) {
         type: "Sprite2D",
         texturePath: texturePath || null,
         properties,
-        createdTexture,
-        createdNode
+        texture: createdTexture?.data ?? null
       }
     };
   }
@@ -66,9 +64,7 @@ export async function createSprite2DWithClient(client, payload = {}) {
       texturePath: texturePath || null,
       properties,
       texture: createdTexture?.data ?? null,
-      node: createdNode.data,
-      createdTexture,
-      createdNode
+      node: createdNode.data
     }
   };
 }

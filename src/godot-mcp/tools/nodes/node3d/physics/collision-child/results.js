@@ -11,8 +11,7 @@ export function collisionChild3DNoCollisionResult({
   type,
   properties,
   ownerDataKey,
-  ownerResult,
-  createdOwnerKey
+  ownerResult
 }) {
   return {
     ok: true,
@@ -26,10 +25,7 @@ export function collisionChild3DNoCollisionResult({
       collisionShapeProperties: null,
       collisionNodeProperties: null,
       shape: null,
-      collision: null,
-      [createdOwnerKey]: ownerResult,
-      createdShape: null,
-      createdCollision: null
+      collision: null
     }
   };
 }
@@ -39,7 +35,6 @@ export function collisionChild3DShapeFailure({
   properties,
   ownerDataKey,
   ownerResult,
-  createdOwnerKey,
   context,
   createdShape
 }) {
@@ -50,9 +45,7 @@ export function collisionChild3DShapeFailure({
       type,
       properties,
       [ownerDataKey]: ownerResult.data,
-      ...collisionChild3DContextData(context),
-      [createdOwnerKey]: ownerResult,
-      createdShape
+      ...collisionChild3DContextData(context)
     }
   };
 }
@@ -62,7 +55,6 @@ export function collisionChild3DNodeFailure({
   properties,
   ownerDataKey,
   ownerResult,
-  createdOwnerKey,
   context,
   collisionNodeProperties,
   createdShape,
@@ -77,9 +69,7 @@ export function collisionChild3DNodeFailure({
       [ownerDataKey]: ownerResult.data,
       ...collisionChild3DContextData(context),
       collisionNodeProperties,
-      [createdOwnerKey]: ownerResult,
-      createdShape,
-      createdCollision
+      shape: createdShape.data
     }
   };
 }
@@ -89,7 +79,6 @@ export function collisionChild3DSuccess({
   properties,
   ownerDataKey,
   ownerResult,
-  createdOwnerKey,
   context,
   collisionNodeProperties,
   createdShape,
@@ -104,10 +93,7 @@ export function collisionChild3DSuccess({
       ...collisionChild3DContextData(context),
       collisionNodeProperties,
       shape: createdShape.data,
-      collision: createdCollision.data,
-      [createdOwnerKey]: ownerResult,
-      createdShape,
-      createdCollision
+      collision: createdCollision.data
     }
   };
 }

@@ -18,6 +18,7 @@ test("Godot MCP server handles initialize, listing, and version tool calls", asy
     const toolNames = tools.result.tools.map((tool) => tool.name);
     assert.deepEqual(toolNames, [
       "get_godot_version",
+      "describe_tools",
       "create_project",
       "open_project",
       "get_open_projects",
@@ -62,7 +63,9 @@ test("Godot MCP server handles initialize, listing, and version tool calls", asy
       "get_input_map",
       "set_input_action",
       "read_script",
+      "search_in_scripts",
       "write_script",
+      "edit_script",
       "open_script",
       "validate_script",
       "diagnose_script",
@@ -105,6 +108,7 @@ test("Godot MCP server handles initialize, listing, and version tool calls", asy
       "set_runtime_node_property",
       "capture_runtime_screenshot",
       "send_runtime_input",
+      "call_runtime_node_method",
       "upsert_animation",
       "list_animations",
       "play_animation",
@@ -180,6 +184,7 @@ test("Godot MCP server handles initialize, listing, and version tool calls", asy
       "create_3d_playable_blockout",
       "create_3d_character_controller",
       "apply_scene_recipe",
+      "batch_scene_operations",
       "create_node_with_script",
       "rename_node",
       "delete_node",

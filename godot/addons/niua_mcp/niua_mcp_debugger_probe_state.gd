@@ -32,5 +32,9 @@ static func runtime_screenshot_result(store, request_id: String) -> Array:
 	return store.runtime_screenshot_result(request_id)
 
 
+static func runtime_node_method_call_result(store, request_id: String) -> Array:
+	return store.runtime_node_method_call_result(request_id)
+
+
 static func runtime_input_send_result(store, request_id: String) -> Array:
 	return store.runtime_input_send_result(request_id)

@@ -29,7 +29,7 @@ static func create_node(editor: EditorInterface, body: Dictionary, path_validato
 		parent = NiuaMcpSceneNodeContext.resolve_node(editor, parent_path)
 		if parent == null:
 			node.free()
-			return NiuaMcpSceneNodeContext.error("parent node not found: %s" % parent_path, "not_found")
+			return NiuaMcpSceneNodeContext.error("parent node not found: %s (call get_scene_tree to list valid node paths)" % parent_path, "not_found")
 
 	var desired_name := str(body.get("name", ""))
 	if not desired_name.is_empty():
@@ -43,12 +43,15 @@ static func create_node(editor: EditorInterface, body: Dictionary, path_validato
 		for key in properties.keys():
 			node.set(str(key), NiuaMcpVariantCodec.json_to_variant(properties[key], path_validator))
 
+	# Read-back guarantee: every field below is derived from the node AFTER
+	# add_child — Godot renames on sibling collision (requested "Enemy" can
+	# become "@Enemy@3"), so echoing the requested name would lie.
 	return {
 		"ok": true,
 		"data": {
 			"nodePath": NiuaMcpSceneNodeContext.node_path_for_response(editor, node),
 			"name": node.name,
 			"type": node.get_class(),
-			"parentPath": NiuaMcpSceneNodeContext.node_path_for_response(editor, parent)
+			"parentPath": NiuaMcpSceneNodeContext.node_path_for_response(editor, node.get_parent())
 		}
 	}

@@ -14,8 +14,7 @@ export async function createCamera2D(args = {}) {
       error: createdNode.error,
       data: {
         type: "Camera2D",
-        properties,
-        createdNode
+        properties
       }
     };
   }
@@ -25,8 +24,7 @@ export async function createCamera2D(args = {}) {
     data: {
       type: "Camera2D",
       properties,
-      node: createdNode.data,
-      createdNode
+      node: createdNode.data
     }
   };
 }

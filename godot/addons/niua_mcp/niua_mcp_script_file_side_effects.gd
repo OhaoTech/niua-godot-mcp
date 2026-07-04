@@ -1,6 +1,7 @@
 @tool
 extends RefCounted
 
+const NiuaMcpScriptEditOperations = preload("niua_mcp_script_edit_operations.gd")
 const NiuaMcpScriptFileBasicOperations = preload("niua_mcp_script_file_basic_operations.gd")
 const NiuaMcpScriptFileUtils = preload("niua_mcp_script_file_utils.gd")
 const NiuaMcpScriptReplaceOperations = preload("niua_mcp_script_replace_operations.gd")
@@ -12,6 +13,16 @@ static func write_script_with_side_effects(body: Dictionary, refresh_filesystem:
 		var data = response.get("data", {})
 		NiuaMcpScriptFileUtils.refresh(refresh_filesystem)
 		NiuaMcpScriptFileUtils.remember(remember, "Wrote text file %s" % str(data.get("path", "")))
+	return response
+
+
+static func edit_script_with_side_effects(body: Dictionary, refresh_filesystem: Callable, remember: Callable) -> Dictionary:
+	var response := NiuaMcpScriptEditOperations.edit_script(body)
+	if bool(response.get("ok", false)):
+		var data = response.get("data", {})
+		var path := str(data.get("path", ""))
+		NiuaMcpScriptFileUtils.refresh_path(refresh_filesystem, path)
+		NiuaMcpScriptFileUtils.remember(remember, "Edited script %s: %d replacement(s)" % [path, int(data.get("replacements", 0))])
 	return response
 
 

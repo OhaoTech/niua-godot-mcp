@@ -29,8 +29,7 @@ export async function createMeshInstance3D(args = {}) {
         meshKind: meshKind.kind,
         meshClassName: meshKind.className,
         meshPath,
-        meshProperties,
-        createdMesh
+        meshProperties
       }
     };
   }
@@ -59,8 +58,7 @@ export async function createMeshInstance3D(args = {}) {
         meshPath,
         meshProperties,
         nodeProperties,
-        createdMesh,
-        createdNode
+        mesh: createdMesh.data
       }
     };
   }
@@ -74,9 +72,7 @@ export async function createMeshInstance3D(args = {}) {
       meshProperties,
       nodeProperties,
       mesh: createdMesh.data,
-      node: createdNode.data,
-      createdMesh,
-      createdNode
+      node: createdNode.data
     }
   };
 }

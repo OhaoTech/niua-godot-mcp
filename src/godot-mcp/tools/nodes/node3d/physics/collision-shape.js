@@ -29,8 +29,7 @@ export async function createCollisionShape3D(args = {}) {
         shapeKind: shapeKind.kind,
         shapeClassName: shapeKind.className,
         shapePath,
-        shapeProperties,
-        createdShape
+        shapeProperties
       }
     };
   }
@@ -59,8 +58,7 @@ export async function createCollisionShape3D(args = {}) {
         shapePath,
         shapeProperties,
         nodeProperties,
-        createdShape,
-        createdNode
+        shape: createdShape.data
       }
     };
   }
@@ -74,9 +72,7 @@ export async function createCollisionShape3D(args = {}) {
       shapeProperties,
       nodeProperties,
       shape: createdShape.data,
-      node: createdNode.data,
-      createdShape,
-      createdNode
+      node: createdNode.data
     }
   };
 }

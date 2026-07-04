@@ -110,6 +110,7 @@ const scriptEditorCursorStateDomainFiles = [
 const debuggerRuntimeDataDomainFiles = [
   "niua_mcp_debugger_probe_runtime_core.gd",
   "niua_mcp_debugger_probe_runtime_node_data.gd",
+  "niua_mcp_debugger_probe_runtime_method_data.gd",
   "niua_mcp_debugger_probe_runtime_screenshot_data.gd",
   "niua_mcp_debugger_probe_runtime_data_utils.gd"
 ];

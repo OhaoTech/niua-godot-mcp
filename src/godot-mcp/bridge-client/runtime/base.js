@@ -6,8 +6,16 @@ export const RUNTIME_BASE_BRIDGE_METHODS = {
     });
   },
 
-  async getRuntimeState() {
-    return this.request("/runtime/state");
+  async getRuntimeState({ maxDepth, pathFilter } = {}) {
+    const query = new URLSearchParams();
+    if (maxDepth !== undefined) {
+      query.set("maxDepth", String(maxDepth));
+    }
+    if (pathFilter !== undefined && pathFilter !== "") {
+      query.set("pathFilter", String(pathFilter));
+    }
+    const queryString = query.toString();
+    return this.request(`/runtime/state${queryString ? `?${queryString}` : ""}`);
   },
 
   async getRuntimeEvents({ limit, kinds = [], sinceMsec } = {}) {

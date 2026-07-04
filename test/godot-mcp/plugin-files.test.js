@@ -3298,7 +3298,7 @@ test("Godot debugger runtime operations live in their own Godot module", async (
   assert.match(operations, /static func set_debugger_breakpoint\(debugger_probe, editor: EditorInterface, body: Dictionary\) -> Dictionary:/);
   assert.match(operations, /static func toggle_debugger_profiler\(debugger_probe, editor: EditorInterface, body: Dictionary\) -> Dictionary:/);
   assert.match(operations, /static func send_debugger_message\(debugger_probe, editor: EditorInterface, body: Dictionary\) -> Dictionary:/);
-  assert.match(operations, /static func runtime_state\(debugger_probe\) -> Dictionary:/);
+  assert.match(operations, /static func runtime_state\(debugger_probe, query: Dictionary\) -> Dictionary:/);
   assert.match(operations, /static func runtime_events\(debugger_probe, query: Dictionary\) -> Dictionary:/);
   assert.match(operations, /static func runtime_node_properties\(debugger_probe, query: Dictionary\) -> Dictionary:/);
   assert.match(operations, /static func set_runtime_node_property\(debugger_probe, body: Dictionary\) -> Dictionary:/);
@@ -3308,7 +3308,7 @@ test("Godot debugger runtime operations live in their own Godot module", async (
   assert.match(operations, /static func install_runtime_probe\(body: Dictionary\) -> Dictionary:/);
   assert.match(controls, /static func debugger_state\(debugger_probe, editor: EditorInterface\) -> Dictionary:/);
   assert.match(controls, /Performance\.get_monitor/);
-  assert.match(runtimeState, /static func runtime_state\(debugger_probe\) -> Dictionary:/);
+  assert.match(runtimeState, /static func runtime_state\(debugger_probe, query: Dictionary\) -> Dictionary:/);
   assert.match(runtimeNode, /static func runtime_node_properties\(debugger_probe, query: Dictionary\) -> Dictionary:/);
   assert.match(runtimeScreenshot, /send_runtime_screenshot_request/);
   assert.match(probeInstaller, /static func install_runtime_probe\(body: Dictionary\) -> Dictionary:/);
@@ -3342,7 +3342,7 @@ test("Godot debugger runtime operations delegate focused domain modules", async 
   assert.match(control, /static func set_debugger_breakpoint\(debugger_probe, editor: EditorInterface, body: Dictionary\) -> Dictionary:/);
   assert.match(control, /static func debugger_breakpoint_summary\(raw_breakpoint: String\) -> Dictionary:/);
   assert.match(control, /Performance\.get_monitor/);
-  assert.match(runtimeState, /static func runtime_state\(debugger_probe\) -> Dictionary:/);
+  assert.match(runtimeState, /static func runtime_state\(debugger_probe, query: Dictionary\) -> Dictionary:/);
   assert.match(runtimeState, /static func runtime_events\(debugger_probe, query: Dictionary\) -> Dictionary:/);
   assert.match(runtimeState, /send_runtime_snapshot_request/);
   assert.match(runtimeState, /filtered_events/);
@@ -3503,8 +3503,9 @@ test("Godot runtime probe delegates focused domain modules", async () => {
   assert.match(codec, /static func json_to_variant\(value\)/);
   assert.match(codec, /static func variant_to_json\(value\)/);
   assert.match(codec, /MAX_SERIALIZED_COLLECTION_ITEMS/);
-  assert.match(state, /static func runtime_state\(probe: Node, kind: String\) -> Dictionary:/);
-  assert.match(state, /static func serialize_node\(node: Node, depth: int\) -> Dictionary:/);
+  assert.match(state, /static func runtime_state\(probe: Node, kind: String, max_depth: int = 0, path_filter: String = ""\) -> Dictionary:/);
+  assert.match(state, /static func serialize_node\(node: Node, depth: int, max_depth: int = 0\) -> Dictionary:/);
+  assert.match(state, /childrenTruncated/);
   assert.match(state, /node\.is_inside_tree\(\)/);
   assert.doesNotMatch(state, /"path": str\(node\.get_path\(\)\)/);
   assert.match(logging, /static func log_event\(probe: Node, send_debugger_message: Callable, message: String, level: String = "info", data: Dictionary = {}\) -> void:/);
@@ -3557,7 +3558,7 @@ test("Godot bridge exposes Milestone 6B runtime state capture endpoint", async (
   assert.match(runtimeState, /runtime_state\(\)/);
   assert.match(probe, /func _capture\(message: String, _data: Array\) -> bool:/);
   assert.match(probe, /NiuaMcpRuntimeProbeState\.runtime_state\(self, "snapshot"/);
-  assert.match(probeState, /static func runtime_state\(probe: Node, kind: String\) -> Dictionary:/);
+  assert.match(probeState, /static func runtime_state\(probe: Node, kind: String, max_depth: int = 0, path_filter: String = ""\) -> Dictionary:/);
   assert.match(probeState, /static func serialize_node/);
 });
 
@@ -3642,6 +3643,42 @@ test("Godot bridge exposes Milestone 6D runtime node property mutation", async (
   assert.match(variantCodec, /static func json_to_variant/);
 });
 
+test("runtime probe codec coerces schema-untyped values like the editor codec (Slice 4)", async () => {
+  const variantCodec = await readAddonFile("niua_mcp_runtime_probe_variant_codec.gd");
+  const nodePropertyWriter = await readAddonFile("niua_mcp_runtime_probe_node_property_writer.gd");
+
+  // JSON-string parse: a typed value arriving as '{"type":"Vector2",...}' or
+  // "[x,y]" text is parsed back to structure before decoding.
+  assert.match(variantCodec, /JSON\.parse_string\(trimmed\)/);
+  assert.match(variantCodec, /trimmed\.begins_with\("\{"\) or trimmed\.begins_with\("\["\)/);
+
+  // Declared-type coercion: scalar strings -> bool/int/float, plain
+  // [x,y]/{x,y} arrays and dicts -> Vector2/Vector3/Color.
+  assert.match(variantCodec, /static func coerce_to_declared_type\(value, declared_type: int\):/);
+  assert.match(variantCodec, /TYPE_BOOL:/);
+  assert.match(variantCodec, /TYPE_INT:/);
+  assert.match(variantCodec, /TYPE_FLOAT:/);
+  assert.match(variantCodec, /static func _as_vector2\(value\):/);
+  assert.match(variantCodec, /static func _as_vector3\(value\):/);
+  assert.match(variantCodec, /static func _as_color\(value\):/);
+
+  // The runtime writer consults the live node's declared property type and
+  // coerces the decoded value to it, mirroring the editor path
+  // (niua_mcp_scene_property_operations.gd).
+  assert.match(nodePropertyWriter, /static func property_type\(node: Node, property_name: String\) -> int:/);
+  assert.match(nodePropertyWriter, /var declared_type := property_type\(node, property_name\)/);
+  assert.match(nodePropertyWriter, /NiuaMcpRuntimeProbeVariantCodec\.coerce_to_declared_type\(decoded, declared_type\)/);
+  // Genuine String/StringName properties keep the caller's text verbatim.
+  assert.match(nodePropertyWriter, /declared_type == TYPE_STRING or declared_type == TYPE_STRING_NAME/);
+  // Object/Resource guard: a non-null value that did not decode to an Object
+  // produces an entry error instead of a silent null write.
+  assert.match(nodePropertyWriter, /declared_type == TYPE_OBJECT and raw_value != null and not \(decoded is Object\)/);
+  assert.match(nodePropertyWriter, /could not resolve a value for Object\/Resource property/);
+  // Read-back truth: the reported value comes from the node AFTER the set.
+  assert.match(nodePropertyWriter, /node\.set\(property_name, decoded\)\n\tvar after_value = node\.get\(property_name\)/);
+  assert.match(nodePropertyWriter, /"value": NiuaMcpRuntimeProbeVariantCodec\.variant_to_json\(after_value\)/);
+});
+
 test("Godot bridge exposes Milestone 6E runtime screenshot capture", async () => {
   const bridge = await readBridgeWriteSurface();
   const readRoutes = await readAddonFile("niua_mcp_bridge_read_routes.gd");
@@ -3662,4 +3699,28 @@ test("Godot bridge exposes Milestone 6E runtime screenshot capture", async () =>
   assert.match(probe, /NiuaMcpRuntimeProbeScreenshot\.runtime_screenshot/);
   assert.match(probeScreenshot, /save_png_to_buffer/);
   assert.match(probeScreenshot, /Marshalls\.raw_to_base64/);
+});
+
+test("scene-graph errors name the recovery step in the message text", async () => {
+  const property = await readAddonFile("niua_mcp_scene_property_operations.gd");
+  const treeBasic = await readAddonFile("niua_mcp_scene_node_tree_basic_operations.gd");
+  const treeHierarchy = await readAddonFile("niua_mcp_scene_node_tree_hierarchy_operations.gd");
+  const instanceCreation = await readAddonFile("niua_mcp_scene_node_instance_creation.gd");
+  const inspector = await readAddonFile("niua_mcp_scene_inspector_operations.gd");
+
+  const treeHint = /call get_scene_tree to list valid node paths/;
+  assert.match(property, treeHint);
+  assert.match(property, /call get_inspector_properties on this node to list valid properties/);
+  assert.match(property, /check the res:\/\/ path with list_filesystem or create it with create_resource first/);
+  assert.match(instanceCreation, treeHint);
+  assert.match(inspector, treeHint);
+
+  // Every not_found error in the scene-node tree operation files carries the hint.
+  for (const source of [treeBasic, treeHierarchy]) {
+    const notFoundLines = source.split("\n").filter((line) => line.includes("\"not_found\""));
+    assert.ok(notFoundLines.length > 0);
+    for (const line of notFoundLines) {
+      assert.match(line, treeHint);
+    }
+  }
 });

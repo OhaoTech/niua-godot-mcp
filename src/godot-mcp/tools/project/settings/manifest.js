@@ -11,6 +11,7 @@ export const PROJECT_SETTINGS_TOOL_MANIFEST = [
     name: "get_project_settings",
     description: "Read Godot Project Settings values, category tree, usage flags, and editor metadata, optionally filtered by prefix.",
     profile: "full",
+    tier: "standard",
     category: "project-settings",
     inputSchema: PROJECT_SETTINGS_SCHEMA,
     bridge: {
@@ -47,6 +48,7 @@ export const PROJECT_SETTINGS_TOOL_MANIFEST = [
     name: "set_project_setting",
     description: "Set a Godot Project Settings value and optionally save project.godot.",
     profile: "full",
+    tier: "standard",
     category: "project-settings",
     inputSchema: SET_PROJECT_SETTING_SCHEMA,
     bridge: {
@@ -74,6 +76,7 @@ export const PROJECT_SETTINGS_TOOL_MANIFEST = [
     name: "set_project_setting_metadata",
     description: "Update Godot Project Settings metadata such as order, initial value, basic/internal visibility, and restart-required flags.",
     profile: "full",
+    tier: "standard",
     category: "project-settings",
     inputSchema: SET_PROJECT_SETTING_METADATA_SCHEMA,
     bridge: {
@@ -101,6 +104,7 @@ export const PROJECT_SETTINGS_TOOL_MANIFEST = [
     name: "get_input_map",
     description: "Read Godot Input Map actions and supported event bindings.",
     profile: "full",
+    tier: "standard",
     category: "project-settings",
     inputSchema: INPUT_MAP_SCHEMA,
     bridge: {
@@ -127,6 +131,7 @@ export const PROJECT_SETTINGS_TOOL_MANIFEST = [
     name: "set_input_action",
     description: "Create or replace a Godot Input Map action with keyboard or joypad button events.",
     profile: "full",
+    tier: "standard",
     category: "project-settings",
     inputSchema: SET_INPUT_ACTION_SCHEMA,
     bridge: {

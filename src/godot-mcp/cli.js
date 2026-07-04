@@ -76,7 +76,7 @@ Options:
   --write                  Write the client config. Default is dry-run.
   --config-path <path>      Override the detected client config path.
   --server-name <name>      MCP server name. Default: niua-godot.
-  --profile <v1|full>       Tool profile. Default: v1.
+  --profile <core|full|compact>  Tool profile. Default: core (aliases: v1=core, dispatch=compact).
   --godot-bin <command>     Godot command/path. Default: GODOT_BIN or godot.
   --node-command <path>     Node command/path. Default: current Node executable.
   --server-path <path>      MCP server JS path. Default: bundled server.js.

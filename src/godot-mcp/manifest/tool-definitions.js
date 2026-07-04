@@ -8,6 +8,7 @@ export function toolDefinitionsFromManifest(manifest, { adapterHandlers = {}, lo
     name: entry.name,
     description: entry.description,
     category: entry.category,
+    tier: entry.tier,
     inputSchema: entry.inputSchema,
     async handler(args = {}) {
       if (manifestImplementation(entry) === "local") {

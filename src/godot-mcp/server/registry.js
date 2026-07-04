@@ -12,9 +12,10 @@ export function createToolRegistry(groups = []) {
   }
 
   return {
-    // category is internal grouping metadata (dispatch profile); it is stripped
-    // from the public MCP tool listing along with the handler.
-    definitions: tools.map(({ handler, category, ...definition }) => definition),
+    // category and tier are internal capability-graph metadata (dispatch
+    // grouping, core projection); they are stripped from the public MCP tool
+    // listing along with the handler.
+    definitions: tools.map(({ handler, category, tier, ...definition }) => definition),
     async call(name, args = {}) {
       const tool = byName.get(name);
       if (!tool) {

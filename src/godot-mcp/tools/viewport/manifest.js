@@ -12,6 +12,7 @@ export const VIEWPORT_TOOL_MANIFEST = [
     name: "capture_editor_screenshot",
     description: "Capture a PNG screenshot of the visible Godot editor. Pass savePath to write the PNG to disk and keep large base64 payloads out of the tool result. Returns available=false when the active renderer cannot expose editor pixels, such as headless mode.",
     profile: "full",
+    tier: "standard",
     category: "viewport",
     inputSchema: EDITOR_SCREENSHOT_SCHEMA,
     bridge: {
@@ -42,6 +43,7 @@ export const VIEWPORT_TOOL_MANIFEST = [
     name: "capture_viewport_screenshot",
     description: "Capture a PNG screenshot from the Godot editor 2D or 3D viewport. Pass savePath to write the PNG to disk and keep large base64 payloads out of the tool result. Returns available=false when the active renderer cannot expose viewport pixels, such as headless mode.",
     profile: "full",
+    tier: "standard",
     category: "viewport",
     inputSchema: VIEWPORT_SCREENSHOT_SCHEMA,
     bridge: {
@@ -78,6 +80,7 @@ export const VIEWPORT_TOOL_MANIFEST = [
     name: "get_viewport_state",
     description: "Read Godot editor 2D or 3D viewport size and active camera metadata when exposed by the editor.",
     profile: "full",
+    tier: "standard",
     category: "viewport",
     inputSchema: VIEWPORT_SCREENSHOT_SCHEMA,
     bridge: {
@@ -111,6 +114,7 @@ export const VIEWPORT_TOOL_MANIFEST = [
     name: "set_viewport_camera",
     description: "Move the active Godot editor 2D or 3D viewport camera, then return updated camera metadata.",
     profile: "full",
+    tier: "standard",
     category: "viewport",
     inputSchema: VIEWPORT_CAMERA_SCHEMA,
     bridge: {
@@ -139,6 +143,7 @@ export const VIEWPORT_TOOL_MANIFEST = [
     name: "send_viewport_input",
     description: "Send mouse pointer events into a Godot editor 2D or 3D viewport using viewport-local coordinates.",
     profile: "full",
+    tier: "standard",
     category: "viewport",
     inputSchema: VIEWPORT_INPUT_SCHEMA,
     bridge: {
@@ -170,6 +175,7 @@ export const VIEWPORT_TOOL_MANIFEST = [
     name: "set_editor_main_screen",
     description: "Switch the visible Godot editor main screen, such as 2D, 3D, Script, Game, or AssetLib.",
     profile: "full",
+    tier: "standard",
     category: "viewport",
     inputSchema: EDITOR_MAIN_SCREEN_SCHEMA,
     bridge: {
@@ -198,6 +204,7 @@ export const VIEWPORT_TOOL_MANIFEST = [
     name: "invoke_editor_action",
     description: "Invoke a conservative allowlisted Godot editor action such as select_file, filesystem_scan, reload_scene_from_path, save_scene, or set_distraction_free_mode.",
     profile: "full",
+    tier: "essential",
     category: "viewport",
     inputSchema: INVOKE_EDITOR_ACTION_SCHEMA,
     bridge: {

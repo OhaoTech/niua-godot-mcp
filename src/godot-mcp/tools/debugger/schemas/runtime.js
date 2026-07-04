@@ -3,6 +3,22 @@ import {
 } from "../../shared/bridge-schema.js";
 import { SAVE_PATH_PROPERTY } from "../../shared/screenshot-io.js";
 
+export const RUNTIME_STATE_SCHEMA = {
+  type: "object",
+  properties: {
+    ...CONNECTION_PROPERTIES,
+    maxDepth: {
+      type: "number",
+      description: "Maximum runtime tree depth to return. 0 or omitted means the full tree (up to the probe's internal cap); truncated nodes report childrenTruncated."
+    },
+    pathFilter: {
+      type: "string",
+      description: "Only serialize the runtime subtree rooted at this live node path, for example /root/Player. An unknown path reports an error in the snapshot naming get_runtime_node_properties."
+    }
+  },
+  additionalProperties: false
+};
+
 export const RUNTIME_EVENTS_SCHEMA = {
   type: "object",
   properties: {
@@ -74,6 +90,38 @@ export const SET_RUNTIME_NODE_PROPERTY_SCHEMA = {
     }
   },
   required: ["nodePath", "property", "value"],
+  additionalProperties: false
+};
+
+export const CALL_RUNTIME_NODE_METHOD_SCHEMA = {
+  type: "object",
+  properties: {
+    ...CONNECTION_PROPERTIES,
+    nodePath: {
+      type: "string",
+      description: "Runtime node path, for example /root/Player."
+    },
+    method: {
+      type: "string",
+      description: "Method to invoke on the runtime node, for example reset_score or take_damage. The node must expose it (node.has_method); unknown methods fail with a hint."
+    },
+    args: {
+      type: "array",
+      description: "Positional arguments passed to node.callv. Plain JSON scalars, arrays, and objects pass through; typed values may use { type: 'Vector2'|'Vector3'|'Color'|'NodePath', ... } wrappers. Defaults to [].",
+      items: {
+        description: "One positional argument: a JSON value or a typed wrapper object."
+      }
+    },
+    timeoutMsec: {
+      type: "number",
+      description: "How long the MCP client should poll for the debugger response. Defaults to 3000."
+    },
+    pollIntervalMsec: {
+      type: "number",
+      description: "Delay between runtime method call polling requests. Defaults to 100."
+    }
+  },
+  required: ["nodePath", "method"],
   additionalProperties: false
 };
 

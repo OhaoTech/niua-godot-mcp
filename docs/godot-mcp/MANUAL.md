@@ -21,7 +21,7 @@ This manual covers what it is, everything it can do (grouped by subsystem), the 
 | Editor bridge | HTTP/1.1 on `127.0.0.1:9174` (default), `x-niua-mcp-token` auth |
 | Godot version | 4.6.x |
 | Node version | >= 20 |
-| Default tool profile | `v1` (~43 tools); `full` = 135+ tools across ~26 domains |
+| Default tool profile | `core` (~47 tools); `full` = 175 tools across ~26 domains; `compact` = full surface behind 13 routers |
 | Filesystem writes | `res://` only, 64 MiB payload cap |
 | Managed projects | Confined to `GODOT_MCP_ALLOWED_PROJECT_ROOTS` (default `./runs`) |
 
@@ -164,15 +164,19 @@ create/open scene  →  build nodes  →  save to a res:// path  →  set_main_s
 
 ---
 
-## 5. `v1`, `full`, and `dispatch` profiles
+## 5. `core`, `full`, and `compact` profiles
 
 The advertised tool count is gated by the `NIUA_MCP_PROFILE` env var (or `--profile` at setup).
 
-- **`v1` (default, ~43 tools).** A curated allowlist proven sufficient for the core build loop. Kept small on purpose: this MCP is designed to coexist in one session alongside the NIUA and Blender MCPs without blowing the context window.
+- **`core` (default, ~47 tools).** A curated allowlist proven sufficient for the core build loop. Kept small on purpose: this MCP is designed to coexist in one session alongside the NIUA and Blender MCPs without blowing the context window.
 - **`full` (170+ tools).** Every tool across all ~26 domains — advanced animation trees, multiplayer, navigation baking, export presets, localization, etc. Schema cost: ~56K tokens injected per request on clients without deferred tool loading.
-- **`dispatch` (13 tools, ~4K tokens).** The full surface behind ~12 action-routed domain tools (`godot_scene`, `godot_node`, `godot_builder`, …) plus `apply_scene_recipe`. Call `{ action: "describe" }` to list a domain's actions, `{ action: "describe", name: "<action>" }` for that action's full argument schema, then `{ action: "<action>", args: { … } }` to run it. Built for schema-injecting clients (Cursor, Codex, most non-Claude harnesses): ~92% less schema tax than `full` with nothing hidden.
+- **`compact` (13 tools, ~4K tokens).** The full surface behind ~12 action-routed domain tools (`godot_scene`, `godot_node`, `godot_builder`, …) plus `apply_scene_recipe`. Call `{ action: "describe" }` to list a domain's actions, `{ action: "describe", name: "<action>" }` for that action's full argument schema, then `{ action: "<action>", args: { … } }` to run it. Built for schema-injecting clients (Cursor, Codex, most non-Claude harnesses): ~92% less schema tax than `full` with nothing hidden.
 
-If an agent calls a `full`-only tool while running under `v1`, the server returns a helpful error explaining the tool is hidden by the active profile and to **restart with `NIUA_MCP_PROFILE=full`** (versus a genuinely unknown tool name). Switching profiles requires restarting the MCP server so the registry rebuilds.
+The historical profile names `v1` (now `core`) and `dispatch` (now `compact`) remain accepted as permanent aliases.
+
+The profiles are computed projections of one capability graph: `core` is derived at load from the `tier: "essential"` field in the tool manifests (no hand-maintained allowlist to drift), and a tool earns that tier by being needed in real runs. Every profile also exposes `describe_tools`, the catalog navigator — call it with no args for the domain map, `{ domain }` for a domain's tools, or `{ name }` for one tool's full schema; it always describes the entire catalog, even tools the active profile hides.
+
+If an agent calls a `full`-only tool while running under `core`, the server returns a helpful error explaining the tool is hidden by the active profile and to **restart with `NIUA_MCP_PROFILE=full`** (versus a genuinely unknown tool name). Switching profiles requires restarting the MCP server so the registry rebuilds.
 
 ---
 
@@ -445,7 +449,12 @@ ships diet controls — use them by default:
   `list_filesystem` calls.
 - **Logs**: use `clearAfterRead: true` on `get_output_logs` so each read returns only
   fresh lines.
-- **Profiles**: run the `v1` profile (42 tools) unless you need the full surface —
+- **Script iteration**: `search_in_scripts` (matched lines only, never file bodies) +
+  ranged `read_script` (`lineStart`/`lineCount`) + `edit_script` (exact-text replacement
+  with a built-in parse check) form the token-efficient script loop — search, read only
+  the lines you need, edit surgically, and trust the returned `valid`/`parseErrors`
+  instead of re-reading the whole file.
+- **Profiles**: run the `core` profile (47 tools) unless you need the full surface —
   clients that inject all schemas per request pay for every tool you load.
 - **Recipes (the big one)**: for multi-step builds, write a recipe JSON to disk and run
   `apply_scene_recipe { recipePath }` — one call executes every step and returns a

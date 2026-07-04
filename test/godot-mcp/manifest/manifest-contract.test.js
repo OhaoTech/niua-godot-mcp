@@ -58,12 +58,36 @@ test("validateToolManifest requires end-to-end bridge contract fields", () => {
         name: "bad_tool",
         description: "Missing bridge and Godot route metadata.",
         profile: "full",
+        tier: "standard",
         category: "bad",
         inputSchema: { type: "object", properties: {}, additionalProperties: false }
       }
     ]),
     /bad_tool.*bridge/
   );
+});
+
+test("validateToolManifest requires a capability-graph tier on every entry", () => {
+  for (const tier of [undefined, "core", "rare", ""]) {
+    assert.throws(
+      () => validateToolManifest([
+        {
+          name: "tierless_tool",
+          description: "Missing or invalid tier metadata.",
+          profile: "full",
+          ...(tier === undefined ? {} : { tier }),
+          category: "bad",
+          inputSchema: { type: "object", properties: {}, additionalProperties: false },
+          implementation: "local",
+          local: { handler: "noop" },
+          conformance: { happy: "x", error: "y" },
+          docs: { summary: "x" }
+        }
+      ]),
+      /tierless_tool manifest tier must be essential or standard/,
+      `tier ${JSON.stringify(tier)} should be rejected`
+    );
+  }
 });
 
 test("localization manifest defines the complete localization tool contract", () => {
@@ -92,6 +116,7 @@ test("migrated manifest registry validates every migrated domain", () => {
     "audio",
     "debugger-control",
     "debugger-runtime",
+    "describe",
     "export",
     "filesystem",
     "import",
@@ -116,7 +141,7 @@ test("migrated manifest registry validates every migrated domain", () => {
     "viewport"
   ]);
   validateToolManifest(MIGRATED_TOOL_MANIFESTS);
-  assert.equal(MIGRATED_TOOL_MANIFESTS.length, 172);
+  assert.equal(MIGRATED_TOOL_MANIFESTS.length, 176);
 });
 
 test("animation manifest defines imported-scene and editor animation contracts", () => {
@@ -196,7 +221,8 @@ test("debugger manifest includes control and runtime probe bridge tools", () => 
     "get_runtime_node_properties",
     "set_runtime_node_property",
     "capture_runtime_screenshot",
-    "send_runtime_input"
+    "send_runtime_input",
+    "call_runtime_node_method"
   ]);
   assert.deepEqual(
     DEBUGGER_TOOL_MANIFEST
@@ -209,7 +235,8 @@ test("debugger manifest includes control and runtime probe bridge tools", () => 
       "get_runtime_node_properties",
       "set_runtime_node_property",
       "capture_runtime_screenshot",
-      "send_runtime_input"
+      "send_runtime_input",
+      "call_runtime_node_method"
     ]
   );
   assert.ok(DEBUGGER_TOOL_MANIFEST.every((entry) => entry.category === "debugger"));
@@ -466,7 +493,9 @@ test("script manifest includes bridge and local diagnostic tools", () => {
 
   assert.deepEqual(SCRIPT_TOOL_MANIFEST.map((entry) => entry.name), [
     "read_script",
+    "search_in_scripts",
     "write_script",
+    "edit_script",
     "open_script",
     "validate_script",
     "diagnose_script",

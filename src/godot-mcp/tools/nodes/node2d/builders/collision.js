@@ -30,8 +30,7 @@ export async function createCollisionShape2DWithClient(client, payload = {}) {
         shapeKind: shapeKind.kind,
         shapeClassName: shapeKind.className,
         shapePath,
-        shapeProperties,
-        createdShape
+        shapeProperties
       }
     };
   }
@@ -50,8 +49,7 @@ export async function createCollisionShape2DWithClient(client, payload = {}) {
         shapePath,
         shapeProperties,
         nodeProperties,
-        createdShape,
-        createdNode
+        shape: createdShape.data
       }
     };
   }
@@ -65,9 +63,7 @@ export async function createCollisionShape2DWithClient(client, payload = {}) {
       shapeProperties,
       nodeProperties,
       shape: createdShape.data,
-      node: createdNode.data,
-      createdShape,
-      createdNode
+      node: createdNode.data
     }
   };
 }

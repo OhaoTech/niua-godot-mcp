@@ -1,4 +1,5 @@
 const VALID_PROFILES = new Set(["v1", "full"]);
+const VALID_TIERS = new Set(["essential", "standard"]);
 const VALID_IMPLEMENTATIONS = new Set(["bridge", "local"]);
 const VALID_ROUTE_SIDES = new Set(["read", "write"]);
 const VALID_ROUTE_ARGS = new Set(["none", "query", "body"]);
@@ -44,6 +45,12 @@ function validateManifestEntry(entry) {
   }
   if (!VALID_PROFILES.has(entry.profile)) {
     throw new Error(`${label} manifest profile must be v1 or full`);
+  }
+  // tier is the capability-graph metadata the core projection derives from
+  // (docs/godot-mcp/capability-graph-architecture.md): a tool earns
+  // "essential" by evidence from real runs, everything else is "standard".
+  if (!VALID_TIERS.has(entry.tier)) {
+    throw new Error(`${label} manifest tier must be essential or standard`);
   }
   requireString(entry, "category", label);
 

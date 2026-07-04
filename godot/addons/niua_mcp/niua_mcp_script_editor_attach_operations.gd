@@ -53,11 +53,19 @@ static func attach_script(editor: EditorInterface, body: Dictionary, resolve_nod
 		return NiuaMcpScriptEditorAuthoringUtils.error("script failed to reload %s: %s" % [script_path, reload_error])
 
 	node.set_script(script)
-	# set_script() silently no-ops when the script's base type is incompatible
-	# with the node, which would otherwise report a successful attach on a node
-	# that actually has no script. Confirm it took.
-	if node.get_script() != script:
-		return NiuaMcpScriptEditorAuthoringUtils.error("script %s could not be attached to a %s node (incompatible base type?)" % [script_path, node.get_class()], "attach_failed")
+	# Read-back guarantee: set_script() silently no-ops when the script's base
+	# type is incompatible with the node, which would otherwise report a
+	# successful attach on a node that actually has no script (the exact silent
+	# failure that broke the NEON RUN demo). Read node.get_script() back and
+	# fail unless the engine holds exactly the script we attached.
+	var attached_script := node.get_script() as Script
+	var attached_path := str(attached_script.resource_path) if attached_script != null else ""
+	if attached_script != script or attached_path != script_path:
+		var read_back := attached_path if not attached_path.is_empty() else "<null>"
+		return NiuaMcpScriptEditorAuthoringUtils.error(
+			"script %s could not be attached to a %s node: node.get_script() read back %s (make the script's extends clause match the node type, then retry attach_script)" % [script_path, node.get_class(), read_back],
+			"attach_failed"
+		)
 
 	var inspected := false
 	if editor.has_method("inspect_object"):
@@ -79,13 +87,15 @@ static func attach_script(editor: EditorInterface, body: Dictionary, resolve_nod
 
 	var root_raw = edited_scene_root.call()
 	var root := root_raw as Node if root_raw is Node else null
+	# Read-back guarantee: the reported script is the one the node actually
+	# holds (attached_script), not an echo of the request.
 	return {
 		"ok": true,
 		"data": {
 			"node": NiuaMcpNodeSnapshot.selection_item(node, root),
 			"script": {
-				"path": script_path,
-				"type": script.get_class()
+				"path": attached_path,
+				"type": attached_script.get_class()
 			},
 			"created": created,
 			"reloadError": reload_error,

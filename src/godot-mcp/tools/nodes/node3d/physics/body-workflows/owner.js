@@ -4,8 +4,7 @@ import { createOptionalCollisionShape3DChild } from "../collision-child.js";
 export async function createPhysicsOwner3D(args = {}, {
   type,
   buildProperties,
-  ownerDataKey,
-  createdOwnerKey
+  ownerDataKey
 }) {
   const { client, payload } = splitBridgeArgs(args);
   const properties = buildProperties(payload);
@@ -29,8 +28,7 @@ export async function createPhysicsOwner3D(args = {}, {
       error: createdOwner.error,
       data: {
         type,
-        properties,
-        [createdOwnerKey]: createdOwner
+        properties
       }
     };
   }
@@ -40,7 +38,6 @@ export async function createPhysicsOwner3D(args = {}, {
     payload,
     ownerResult: createdOwner,
     ownerDataKey,
-    createdOwnerKey,
     ownerName: name,
     ownerParentPath: payload.parentPath,
     type,

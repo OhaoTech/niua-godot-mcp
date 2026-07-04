@@ -3,6 +3,7 @@ export const RUNTIME_TOOL_MANIFEST = [
     name: "get_godot_version",
     description: "Return the installed Godot executable version used by the local MCP server.",
     profile: "v1",
+    tier: "essential",
     category: "runtime",
     implementation: "local",
     inputSchema: {

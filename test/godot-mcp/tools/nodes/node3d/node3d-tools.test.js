@@ -351,32 +351,33 @@ test("Node3D body workflow facade delegates shared owner and body domains", asyn
   assert.match(owner, /splitBridgeArgs/);
   assert.match(owner, /createOptionalCollisionShape3DChild/);
   assert.match(owner, /client\.createNode/);
-  assert.match(owner, /\[createdOwnerKey\]: createdOwner/);
+  assert.match(owner, /ownerResult: createdOwner/);
+  assert.doesNotMatch(owner, /createdOwnerKey/);
 
   assert.match(bodyModules, /createPhysicsOwner3D/);
   assert.match(rigidBody, /export async function createRigidBody3D/);
   assert.match(rigidBody, /buildRigidBody3DProperties/);
   assert.match(rigidBody, /type: "RigidBody3D"/);
   assert.match(rigidBody, /ownerDataKey: "body"/);
-  assert.match(rigidBody, /createdOwnerKey: "createdBody"/);
+  assert.doesNotMatch(rigidBody, /createdOwnerKey/);
 
   assert.match(characterBody, /export async function createCharacterBody3D/);
   assert.match(characterBody, /buildCharacterBody3DProperties/);
   assert.match(characterBody, /type: "CharacterBody3D"/);
   assert.match(characterBody, /ownerDataKey: "character"/);
-  assert.match(characterBody, /createdOwnerKey: "createdCharacter"/);
+  assert.doesNotMatch(characterBody, /createdOwnerKey/);
 
   assert.match(staticBody, /export async function createStaticBody3D/);
   assert.match(staticBody, /buildStaticBody3DProperties/);
   assert.match(staticBody, /type: "StaticBody3D"/);
   assert.match(staticBody, /ownerDataKey: "body"/);
-  assert.match(staticBody, /createdOwnerKey: "createdBody"/);
+  assert.doesNotMatch(staticBody, /createdOwnerKey/);
 
   assert.match(area, /export async function createArea3D/);
   assert.match(area, /buildArea3DProperties/);
   assert.match(area, /type: "Area3D"/);
   assert.match(area, /ownerDataKey: "area"/);
-  assert.match(area, /createdOwnerKey: "createdArea"/);
+  assert.doesNotMatch(area, /createdOwnerKey/);
 });
 
 test("Node3D schemas delegate visual and physics catalogs to focused modules", async () => {
@@ -648,5 +649,59 @@ test("create_rigid_body_3d creates optional collision resource and child", async
       }
     ]);
     assert.deepEqual(parseToolText(result).data.collision, { endpoint: "/scene/node/create" });
+  });
+});
+
+test("create_character_body_3d returns each fact exactly once with no created* echo wrappers", async () => {
+  await withJsonBridge(async (req, res) => {
+    const body = await readJsonBody(req);
+    res.setHeader("content-type", "application/json");
+    if (req.url === "/scene/node/create" && body.type === "CharacterBody3D") {
+      res.end(JSON.stringify({ ok: true, data: { nodePath: "Root/Player" } }));
+      return;
+    }
+    if (req.url === "/resource/create") {
+      res.end(JSON.stringify({ ok: true, data: { path: "res://shapes/player_capsule.tres" } }));
+      return;
+    }
+    res.end(JSON.stringify({ ok: true, data: { nodePath: "Root/Player/PlayerCollision" } }));
+  }, async (port) => {
+    const result = await toolByName("create_character_body_3d").handler({
+      port,
+      name: "Player",
+      parentPath: "Root",
+      collisionShapeKind: "capsule",
+      collisionShapePath: "res://shapes/player_capsule.tres",
+      collisionName: "PlayerCollision",
+      collisionRadius: 0.5,
+      collisionHeight: 1.8
+    });
+    const payload = parseToolText(result);
+
+    assert.equal(payload.ok, true);
+    assert.deepEqual(payload.data.character, { nodePath: "Root/Player" });
+    assert.deepEqual(payload.data.shape, { path: "res://shapes/player_capsule.tres" });
+    assert.deepEqual(payload.data.collision, { nodePath: "Root/Player/PlayerCollision" });
+
+    const keys = [];
+    (function collectKeys(value) {
+      if (Array.isArray(value)) {
+        value.forEach(collectKeys);
+        return;
+      }
+      if (value && typeof value === "object") {
+        for (const [key, child] of Object.entries(value)) {
+          keys.push(key);
+          collectKeys(child);
+        }
+      }
+    })(payload);
+    assert.deepEqual(keys.filter((key) => /^created/.test(key)), []);
+
+    const text = JSON.stringify(payload);
+    const countOf = (needle) => text.split(needle).length - 1;
+    assert.equal(countOf("\"nodePath\":\"Root/Player\""), 1);
+    assert.equal(countOf("\"nodePath\":\"Root/Player/PlayerCollision\""), 1);
+    assert.equal(countOf("CharacterBody3D"), 1);
   });
 });

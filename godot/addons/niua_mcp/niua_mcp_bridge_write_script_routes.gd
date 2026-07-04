@@ -8,6 +8,7 @@ const NiuaMcpScriptFileOperations = preload("niua_mcp_script_file_operations.gd"
 
 const HANDLERS := {
 	"_write_script": true,
+	"_edit_script": true,
 	"_replace_in_scripts": true,
 	"_create_script": true,
 	"_attach_script": true,
@@ -28,6 +29,10 @@ func handles(handler: String) -> bool:
 
 func _write_script(body: Dictionary) -> Dictionary:
 	return NiuaMcpScriptFileOperations.write_script_with_side_effects(body, Callable(_context, "refresh_filesystem"), Callable(_context, "remember"))
+
+
+func _edit_script(body: Dictionary) -> Dictionary:
+	return NiuaMcpScriptFileOperations.edit_script_with_side_effects(body, Callable(_context, "refresh_filesystem"), Callable(_context, "remember"))
 
 
 func _replace_in_scripts(body: Dictionary) -> Dictionary:

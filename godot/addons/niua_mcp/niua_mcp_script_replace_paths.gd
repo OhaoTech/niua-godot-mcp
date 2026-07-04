@@ -1,6 +1,7 @@
 @tool
 extends RefCounted
 
+const NiuaMcpFilesystemReadOperations = preload("niua_mcp_filesystem_read_operations.gd")
 const NiuaMcpPathUtils = preload("niua_mcp_path_utils.gd")
 const NiuaMcpScriptFileUtils = preload("niua_mcp_script_file_utils.gd")
 
@@ -48,14 +49,14 @@ static func collect_script_paths(path: String, collected: Array, max_files: int)
 	if directory == null:
 		return
 
-	directory.list_dir_begin()
-	var name := directory.get_next()
-	while not name.is_empty() and collected.size() < max_files:
-		if not name.begins_with("."):
-			var entry_path := NiuaMcpPathUtils.join_res_path(path, name)
-			if directory.current_is_dir():
-				collect_script_paths(entry_path, collected, max_files)
-			elif entry_path.ends_with(".gd"):
-				collected.append(entry_path)
-		name = directory.get_next()
-	directory.list_dir_end()
+	# Determinism (B6): DirAccess iteration order is filesystem-dependent; walk
+	# each directory in sorted name-ascending order so the visited-file list —
+	# and which files survive the max_files cut — is stable across runs.
+	for listed in NiuaMcpFilesystemReadOperations.sorted_directory_listing(directory):
+		if collected.size() >= max_files:
+			break
+		var entry_path := NiuaMcpPathUtils.join_res_path(path, str(listed.get("name")))
+		if bool(listed.get("isDirectory")):
+			collect_script_paths(entry_path, collected, max_files)
+		elif entry_path.ends_with(".gd"):
+			collected.append(entry_path)

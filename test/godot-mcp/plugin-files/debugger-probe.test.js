@@ -39,10 +39,12 @@ test("Godot debugger probe delegates runtime capture storage", async () => {
   assert.match(capture, /store\.store_runtime_log\(data, session_id\)/);
   assert.match(capture, /store\.store_runtime_node_properties\(data, session_id\)/);
   assert.match(capture, /store\.store_runtime_node_property_set\(data, session_id\)/);
+  assert.match(capture, /store\.store_runtime_node_method_call\(data, session_id\)/);
   assert.match(capture, /store\.store_runtime_screenshot\(data, session_id\)/);
   assert.match(state, /store\.filtered_events\(limit, kinds, since_msec\)/);
   assert.match(state, /store\.runtime_node_properties\(sessions\.ids\(\), node_path, request_id\)/);
   assert.match(state, /store\.runtime_node_property_set_result\(request_id\)/);
+  assert.match(state, /store\.runtime_node_method_call_result\(request_id\)/);
   assert.match(state, /store\.runtime_screenshot_result\(request_id\)/);
   assert.doesNotMatch(probe, /var _runtime_states :=/);
   assert.doesNotMatch(probe, /var _runtime_node_properties_by_request :=/);
@@ -73,6 +75,8 @@ test("Godot debugger probe delegates runtime capture storage", async () => {
   assert.match(store, /func store_runtime_log\(data: Array, session_id: int\) -> void:/);
   assert.match(store, /func store_runtime_node_properties\(data: Array, session_id: int\) -> void:/);
   assert.match(store, /func store_runtime_node_property_set\(data: Array, session_id: int\) -> void:/);
+  assert.match(store, /func store_runtime_node_method_call\(data: Array, session_id: int\) -> void:/);
+  assert.match(store, /func runtime_node_method_call_result\(request_id: String\) -> Array:/);
   assert.match(store, /func store_runtime_screenshot\(data: Array, session_id: int\) -> void:/);
   assert.match(store, /func runtime_node_properties\(session_ids: Array\[int\], node_path: String, request_id: String = ""\) -> Array:/);
   assert.match(store, /func runtime_node_property_set_result\(request_id: String\) -> Array:/);
@@ -278,12 +282,14 @@ test("Godot debugger probe delegates focused plugin domains", async () => {
   assert.match(runtimeRequests, /const SNAPSHOT_MESSAGE := "niua_mcp:snapshot"/);
   assert.match(runtimeRequests, /const NODE_PROPERTIES_MESSAGE := "niua_mcp:node_properties"/);
   assert.match(runtimeRequests, /const SET_NODE_PROPERTY_MESSAGE := "niua_mcp:set_node_property"/);
+  assert.match(runtimeRequests, /const CALL_NODE_METHOD_MESSAGE := "niua_mcp:call_node_method"/);
   assert.match(runtimeRequests, /const RUNTIME_SCREENSHOT_MESSAGE := "niua_mcp:runtime_screenshot"/);
   assert.match(runtimeRequests, /var _runtime_request_counter := 0/);
   assert.match(runtimeRequests, /func next_runtime_request_id\(prefix: String\) -> String:/);
-  assert.match(runtimeRequests, /func send_runtime_snapshot_request\(debugger_probe: EditorDebuggerPlugin, session_ids: Array\[int\], record_event: Callable\) -> Array:/);
+  assert.match(runtimeRequests, /func send_runtime_snapshot_request\(debugger_probe: EditorDebuggerPlugin, session_ids: Array\[int\], max_depth: int, path_filter: String, record_event: Callable\) -> Array:/);
   assert.match(runtimeRequests, /func send_runtime_node_properties_request\(debugger_probe: EditorDebuggerPlugin, session_ids: Array\[int\], node_path: String, request_id: String, record_event: Callable\) -> Array:/);
   assert.match(runtimeRequests, /func send_runtime_node_property_set_request\(debugger_probe: EditorDebuggerPlugin, session_ids: Array\[int\], node_path: String, property_name: String, value, request_id: String, record_event: Callable\) -> Array:/);
+  assert.match(runtimeRequests, /func send_runtime_node_method_call_request\(debugger_probe: EditorDebuggerPlugin, session_ids: Array\[int\], node_path: String, method_name: String, args: Array, request_id: String, record_event: Callable\) -> Array:/);
   assert.match(runtimeRequests, /func send_runtime_screenshot_request\(debugger_probe: EditorDebuggerPlugin, session_ids: Array\[int\], request_id: String, record_event: Callable\) -> Array:/);
 });
 

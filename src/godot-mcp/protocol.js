@@ -28,9 +28,16 @@ export function normalizeBridgeResponse(response) {
     };
   }
 
+  // The addon's machine-readable errorCode survives normalization (A2/D11:
+  // errors carry the fix); the key is omitted when the bridge sent none.
+  const errorCode = typeof response.errorCode === "string" && response.errorCode.length > 0
+    ? response.errorCode
+    : undefined;
+
   return {
     ok: false,
     error: String(response.error ?? response.message ?? "unknown bridge error"),
+    ...(errorCode === undefined ? {} : { errorCode }),
     data: response.data ?? null
   };
 }

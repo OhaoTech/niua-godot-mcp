@@ -27,6 +27,10 @@ static func capture(store, sessions, message: String, data: Array, session_id: i
 			sessions.remember_session_id(session_id)
 			store.store_runtime_node_property_set(data, session_id)
 			return true
+		"node_method_call_result":
+			sessions.remember_session_id(session_id)
+			store.store_runtime_node_method_call(data, session_id)
+			return true
 		"runtime_screenshot_result":
 			sessions.remember_session_id(session_id)
 			store.store_runtime_screenshot(data, session_id)

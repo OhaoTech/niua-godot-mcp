@@ -1,6 +1,7 @@
 @tool
 extends RefCounted
 
+const NiuaMcpFilesystemReadOperations = preload("niua_mcp_filesystem_read_operations.gd")
 const NiuaMcpImportMetadataQueries = preload("niua_mcp_import_metadata_queries.gd")
 const NiuaMcpPathUtils = preload("niua_mcp_path_utils.gd")
 
@@ -33,21 +34,19 @@ static func _collect_imported_assets(path: String, recursive: bool) -> Array:
 	if directory == null:
 		return assets
 
-	directory.list_dir_begin()
-	var name := directory.get_next()
-	while not name.is_empty():
-		if not name.begins_with("."):
-			var entry_path := NiuaMcpPathUtils.join_res_path(path, name)
-			var is_directory := directory.current_is_dir()
-			if is_directory:
-				if recursive:
-					assets.append_array(_collect_imported_assets(entry_path, true))
-			elif entry_path.ends_with(".import"):
-				var source_path := entry_path.trim_suffix(".import")
-				var metadata := NiuaMcpImportMetadataQueries.load_metadata(source_path)
-				assets.append(NiuaMcpImportMetadataQueries.summary(source_path, entry_path, metadata))
-		name = directory.get_next()
-	directory.list_dir_end()
+	# Determinism (B6): DirAccess iteration order is filesystem-dependent, so
+	# each directory is walked in sorted name-ascending order (depth-first),
+	# making the asset list stable across runs and machines.
+	for listed in NiuaMcpFilesystemReadOperations.sorted_directory_listing(directory):
+		var entry_name := str(listed.get("name"))
+		var entry_path := NiuaMcpPathUtils.join_res_path(path, entry_name)
+		if bool(listed.get("isDirectory")):
+			if recursive:
+				assets.append_array(_collect_imported_assets(entry_path, true))
+		elif entry_path.ends_with(".import"):
+			var source_path := entry_path.trim_suffix(".import")
+			var metadata := NiuaMcpImportMetadataQueries.load_metadata(source_path)
+			assets.append(NiuaMcpImportMetadataQueries.summary(source_path, entry_path, metadata))
 	return assets
 
 

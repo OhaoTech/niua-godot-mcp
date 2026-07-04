@@ -2,21 +2,25 @@ import { BRIDGE_INPUT_SCHEMA } from "../shared/bridge-schema.js";
 import {
   ATTACH_SCRIPT_SCHEMA,
   CREATE_SCRIPT_SCHEMA,
+  EDIT_SCRIPT_SCHEMA,
   FILESYSTEM_PATH_SCHEMA,
   GOTO_SCRIPT_LINE_SCHEMA,
   PROJECT_SCRIPT_DIAGNOSTICS_SCHEMA,
+  READ_TEXT_FILE_SCHEMA,
   REPLACE_IN_SCRIPTS_SCHEMA,
   SCRIPT_DIAGNOSTICS_SCHEMA,
+  SEARCH_IN_SCRIPTS_SCHEMA,
   WRITE_TEXT_FILE_SCHEMA
 } from "./schemas.js";
 
 export const SCRIPT_TOOL_MANIFEST = [
   {
     name: "read_script",
-    description: "Read a GDScript file from the Godot project.",
+    description: "Read a GDScript file from the Godot project. Optional lineStart (1-based) + lineCount return only that line range; totalLines is always reported.",
     profile: "full",
+    tier: "essential",
     category: "scripts",
-    inputSchema: FILESYSTEM_PATH_SCHEMA,
+    inputSchema: READ_TEXT_FILE_SCHEMA,
     bridge: {
       clientMethod: "readScript",
       endpoint: "/script/read",
@@ -24,7 +28,9 @@ export const SCRIPT_TOOL_MANIFEST = [
       request: "query",
       query: {
         fields: {
-          path: {}
+          path: {},
+          lineStart: {},
+          lineCount: {}
         }
       }
     },
@@ -39,13 +45,51 @@ export const SCRIPT_TOOL_MANIFEST = [
       error: "reject missing or non-script paths"
     },
     docs: {
-      summary: "Reads a GDScript file from the Godot project."
+      summary: "Reads a GDScript file, optionally limited to a line range."
+    }
+  },
+  {
+    name: "search_in_scripts",
+    description: "Search .gd files under a res:// prefix for plain-text (or Godot RegEx) matches. Returns matched lines only (trimmed to 160 chars) in sorted file order then line order; maxResults defaults to 50 (cap 200) with truncated:true when hit. Zero matches is a success.",
+    profile: "full",
+    tier: "essential",
+    category: "scripts",
+    inputSchema: SEARCH_IN_SCRIPTS_SCHEMA,
+    bridge: {
+      clientMethod: "searchInScripts",
+      endpoint: "/script/search",
+      method: "GET",
+      request: "query",
+      query: {
+        fields: {
+          query: {},
+          regex: {},
+          pathPrefix: {},
+          exclude: { array: "csv", trim: true },
+          maxResults: {},
+          caseSensitive: {}
+        }
+      }
+    },
+    godotRoute: {
+      side: "read",
+      endpoint: "/script/search",
+      handler: "_search_in_scripts",
+      arg: "query"
+    },
+    conformance: {
+      happy: "search GDScript files for a plain-text query",
+      error: "reject invalid regex patterns naming the pattern"
+    },
+    docs: {
+      summary: "Searches .gd files for plain-text or regex matches, matched lines only."
     }
   },
   {
     name: "write_script",
     description: "Write a GDScript file under res:// and refresh the Godot editor filesystem.",
     profile: "full",
+    tier: "essential",
     category: "scripts",
     inputSchema: WRITE_TEXT_FILE_SCHEMA,
     bridge: {
@@ -70,9 +114,38 @@ export const SCRIPT_TOOL_MANIFEST = [
     }
   },
   {
+    name: "edit_script",
+    description: "Replace exact oldText with newText in a res:// GDScript file. oldText must be unique unless replaceAll:true; the edited file is parse-checked by default and valid:false means the edit WAS applied but the script no longer parses — fix or revert. replacements and totalLines are read back from disk.",
+    profile: "full",
+    tier: "essential",
+    category: "scripts",
+    inputSchema: EDIT_SCRIPT_SCHEMA,
+    bridge: {
+      clientMethod: "editScript",
+      endpoint: "/script/edit",
+      method: "POST",
+      request: "body"
+    },
+    godotRoute: {
+      side: "write",
+      endpoint: "/script/edit",
+      handler: "_edit_script",
+      arg: "body",
+      methodError: "script edit requires POST"
+    },
+    conformance: {
+      happy: "apply a surgical text replacement and parse-check the result",
+      error: "reject oldText that does not appear in the script"
+    },
+    docs: {
+      summary: "Replaces exact text in a GDScript file and parse-checks the result."
+    }
+  },
+  {
     name: "open_script",
     description: "Open a GDScript file in the visible Godot editor.",
     profile: "full",
+    tier: "standard",
     category: "scripts",
     inputSchema: FILESYSTEM_PATH_SCHEMA,
     bridge: {
@@ -100,6 +173,7 @@ export const SCRIPT_TOOL_MANIFEST = [
     name: "validate_script",
     description: "Validate that a GDScript file can be loaded by Godot.",
     profile: "full",
+    tier: "standard",
     category: "scripts",
     inputSchema: FILESYSTEM_PATH_SCHEMA,
     bridge: {
@@ -131,6 +205,7 @@ export const SCRIPT_TOOL_MANIFEST = [
     name: "diagnose_script",
     description: "Run Godot's GDScript parser for a res:// script and return structured diagnostics.",
     profile: "full",
+    tier: "essential",
     category: "scripts",
     implementation: "local",
     inputSchema: SCRIPT_DIAGNOSTICS_SCHEMA,
@@ -149,6 +224,7 @@ export const SCRIPT_TOOL_MANIFEST = [
     name: "diagnose_project_scripts",
     description: "Run Godot's GDScript parser across explicit or discovered project scripts and return aggregate diagnostics.",
     profile: "full",
+    tier: "standard",
     category: "scripts",
     implementation: "local",
     inputSchema: PROJECT_SCRIPT_DIAGNOSTICS_SCHEMA,
@@ -167,6 +243,7 @@ export const SCRIPT_TOOL_MANIFEST = [
     name: "get_script_symbols",
     description: "Read Godot script symbol metadata including methods, properties, signals, and constants.",
     profile: "full",
+    tier: "standard",
     category: "scripts",
     inputSchema: FILESYSTEM_PATH_SCHEMA,
     bridge: {
@@ -198,6 +275,7 @@ export const SCRIPT_TOOL_MANIFEST = [
     name: "get_script_editor_state",
     description: "Read visible Godot Script Editor state including current script, open scripts, and breakpoints.",
     profile: "full",
+    tier: "standard",
     category: "scripts",
     inputSchema: BRIDGE_INPUT_SCHEMA,
     bridge: {
@@ -224,6 +302,7 @@ export const SCRIPT_TOOL_MANIFEST = [
     name: "get_script_cursor_state",
     description: "Read active Godot Script Editor caret, selection, and visible-line metadata.",
     profile: "full",
+    tier: "standard",
     category: "scripts",
     inputSchema: BRIDGE_INPUT_SCHEMA,
     bridge: {
@@ -250,6 +329,7 @@ export const SCRIPT_TOOL_MANIFEST = [
     name: "goto_script_line",
     description: "Open a script in the visible Godot Script Editor and focus a 1-based line number.",
     profile: "full",
+    tier: "standard",
     category: "scripts",
     inputSchema: GOTO_SCRIPT_LINE_SCHEMA,
     bridge: {
@@ -275,8 +355,9 @@ export const SCRIPT_TOOL_MANIFEST = [
   },
   {
     name: "replace_in_scripts",
-    description: "Preview or apply a capped literal replacement across GDScript files in the Godot project.",
+    description: "Preview or apply a capped literal replacement across GDScript files in the Godot project. When scanning by rootPath, files are visited in sorted name order per directory, so the maxFiles cap is deterministic.",
     profile: "full",
+    tier: "standard",
     category: "scripts",
     inputSchema: REPLACE_IN_SCRIPTS_SCHEMA,
     bridge: {
@@ -304,6 +385,7 @@ export const SCRIPT_TOOL_MANIFEST = [
     name: "create_script",
     description: "Create a GDScript file using supplied content or a generated template with optional class_name.",
     profile: "full",
+    tier: "essential",
     category: "scripts",
     inputSchema: CREATE_SCRIPT_SCHEMA,
     bridge: {
@@ -331,6 +413,7 @@ export const SCRIPT_TOOL_MANIFEST = [
     name: "attach_script",
     description: "Attach a GDScript file to a node in the current edited Godot scene.",
     profile: "full",
+    tier: "essential",
     category: "scripts",
     inputSchema: ATTACH_SCRIPT_SCHEMA,
     bridge: {

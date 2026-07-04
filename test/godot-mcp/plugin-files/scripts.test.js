@@ -183,7 +183,9 @@ test("Godot script editor operations live in their own Godot module", async () =
   assert.doesNotMatch(bridge, /NiuaMcpScriptTemplates\.template_content/);
   assert.doesNotMatch(bridge, /get_script_editor/);
   assert.doesNotMatch(bridge, /get_base_editor/);
-  assert.doesNotMatch(bridge, /edit_script/);
+  // The edit_script tool routes through script operations; the bridge surface
+  // must still never call the ScriptEditor edit_script(...) API directly.
+  assert.doesNotMatch(bridge, /\.edit_script\(/);
   assert.doesNotMatch(bridge, /set_script/);
   assert.match(operations, /extends RefCounted/);
   assert.match(operations, /preload\("niua_mcp_script_editor_authoring_operations\.gd"\)/);
@@ -390,6 +392,55 @@ test("Godot script editor cursor state delegates context and caret modules", asy
   assert.match(caretSnapshot, /get_selection_from_line/);
   assert.match(caretSnapshot, /get_first_visible_line/);
   assert.match(caretSnapshot, /get_line\(line\)/);
+});
+
+test("Godot script iteration trio delegates focused domain modules", async () => {
+  const bridge = await readBridgeWriteSurface();
+  const readRoutes = await readAddonFile("niua_mcp_bridge_read_routes.gd");
+  const facade = await readAddonFileExact("niua_mcp_script_file_operations.gd");
+  const sideEffects = await readAddonFile("niua_mcp_script_file_side_effects.gd");
+  const utils = await readAddonFile("niua_mcp_script_file_utils.gd");
+  const search = await readAddonFileExact("niua_mcp_script_search_operations.gd");
+  const edit = await readAddonFileExact("niua_mcp_script_edit_operations.gd");
+  const filesystemRead = await readAddonFile("niua_mcp_filesystem_read_operations.gd");
+  const basic = await readAddonFile("niua_mcp_script_file_basic_operations.gd");
+
+  // Routing: search is a read route, edit is a write route with side effects.
+  assert.match(readRoutes, /NiuaMcpScriptFileOperations\.search_in_scripts/);
+  assert.match(bridge, /NiuaMcpScriptFileOperations\.edit_script_with_side_effects/);
+  assert.match(facade, /preload\("niua_mcp_script_search_operations\.gd"\)/);
+  assert.match(facade, /preload\("niua_mcp_script_edit_operations\.gd"\)/);
+
+  // Search: deterministic sorted walk (reused lister), regex failure naming the
+  // pattern, and the token-diet caps.
+  assert.match(search, /NiuaMcpFilesystemReadOperations\.sorted_directory_listing/);
+  assert.match(search, /NiuaMcpFilesystemReadOperations\._excluded/);
+  assert.match(search, /invalid regex pattern: %s/);
+  assert.match(search, /"truncated": total_matches > matches\.size\(\)/);
+  assert.match(search, /\(\?i\)/);
+  assert.doesNotMatch(search, /list_dir_begin/);
+
+  // Edit: exact replacement reuses replace_literal + the replace writer; parse
+  // truth reuses validate_script; errors carry the fix.
+  assert.match(edit, /NiuaMcpScriptReplaceLiteral\.replace_literal/);
+  assert.match(edit, /NiuaMcpScriptReplaceWriter\.write_script_content/);
+  assert.match(edit, /NiuaMcpScriptAnalysisOperations\.validate_script/);
+  assert.match(edit, /read_script the file to see current content/);
+  assert.match(edit, /make oldText unique by including surrounding lines, or pass replaceAll:true/);
+  assert.match(edit, /"replacements": occurrences/);
+  assert.match(edit, /NiuaMcpFilesystemReadOperations\.line_count/);
+  assert.doesNotMatch(edit, /store_string/);
+
+  // Side effects: targeted refresh for the single edited path.
+  assert.match(sideEffects, /NiuaMcpScriptEditOperations\.edit_script/);
+  assert.match(sideEffects, /NiuaMcpScriptFileUtils\.refresh_path/);
+  assert.match(utils, /static func refresh_path\(refresh_filesystem: Callable, path: String\) -> void:/);
+
+  // Ranged reads: one shared file-read core; read_script passes the range through.
+  assert.match(basic, /lineStart/);
+  assert.match(basic, /lineCount/);
+  assert.match(filesystemRead, /static func line_count\(content: String\) -> int:/);
+  assert.match(filesystemRead, /lineStart %d is out of range for %s: totalLines is %d/);
 });
 
 test("Godot script bridge side effects live in script operations", async () => {

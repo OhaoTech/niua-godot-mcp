@@ -61,12 +61,14 @@ test("GodotBridgeClient runtime polling lives in its own module", async () => {
   const runtimeFacade = await readBridgeClientSource("bridge-client/runtime.js");
   const runtimeBase = await readBridgeClientSource("bridge-client/runtime/base.js");
   const runtimeNodeProperties = await readBridgeClientSource("bridge-client/runtime/node-properties.js");
+  const runtimeNodeMethods = await readBridgeClientSource("bridge-client/runtime/node-methods.js");
   const runtimeScreenshots = await readBridgeClientSource("bridge-client/runtime/screenshots.js");
   const runtimePolling = await readBridgeClientSource("bridge-client/runtime/polling.js");
   const runtimeSurface = [
     runtimeFacade,
     runtimeBase,
     runtimeNodeProperties,
+    runtimeNodeMethods,
     runtimeScreenshots,
     runtimePolling
   ].join("\n");
@@ -80,6 +82,7 @@ test("GodotBridgeClient runtime polling lives in its own module", async () => {
   assert.doesNotMatch(client, /async captureRuntimeScreenshot/);
 
   assert.match(runtimeFacade, /import \{ RUNTIME_BASE_BRIDGE_METHODS \} from "\.\/runtime\/base\.js"/);
+  assert.match(runtimeFacade, /import \{ RUNTIME_NODE_METHOD_BRIDGE_METHODS \} from "\.\/runtime\/node-methods\.js"/);
   assert.match(runtimeFacade, /import \{ RUNTIME_NODE_PROPERTY_BRIDGE_METHODS \} from "\.\/runtime\/node-properties\.js"/);
   assert.match(runtimeFacade, /import \{ RUNTIME_SCREENSHOT_BRIDGE_METHODS \} from "\.\/runtime\/screenshots\.js"/);
   assert.match(runtimeFacade, /export const RUNTIME_BRIDGE_METHODS/);
@@ -101,6 +104,9 @@ test("GodotBridgeClient runtime polling lives in its own module", async () => {
   assert.match(runtimeSurface, /async requestSetRuntimeNodeProperty/);
   assert.match(runtimeSurface, /async getRuntimeNodePropertySetResult/);
   assert.match(runtimeSurface, /async setRuntimeNodeProperty/);
+  assert.match(runtimeSurface, /async requestCallRuntimeNodeMethod/);
+  assert.match(runtimeSurface, /async getRuntimeNodeMethodCallResult/);
+  assert.match(runtimeSurface, /async callRuntimeNodeMethod/);
   assert.match(runtimeSurface, /async requestRuntimeScreenshot/);
   assert.match(runtimeSurface, /async getRuntimeScreenshotResult/);
   assert.match(runtimeSurface, /async captureRuntimeScreenshot/);
@@ -118,6 +124,12 @@ test("GodotBridgeClient runtime polling lives in its own module", async () => {
   assert.match(runtimeNodeProperties, /async getRuntimeNodePropertySetResult/);
   assert.match(runtimeNodeProperties, /async setRuntimeNodeProperty/);
   assert.match(runtimeNodeProperties, /pollRuntimeResult/);
+
+  assert.match(runtimeNodeMethods, /export const RUNTIME_NODE_METHOD_BRIDGE_METHODS/);
+  assert.match(runtimeNodeMethods, /async requestCallRuntimeNodeMethod/);
+  assert.match(runtimeNodeMethods, /async getRuntimeNodeMethodCallResult/);
+  assert.match(runtimeNodeMethods, /async callRuntimeNodeMethod/);
+  assert.match(runtimeNodeMethods, /pollRuntimeResult/);
 
   assert.match(runtimeScreenshots, /export const RUNTIME_SCREENSHOT_BRIDGE_METHODS/);
   assert.match(runtimeScreenshots, /async requestRuntimeScreenshot/);
@@ -2215,7 +2227,11 @@ test("GodotBridgeClient reads runtime state captured by the debugger probe", asy
     seenUrls.push(req.url);
     res.setHeader("content-type", "application/json");
 
-    if (req.url === "/runtime/state") {
+    if (
+      req.url === "/runtime/state" ||
+      req.url === "/runtime/state?maxDepth=3" ||
+      req.url === "/runtime/state?pathFilter=%2Froot%2FPlayer"
+    ) {
       res.end(JSON.stringify({
         ok: true,
         data: {
@@ -2254,7 +2270,23 @@ test("GodotBridgeClient reads runtime state captured by the debugger probe", asy
     assert.equal(response.ok, true);
     assert.equal(response.data.available, true);
     assert.equal(response.data.sessions[0].runtimeState.currentScene, "res://scenes/main.tscn");
-    assert.deepEqual(seenUrls, ["/runtime/state"]);
+
+    const shallowResponse = await client.getRuntimeState({ maxDepth: 3 });
+    assert.equal(shallowResponse.ok, true);
+
+    const filteredResponse = await client.getRuntimeState({ pathFilter: "/root/Player" });
+    assert.equal(filteredResponse.ok, true);
+
+    // Empty pathFilter is omitted from the query entirely.
+    const emptyFilterResponse = await client.getRuntimeState({ pathFilter: "" });
+    assert.equal(emptyFilterResponse.ok, true);
+
+    assert.deepEqual(seenUrls, [
+      "/runtime/state",
+      "/runtime/state?maxDepth=3",
+      "/runtime/state?pathFilter=%2Froot%2FPlayer",
+      "/runtime/state"
+    ]);
   });
 });
 
@@ -2445,6 +2477,82 @@ test("GodotBridgeClient polls runtime node property mutations captured by the de
     assert.deepEqual(seenRequests, [
       { method: "POST", url: "/runtime/node/property/set" },
       { method: "GET", url: "/runtime/node/property/set/result?requestId=set_node_property%3A1" }
+    ]);
+  });
+});
+
+test("GodotBridgeClient polls runtime node method calls captured by the debugger probe", async () => {
+  const seenRequests = [];
+
+  await withBridgeServer(async (req, res) => {
+    seenRequests.push({ method: req.method, url: req.url });
+    res.setHeader("content-type", "application/json");
+
+    if (req.url === "/runtime/node/method/call" && req.method === "POST") {
+      const chunks = [];
+      for await (const chunk of req) {
+        chunks.push(chunk);
+      }
+      const body = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+      assert.deepEqual(body, {
+        nodePath: "/root/RuntimeSmoke",
+        method: "get_score",
+        args: []
+      });
+      res.end(JSON.stringify({
+        ok: true,
+        data: {
+          available: true,
+          requestId: "call_node_method:1",
+          pending: true,
+          responses: []
+        }
+      }));
+      return;
+    }
+
+    if (req.url === "/runtime/node/method/call/result?requestId=call_node_method%3A1" && req.method === "GET") {
+      res.end(JSON.stringify({
+        ok: true,
+        data: {
+          available: true,
+          requestId: "call_node_method:1",
+          pending: false,
+          responses: [
+            {
+              sessionId: 0,
+              nodePath: "/root/RuntimeSmoke",
+              method: "get_score",
+              exists: true,
+              called: true,
+              returnValue: 1250,
+              returnType: "int"
+            }
+          ]
+        }
+      }));
+      return;
+    }
+
+    res.statusCode = 404;
+    res.end(JSON.stringify({ ok: false, error: "not found" }));
+  }, async (port) => {
+    const client = new GodotBridgeClient({ port });
+    const response = await client.callRuntimeNodeMethod({
+      nodePath: "/root/RuntimeSmoke",
+      method: "get_score",
+      args: [],
+      timeoutMsec: 1000,
+      pollIntervalMsec: 1
+    });
+
+    assert.equal(response.ok, true);
+    assert.equal(response.data.pending, false);
+    assert.equal(response.data.responses[0].called, true);
+    assert.equal(response.data.responses[0].returnValue, 1250);
+    assert.deepEqual(seenRequests, [
+      { method: "POST", url: "/runtime/node/method/call" },
+      { method: "GET", url: "/runtime/node/method/call/result?requestId=call_node_method%3A1" }
     ]);
   });
 });

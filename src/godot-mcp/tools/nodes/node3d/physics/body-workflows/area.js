@@ -5,7 +5,6 @@ export async function createArea3D(args = {}) {
   return createPhysicsOwner3D(args, {
     type: "Area3D",
     buildProperties: buildArea3DProperties,
-    ownerDataKey: "area",
-    createdOwnerKey: "createdArea"
+    ownerDataKey: "area"
   });
 }

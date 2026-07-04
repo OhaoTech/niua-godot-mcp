@@ -51,8 +51,11 @@ test("Godot MCP server forwards install_runtime_probe calls to the editor bridge
 });
 
 test("Godot MCP server forwards get_runtime_state calls to the editor bridge", async () => {
+  const seenUrls = [];
+
   await withBridgeServer(async (req, res) => {
-    if (req.url === "/runtime/state" && req.method === "GET") {
+    seenUrls.push(req.url);
+    if ((req.url === "/runtime/state?maxDepth=2" || req.url === "/runtime/state") && req.method === "GET") {
       res.setHeader("content-type", "application/json");
       res.end(JSON.stringify({
         ok: true,
@@ -83,7 +86,9 @@ test("Godot MCP server forwards get_runtime_state calls to the editor bridge", a
     try {
       const toolResponse = await server.request("tools/call", {
         name: "get_runtime_state",
-        arguments: {}
+        arguments: {
+          maxDepth: 2
+        }
       });
       assert.match(toolResponse.result.content[0].text, /"currentScene":"res:\/\/scenes\/main\.tscn"/);
 
@@ -92,6 +97,10 @@ test("Godot MCP server forwards get_runtime_state calls to the editor bridge", a
         arguments: {}
       });
       assert.match(resourceResponse.result.contents[0].text, /"hasRuntimeState":true/);
+      assert.deepEqual(seenUrls, [
+        "/runtime/state?maxDepth=2",
+        "/runtime/state"
+      ]);
     } finally {
       await server.close();
     }

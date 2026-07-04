@@ -12,8 +12,10 @@ function dispatchDefinitions() {
 }
 
 test("dispatch profile is a valid, selectable profile", () => {
-  assert.equal(resolveToolProfile("dispatch"), "dispatch");
-  const tools = selectProfileTools(GODOT_MCP_TOOLS, "dispatch");
+  assert.equal(resolveToolProfile("compact"), "compact");
+  assert.equal(resolveToolProfile("dispatch"), "compact"); // permanent alias
+  assert.equal(resolveToolProfile("v1"), "core"); // permanent alias
+  const tools = selectProfileTools(GODOT_MCP_TOOLS, "compact");
   assert.ok(tools.length < 20, `expected a handful of dispatchers, got ${tools.length}`);
 });
 

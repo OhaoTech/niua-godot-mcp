@@ -14,6 +14,7 @@ export const ANIMATION_TOOL_MANIFEST = [
     name: "upsert_animation",
     description: "Create or replace an AnimationPlayer animation with property or transform tracks and keyframes.",
     profile: "full",
+    tier: "standard",
     category: "animation",
     inputSchema: UPSERT_ANIMATION_SCHEMA,
     bridge: {
@@ -42,6 +43,7 @@ export const ANIMATION_TOOL_MANIFEST = [
     name: "list_animations",
     description: "List AnimationPlayer animations in the edited scene or inside an imported PackedScene such as a GLB.",
     profile: "full",
+    tier: "standard",
     category: "animation",
     inputSchema: LIST_ANIMATIONS_SCHEMA,
     bridge: {
@@ -76,6 +78,7 @@ export const ANIMATION_TOOL_MANIFEST = [
     name: "play_animation",
     description: "Play an AnimationPlayer animation in the visible Godot editor.",
     profile: "full",
+    tier: "standard",
     category: "animation",
     inputSchema: PLAY_ANIMATION_SCHEMA,
     bridge: {
@@ -104,6 +107,7 @@ export const ANIMATION_TOOL_MANIFEST = [
     name: "stop_animation",
     description: "Stop an AnimationPlayer animation in the visible Godot editor.",
     profile: "full",
+    tier: "standard",
     category: "animation",
     inputSchema: STOP_ANIMATION_SCHEMA,
     bridge: {
@@ -132,6 +136,7 @@ export const ANIMATION_TOOL_MANIFEST = [
     name: "get_animation_state",
     description: "Read an AnimationPlayer playback state and available animations.",
     profile: "full",
+    tier: "standard",
     category: "animation",
     inputSchema: GET_ANIMATION_STATE_SCHEMA,
     bridge: {
@@ -164,6 +169,7 @@ export const ANIMATION_TOOL_MANIFEST = [
     name: "instance_animated_scene",
     description: "Instance an imported PackedScene that contains animations into the edited scene and report nested AnimationPlayers.",
     profile: "full",
+    tier: "standard",
     category: "animation",
     inputSchema: INSTANCE_ANIMATED_SCENE_SCHEMA,
     bridge: {
@@ -192,6 +198,7 @@ export const ANIMATION_TOOL_MANIFEST = [
     name: "create_animation_tree_state_machine",
     description: "Create or update a basic AnimationTree StateMachine wired to an AnimationPlayer.",
     profile: "full",
+    tier: "standard",
     category: "animation",
     inputSchema: CREATE_ANIMATION_TREE_STATE_MACHINE_SCHEMA,
     bridge: {
@@ -220,6 +227,7 @@ export const ANIMATION_TOOL_MANIFEST = [
     name: "travel_animation_tree",
     description: "Travel an AnimationTree StateMachine playback to a named state.",
     profile: "full",
+    tier: "standard",
     category: "animation",
     inputSchema: TRAVEL_ANIMATION_TREE_SCHEMA,
     bridge: {

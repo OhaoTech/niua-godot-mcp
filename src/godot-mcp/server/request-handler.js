@@ -4,6 +4,7 @@ import {
   callTool
 } from "./tool-catalog.js";
 import { RESOURCE_DEFINITIONS, readBridgeResource } from "./resources.js";
+import { serverInstructions } from "./instructions.js";
 
 export async function handleRequest(message) {
   switch (message.method) {
@@ -14,7 +15,8 @@ export async function handleRequest(message) {
           tools: {},
           resources: {}
         },
-        serverInfo: SERVER_INFO
+        serverInfo: SERVER_INFO,
+        instructions: serverInstructions()
       };
     case "ping":
       return {};

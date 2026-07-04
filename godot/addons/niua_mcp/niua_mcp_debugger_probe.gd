@@ -60,8 +60,8 @@ func send_message_for_sessions(message: String, data: Array, active_only: bool =
 	return NiuaMcpDebuggerProbeSessionCommands.send_message_for_sessions(self, _sessions.ids(), message, data, active_only, Callable(self, "_record_event"))
 
 
-func send_runtime_snapshot_request() -> Array:
-	return _runtime_requests.send_runtime_snapshot_request(self, _sessions.ids(), Callable(self, "_record_event"))
+func send_runtime_snapshot_request(max_depth: int = 0, path_filter: String = "") -> Array:
+	return _runtime_requests.send_runtime_snapshot_request(self, _sessions.ids(), max_depth, path_filter, Callable(self, "_record_event"))
 
 
 func next_runtime_request_id(prefix: String) -> String:
@@ -90,6 +90,14 @@ func send_runtime_screenshot_request(request_id: String) -> Array:
 
 func runtime_screenshot_result(request_id: String) -> Array:
 	return NiuaMcpDebuggerProbeState.runtime_screenshot_result(_store, request_id)
+
+
+func send_runtime_node_method_call_request(node_path: String, method_name: String, args: Array, request_id: String) -> Array:
+	return _runtime_requests.send_runtime_node_method_call_request(self, _sessions.ids(), node_path, method_name, args, request_id, Callable(self, "_record_event"))
+
+
+func runtime_node_method_call_result(request_id: String) -> Array:
+	return NiuaMcpDebuggerProbeState.runtime_node_method_call_result(_store, request_id)
 
 
 func send_runtime_input_request(actions: Array, hold_ms, mouse_motion, request_id: String) -> Array:

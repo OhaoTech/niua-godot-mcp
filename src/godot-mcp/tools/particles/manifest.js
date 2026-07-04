@@ -10,6 +10,7 @@ export const PARTICLES_TOOL_MANIFEST = [
     name: "create_gpu_particles_3d",
     description: "Create a GPUParticles3D emitter with a draw-pass mesh and optional ParticleProcessMaterial settings.",
     profile: "full",
+    tier: "standard",
     category: "particles",
     inputSchema: CREATE_GPU_PARTICLES_3D_SCHEMA,
     bridge: {
@@ -37,6 +38,7 @@ export const PARTICLES_TOOL_MANIFEST = [
     name: "create_gpu_particles_2d",
     description: "Create a GPUParticles2D emitter with a default texture and optional ParticleProcessMaterial settings.",
     profile: "full",
+    tier: "standard",
     category: "particles",
     inputSchema: CREATE_GPU_PARTICLES_2D_SCHEMA,
     bridge: {
@@ -64,6 +66,7 @@ export const PARTICLES_TOOL_MANIFEST = [
     name: "configure_particle_process_material",
     description: "Create or update the ParticleProcessMaterial on a GPUParticles2D or GPUParticles3D node.",
     profile: "full",
+    tier: "standard",
     category: "particles",
     inputSchema: CONFIGURE_PARTICLE_PROCESS_MATERIAL_SCHEMA,
     bridge: {
@@ -91,6 +94,7 @@ export const PARTICLES_TOOL_MANIFEST = [
     name: "set_particles_emitting",
     description: "Set a GPUParticles2D or GPUParticles3D node's emitting and one-shot state, optionally restarting it.",
     profile: "full",
+    tier: "standard",
     category: "particles",
     inputSchema: SET_PARTICLES_EMITTING_SCHEMA,
     bridge: {

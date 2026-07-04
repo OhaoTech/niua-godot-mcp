@@ -28,7 +28,7 @@ test("Godot MCP server exposes Audio tools only under the full profile", async (
       name: "list_audio_buses",
       arguments: {}
     });
-    assert.match(blocked.error.message, /not in the "v1" tool profile/);
+    assert.match(blocked.error.message, /not in the "core" tool profile/);
   } finally {
     await fullServer.close();
     await v1Server.close();

@@ -51,6 +51,7 @@ export const RUN_TOOL_MANIFEST = [
     name: "get_run_settings",
     description: "Read Godot run settings such as the configured main scene.",
     profile: "full",
+    tier: "standard",
     category: "run",
     inputSchema: BRIDGE_INPUT_SCHEMA,
     bridge: {
@@ -77,6 +78,7 @@ export const RUN_TOOL_MANIFEST = [
     name: "set_main_scene",
     description: "Set application/run/main_scene to a scene path through the visible Godot editor bridge.",
     profile: "full",
+    tier: "essential",
     category: "run",
     inputSchema: SET_MAIN_SCENE_SCHEMA,
     bridge: {
@@ -104,6 +106,7 @@ export const RUN_TOOL_MANIFEST = [
     name: "get_run_status",
     description: "Read whether the Godot editor is currently playing a scene.",
     profile: "full",
+    tier: "essential",
     category: "run",
     inputSchema: BRIDGE_INPUT_SCHEMA,
     bridge: {
@@ -130,6 +133,7 @@ export const RUN_TOOL_MANIFEST = [
     name: "run_main_scene",
     description: "Run the project's main scene from the visible Godot editor.",
     profile: "full",
+    tier: "essential",
     category: "run",
     inputSchema: RUN_CONTROL_SCHEMA,
     bridge: {
@@ -157,6 +161,7 @@ export const RUN_TOOL_MANIFEST = [
     name: "run_current_scene",
     description: "Run the currently edited scene from the visible Godot editor.",
     profile: "full",
+    tier: "standard",
     category: "run",
     inputSchema: RUN_CONTROL_SCHEMA,
     bridge: {
@@ -184,6 +189,7 @@ export const RUN_TOOL_MANIFEST = [
     name: "run_custom_scene",
     description: "Run a specific scene path from the visible Godot editor.",
     profile: "full",
+    tier: "standard",
     category: "run",
     inputSchema: RUN_CUSTOM_SCENE_SCHEMA,
     bridge: {
@@ -211,6 +217,7 @@ export const RUN_TOOL_MANIFEST = [
     name: "stop_running_scene",
     description: "Stop the scene currently playing from the Godot editor.",
     profile: "full",
+    tier: "essential",
     category: "run",
     inputSchema: BRIDGE_INPUT_SCHEMA,
     bridge: {
@@ -238,6 +245,7 @@ export const RUN_TOOL_MANIFEST = [
     name: "reload_running_scene",
     description: "Reload the currently running Godot scene by stopping playback and starting the same scene again.",
     profile: "full",
+    tier: "standard",
     category: "run",
     inputSchema: RUN_CONTROL_SCHEMA,
     bridge: {

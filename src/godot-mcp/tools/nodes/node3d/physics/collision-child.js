@@ -18,7 +18,6 @@ export async function createOptionalCollisionShape3DChild({
   payload,
   ownerResult,
   ownerDataKey,
-  createdOwnerKey,
   ownerName,
   ownerParentPath,
   type,
@@ -30,8 +29,7 @@ export async function createOptionalCollisionShape3DChild({
       type,
       properties,
       ownerDataKey,
-      ownerResult,
-      createdOwnerKey
+      ownerResult
     });
   }
 
@@ -42,7 +40,6 @@ export async function createOptionalCollisionShape3DChild({
       properties,
       ownerDataKey,
       ownerResult,
-      createdOwnerKey,
       context,
       createdShape
     });
@@ -63,7 +60,6 @@ export async function createOptionalCollisionShape3DChild({
       properties,
       ownerDataKey,
       ownerResult,
-      createdOwnerKey,
       context,
       collisionNodeProperties,
       createdShape,
@@ -76,7 +72,6 @@ export async function createOptionalCollisionShape3DChild({
     properties,
     ownerDataKey,
     ownerResult,
-    createdOwnerKey,
     context,
     collisionNodeProperties,
     createdShape,

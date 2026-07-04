@@ -44,10 +44,28 @@ static func set_selection(editor: EditorInterface, body: Dictionary) -> Dictiona
 		editor.edit_node(nodes[0])
 		edited = true
 
+	# Read-back guarantee: report what the editor actually selected — an ok:true
+	# with an empty selection would be a silent lie. The diagnostics in the error
+	# name which precondition failed (nodes detached vs selection dropped).
+	var applied := NiuaMcpSceneGraphOperations.selection_data(editor)
+	if applied.size() != nodes.size():
+		var inside := []
+		for node in nodes:
+			inside.append(node.is_inside_tree())
+		var root := NiuaMcpSceneGraphOperations.edited_scene_root(editor)
+		var detail := "editor selection did not stick (%d of %d selected; nodesInsideTree=%s rootInsideTree=%s rawSelected=%d) — retry set_selection" % [
+			applied.size(),
+			nodes.size(),
+			str(inside),
+			str(root != null and root.is_inside_tree()),
+			editor_selection.get_selected_nodes().size()
+		]
+		return NiuaMcpEditorSelectionUtils.error(detail, "selection_failed")
+
 	return {
 		"ok": true,
 		"data": {
-			"selection": NiuaMcpSceneGraphOperations.selection_data(editor),
+			"selection": applied,
 			"selectedCount": nodes.size(),
 			"edited": edited
 		}

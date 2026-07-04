@@ -8,8 +8,7 @@ export function physicsBody2DBodyFailure({
     error: createdBody.error,
     data: {
       type,
-      properties,
-      createdBody
+      properties
     }
   };
 }
@@ -21,6 +20,7 @@ export function physicsBody2DCollisionFailure({
   createdBody,
   collisionChild
 }) {
+  const collisionData = collisionChild.data.collisionResult?.data ?? {};
   return {
     ok: false,
     error: collisionChild.error,
@@ -28,8 +28,12 @@ export function physicsBody2DCollisionFailure({
       type,
       properties,
       [bodyKey]: createdBody.data,
-      createdBody,
-      collisionResult: collisionChild.data.collisionResult
+      collisionShapeKind: collisionData.shapeKind ?? null,
+      collisionShapeClassName: collisionData.shapeClassName ?? null,
+      collisionShapePath: collisionData.shapePath ?? null,
+      collisionShapeProperties: collisionData.shapeProperties ?? null,
+      collisionNodeProperties: collisionData.nodeProperties ?? null,
+      shape: collisionData.shape ?? null
     }
   };
 }
@@ -53,11 +57,7 @@ export function physicsBody2DNoCollisionSuccess({
       collisionNodeProperties: null,
       shape: null,
       collision: null,
-      visual: null,
-      createdBody,
-      createdShape: null,
-      createdCollision: null,
-      visualResult: null
+      visual: null
     }
   };
 }
@@ -77,9 +77,14 @@ export function physicsBody2DVisualFailure({
       type,
       properties,
       [bodyKey]: createdBody.data,
-      createdBody,
-      collisionResult,
-      visualResult
+      collisionShapeKind: collisionResult.data.shapeKind,
+      collisionShapeClassName: collisionResult.data.shapeClassName,
+      collisionShapePath: collisionResult.data.shapePath,
+      collisionShapeProperties: collisionResult.data.shapeProperties,
+      collisionNodeProperties: collisionResult.data.nodeProperties,
+      shape: collisionResult.data.shape,
+      collision: collisionResult.data.node,
+      visual: visualResult.data ?? null
     }
   };
 }
@@ -106,12 +111,7 @@ export function physicsBody2DSuccess({
       collisionNodeProperties: collisionResult.data.nodeProperties,
       shape: collisionResult.data.shape,
       collision: collisionResult.data.node,
-      visual: visualResult?.data?.node ?? null,
-      createdBody,
-      createdShape: collisionResult.data.createdShape,
-      createdCollision: collisionResult.data.createdNode,
-      collisionResult,
-      visualResult
+      visual: visualResult?.data?.node ?? null
     }
   };
 }

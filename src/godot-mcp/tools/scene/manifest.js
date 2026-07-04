@@ -82,6 +82,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "get_editor_state",
     description: "Read current visible Godot editor state from the NIUA editor plugin bridge.",
     profile: "full",
+    tier: "standard",
     category: "scene",
     inputSchema: BRIDGE_INPUT_SCHEMA,
     bridge: {
@@ -109,6 +110,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "get_project_info",
     description: "Read the active Godot project root and project metadata from the editor bridge.",
     profile: "full",
+    tier: "essential",
     category: "scene",
     inputSchema: BRIDGE_INPUT_SCHEMA,
     bridge: {
@@ -136,6 +138,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "get_scene_tree",
     description: "Read the current scene tree from the visible Godot editor.",
     profile: "full",
+    tier: "essential",
     category: "scene",
     inputSchema: SCENE_TREE_SCHEMA,
     bridge: {
@@ -169,6 +172,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "get_open_scene_tabs",
     description: "Read ordered open scene tabs and the current visible Godot scene tab.",
     profile: "full",
+    tier: "standard",
     category: "scene",
     inputSchema: BRIDGE_INPUT_SCHEMA,
     bridge: {
@@ -196,6 +200,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "get_selection",
     description: "Read the current editor selection from the visible Godot editor, including per-node parent, owner, sibling, group, and metadata-key context.",
     profile: "full",
+    tier: "standard",
     category: "scene",
     inputSchema: BRIDGE_INPUT_SCHEMA,
     bridge: {
@@ -223,6 +228,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "set_selection",
     description: "Replace the visible Godot editor node selection with one or more scene-tree nodes.",
     profile: "full",
+    tier: "standard",
     category: "scene",
     inputSchema: SET_SELECTION_SCHEMA,
     bridge: {
@@ -251,6 +257,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "focus_node",
     description: "Select and focus a scene-tree node in the visible Godot editor.",
     profile: "full",
+    tier: "standard",
     category: "scene",
     inputSchema: FOCUS_NODE_SCHEMA,
     bridge: {
@@ -279,6 +286,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "open_scene",
     description: "Open an existing scene in the visible Godot editor.",
     profile: "full",
+    tier: "essential",
     category: "scene",
     inputSchema: SCENE_PATH_SCHEMA,
     bridge: {
@@ -307,6 +315,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "create_scene",
     description: "Create a new scene file with a configurable root node and optionally open it in the visible Godot editor.",
     profile: "full",
+    tier: "essential",
     category: "scene",
     inputSchema: CREATE_SCENE_SCHEMA,
     bridge: {
@@ -335,6 +344,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "save_scene_as",
     description: "Save the current edited scene to a new scene path under res://.",
     profile: "full",
+    tier: "standard",
     category: "scene",
     inputSchema: SCENE_PATH_SCHEMA,
     bridge: {
@@ -363,6 +373,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "switch_scene_tab",
     description: "Switch the visible Godot editor to an open scene tab, opening it if needed.",
     profile: "full",
+    tier: "standard",
     category: "scene",
     inputSchema: SCENE_TAB_PATH_SCHEMA,
     bridge: {
@@ -391,6 +402,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "close_scene",
     description: "Close the current Godot scene tab, optionally switching to and saving a target scene first.",
     profile: "full",
+    tier: "standard",
     category: "scene",
     inputSchema: CLOSE_SCENE_SCHEMA,
     bridge: {
@@ -419,6 +431,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "mark_scene_unsaved",
     description: "Mark the current or target Godot scene tab as unsaved for dirty-state workflows.",
     profile: "full",
+    tier: "standard",
     category: "scene",
     inputSchema: SCENE_TAB_PATH_SCHEMA,
     bridge: {
@@ -447,6 +460,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "undo_editor_action",
     description: "Undo the current Godot editor scene/history action, optionally targeting a historyId from get_open_scene_tabs.",
     profile: "full",
+    tier: "standard",
     category: "scene",
     inputSchema: EDITOR_UNDO_REDO_SCHEMA,
     bridge: {
@@ -475,6 +489,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "redo_editor_action",
     description: "Redo the current Godot editor scene/history action, optionally targeting a historyId from get_open_scene_tabs.",
     profile: "full",
+    tier: "standard",
     category: "scene",
     inputSchema: EDITOR_UNDO_REDO_SCHEMA,
     bridge: {
@@ -503,6 +518,7 @@ export const SCENE_TOOL_MANIFEST = [
     name: "save_current_scene",
     description: "Save the current edited Godot scene.",
     profile: "full",
+    tier: "essential",
     category: "scene",
     inputSchema: BRIDGE_INPUT_SCHEMA,
     bridge: {

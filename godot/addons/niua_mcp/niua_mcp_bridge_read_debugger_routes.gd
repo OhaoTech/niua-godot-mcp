@@ -9,6 +9,7 @@ const HANDLERS := {
 	"_runtime_events": true,
 	"_runtime_node_properties": true,
 	"_runtime_node_property_set_result": true,
+	"_runtime_node_method_call_result": true,
 	"_runtime_input_send_result": true,
 	"_runtime_screenshot_result": true
 }
@@ -28,8 +29,8 @@ func _debugger_state() -> Dictionary:
 	return NiuaMcpDebuggerRuntimeOperations.debugger_state(_context.debugger_probe(), _context.editor)
 
 
-func _runtime_state() -> Dictionary:
-	return NiuaMcpDebuggerRuntimeOperations.runtime_state(_context.debugger_probe())
+func _runtime_state(query: Dictionary) -> Dictionary:
+	return NiuaMcpDebuggerRuntimeOperations.runtime_state(_context.debugger_probe(), query)
 
 
 func _runtime_events(query: Dictionary) -> Dictionary:
@@ -42,6 +43,10 @@ func _runtime_node_properties(query: Dictionary) -> Dictionary:
 
 func _runtime_node_property_set_result(query: Dictionary) -> Dictionary:
 	return NiuaMcpDebuggerRuntimeOperations.runtime_node_property_set_result(_context.debugger_probe(), query)
+
+
+func _runtime_node_method_call_result(query: Dictionary) -> Dictionary:
+	return NiuaMcpDebuggerRuntimeOperations.runtime_node_method_call_result(_context.debugger_probe(), query)
 
 
 func _runtime_input_send_result(query: Dictionary) -> Dictionary:

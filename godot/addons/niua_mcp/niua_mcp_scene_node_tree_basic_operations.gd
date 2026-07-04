@@ -8,7 +8,7 @@ static func rename_node(editor: EditorInterface, body: Dictionary) -> Dictionary
 	var node := NiuaMcpSceneNodeContext.resolve_node(editor, str(body.get("nodePath", "")))
 	var root := NiuaMcpSceneNodeContext.edited_scene_root(editor)
 	if node == null:
-		return NiuaMcpSceneNodeContext.error("node not found: %s" % str(body.get("nodePath", "")), "not_found")
+		return NiuaMcpSceneNodeContext.error("node not found: %s (call get_scene_tree to list valid node paths)" % str(body.get("nodePath", "")), "not_found")
 	if node == root:
 		return NiuaMcpSceneNodeContext.error("cannot rename the edited scene root")
 
@@ -35,7 +35,7 @@ static func delete_node(editor: EditorInterface, body: Dictionary) -> Dictionary
 	var node := NiuaMcpSceneNodeContext.resolve_node(editor, str(body.get("nodePath", "")))
 	var root := NiuaMcpSceneNodeContext.edited_scene_root(editor)
 	if node == null:
-		return NiuaMcpSceneNodeContext.error("node not found: %s" % str(body.get("nodePath", "")), "not_found")
+		return NiuaMcpSceneNodeContext.error("node not found: %s (call get_scene_tree to list valid node paths)" % str(body.get("nodePath", "")), "not_found")
 	if node == root:
 		return NiuaMcpSceneNodeContext.error("cannot delete the edited scene root")
 
@@ -44,7 +44,12 @@ static func delete_node(editor: EditorInterface, body: Dictionary) -> Dictionary
 		return NiuaMcpSceneNodeContext.error("node has no parent: %s" % NiuaMcpSceneNodeContext.node_path_for_response(editor, node))
 
 	var deleted_path := NiuaMcpSceneNodeContext.node_path_for_response(editor, node)
+	var deleted_name := str(node.name)
 	parent.remove_child(node)
+	# Read-back guarantee: confirm the node actually left the tree before
+	# reporting success — a still-attached child would be a silent no-op.
+	if node.get_parent() != null or parent.has_node(NodePath(deleted_name)):
+		return NiuaMcpSceneNodeContext.error("delete failed: node is still attached at %s" % deleted_path, "delete_failed")
 	node.queue_free()
 
 	return {
@@ -59,7 +64,7 @@ static func duplicate_node(editor: EditorInterface, body: Dictionary) -> Diction
 	var node := NiuaMcpSceneNodeContext.resolve_node(editor, str(body.get("nodePath", "")))
 	var root := NiuaMcpSceneNodeContext.edited_scene_root(editor)
 	if node == null:
-		return NiuaMcpSceneNodeContext.error("node not found: %s" % str(body.get("nodePath", "")), "not_found")
+		return NiuaMcpSceneNodeContext.error("node not found: %s (call get_scene_tree to list valid node paths)" % str(body.get("nodePath", "")), "not_found")
 	if node == root:
 		return NiuaMcpSceneNodeContext.error("cannot duplicate the edited scene root")
 
@@ -68,7 +73,7 @@ static func duplicate_node(editor: EditorInterface, body: Dictionary) -> Diction
 	if not parent_path.is_empty():
 		parent = NiuaMcpSceneNodeContext.resolve_node(editor, parent_path)
 	if parent == null:
-		return NiuaMcpSceneNodeContext.error("duplicate parent not found", "not_found")
+		return NiuaMcpSceneNodeContext.error("duplicate parent not found (call get_scene_tree to list valid node paths)", "not_found")
 
 	var duplicate := node.duplicate() as Node
 	if duplicate == null:
@@ -81,6 +86,8 @@ static func duplicate_node(editor: EditorInterface, body: Dictionary) -> Diction
 	parent.add_child(duplicate)
 	NiuaMcpSceneNodeContext.set_owner_recursive(duplicate, root)
 
+	# Read-back guarantee: name/type/paths come from the duplicate AFTER
+	# add_child, which renames on sibling collision.
 	return {
 		"ok": true,
 		"data": {
@@ -88,6 +95,6 @@ static func duplicate_node(editor: EditorInterface, body: Dictionary) -> Diction
 			"nodePath": NiuaMcpSceneNodeContext.node_path_for_response(editor, duplicate),
 			"name": duplicate.name,
 			"type": duplicate.get_class(),
-			"parentPath": NiuaMcpSceneNodeContext.node_path_for_response(editor, parent)
+			"parentPath": NiuaMcpSceneNodeContext.node_path_for_response(editor, duplicate.get_parent())
 		}
 	}

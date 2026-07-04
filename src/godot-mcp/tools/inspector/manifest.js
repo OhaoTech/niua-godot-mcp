@@ -5,6 +5,7 @@ export const INSPECTOR_TOOL_MANIFEST = [
     name: "get_inspector_properties",
     description: "Read inspector-style editable properties for a selected or addressed node.",
     profile: "full",
+    tier: "essential",
     category: "inspector",
     inputSchema: INSPECTOR_PROPERTIES_SCHEMA,
     bridge: {
@@ -40,6 +41,7 @@ export const INSPECTOR_TOOL_MANIFEST = [
     name: "set_node_property",
     description: "Set a property on a node in the current edited Godot scene.",
     profile: "full",
+    tier: "essential",
     category: "inspector",
     inputSchema: SET_NODE_PROPERTY_SCHEMA,
     bridge: {
