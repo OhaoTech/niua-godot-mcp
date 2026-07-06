@@ -45,6 +45,7 @@ const HANDLERS := {
 	"_export_presets": true,
 	"_debugger_state": true,
 	"_runtime_state": true,
+	"_runtime_state_result": true,
 	"_runtime_events": true,
 	"_runtime_node_properties": true,
 	"_runtime_node_property_set_result": true,

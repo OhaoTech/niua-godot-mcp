@@ -5,10 +5,16 @@ import {
 } from "./polling.js";
 
 export const RUNTIME_INPUT_BRIDGE_METHODS = {
-  async requestSendRuntimeInput({ actions, holdMs, mouseMotion } = {}) {
+  async requestSendRuntimeInput({ actions, keys, mouseButtons, holdMs, mouseMotion } = {}) {
     const body = {};
     if (actions !== undefined) {
       body.actions = actions;
+    }
+    if (keys !== undefined) {
+      body.keys = keys;
+    }
+    if (mouseButtons !== undefined) {
+      body.mouseButtons = mouseButtons;
     }
     if (holdMs !== undefined) {
       body.holdMs = holdMs;
@@ -29,12 +35,14 @@ export const RUNTIME_INPUT_BRIDGE_METHODS = {
 
   async sendRuntimeInput({
     actions,
+    keys,
+    mouseButtons,
     holdMs,
     mouseMotion,
     timeoutMsec = DEFAULT_RUNTIME_TIMEOUT_MSEC,
     pollIntervalMsec = DEFAULT_RUNTIME_POLL_INTERVAL_MSEC
   } = {}) {
-    const initialResult = await this.requestSendRuntimeInput({ actions, holdMs, mouseMotion });
+    const initialResult = await this.requestSendRuntimeInput({ actions, keys, mouseButtons, holdMs, mouseMotion });
     return pollRuntimeResult(
       initialResult,
       (requestId) => this.getRuntimeInputSendResult({ requestId }),

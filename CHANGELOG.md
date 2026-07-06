@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.1.5
+
+- Selfplay: `send_runtime_input` gains raw keyboard events (`keys`: keycode/physicalKeycode via `Input.parse_input_event`, reaching both `_input` handlers and `Input.is_physical_key_pressed`) and mouse-button events with viewport positions — games that check raw keys (restart keys, menus, upgrade pickers) are now drivable end to end. `holdMs` releases keys symmetrically with actions.
+- `get_runtime_state` returns the snapshot you asked for: requests carry a requestId, the probe stamps it into the response, and the tool polls until the correlated snapshot lands (`pending: false`, `kind: "snapshot"`) instead of serving a cached earlier tree as current truth.
+- Fix: `send_runtime_input` without `holdMs` crashed the runtime probe planner (`int(null)`) and left requests pending forever. Fixed at both layers (route never forwards null; planner casts are null-safe) and pinned in live conformance, which previously had zero coverage for this tool.
+- Bare `res://` strings now coerce for Object/Resource properties (`set_node_property stream = "res://sfx/fire.wav"`), resolved through the same validated loader as the `{ type: "Resource", path }` wrapper. Unresolved paths still fail loudly.
+- Local usage counters: each session writes tool-call counts to `runs/tool-usage/` — tool names, call counts, and error counts only; nothing leaves the machine. Disable with `NIUA_MCP_USAGE_STATS=off`. This is the evidence base for future usage-derived default profiles.
+- Tier triage from a real game build (a survivor-like built end to end through this MCP): the `core` profile grows 48 -> 55, adding the runtime verification quartet, `set_input_action`, and the audio pair (`upsert_audio_bus`, `create_audio_stream_player`) — each promotion backed by a documented real-run need, and each requiring live error-path conformance coverage to land.
+- New CI contract pins route reachability across all four registration points (catalog, aggregator allowlist, domain handler map, handler function), killing the drift class where a route 400s at runtime with "route handler did not return a Dictionary".
+- Docs: manual documents the usage-stats env vars and current `core`/`full`/`compact` profile names; adaptive-exposure research note ships in `docs/godot-mcp/spike-list-changed.md`.
+
 ## 0.1.4
 
 - Capability-graph architecture (see `docs/godot-mcp/capability-graph-architecture.md`): profiles are now computed projections of one tool graph — `core` derives from per-tool `tier` metadata (no hand-maintained allowlist), `compact` from the domain structure. New `describe_tools` navigates the full catalog from any profile: no args → domain map, `{domain}` → its tools, `{name}` → one schema.

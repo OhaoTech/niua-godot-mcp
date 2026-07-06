@@ -2377,6 +2377,10 @@ test("Godot bridge exposes Milestone 1A scene and inspector write endpoints", as
   assert.match(materialOperations, /ResourceLoader\.load/);
   assert.match(materialOperations, /Material/);
   assert.match(propertyOperations, /NiuaMcpVariantCodec\.json_to_variant/);
+  // A bare res:// string coerces for Object/Resource properties through the
+  // same validated loader as the { type: "Resource", path } wrapper.
+  assert.match(propertyOperations, /declared_type == TYPE_OBJECT and typeof\(decoded\) == TYPE_STRING/);
+  assert.match(propertyOperations, /NiuaMcpVariantCodec\.resource_from_json\(\{ "path": decoded \}, path_validator\)/);
   assert.match(inspectorOperations, /property_can_revert/);
   assert.match(inspectorOperations, /property_get_revert/);
   assert.match(inspectorOperations, /canRevert/);
@@ -3503,7 +3507,7 @@ test("Godot runtime probe delegates focused domain modules", async () => {
   assert.match(codec, /static func json_to_variant\(value\)/);
   assert.match(codec, /static func variant_to_json\(value\)/);
   assert.match(codec, /MAX_SERIALIZED_COLLECTION_ITEMS/);
-  assert.match(state, /static func runtime_state\(probe: Node, kind: String, max_depth: int = 0, path_filter: String = ""\) -> Dictionary:/);
+  assert.match(state, /static func runtime_state\(probe: Node, kind: String, max_depth: int = 0, path_filter: String = "", request_id: String = ""\) -> Dictionary:/);
   assert.match(state, /static func serialize_node\(node: Node, depth: int, max_depth: int = 0\) -> Dictionary:/);
   assert.match(state, /childrenTruncated/);
   assert.match(state, /node\.is_inside_tree\(\)/);
@@ -3557,8 +3561,8 @@ test("Godot bridge exposes Milestone 6B runtime state capture endpoint", async (
   assert.match(debuggerProbeRuntimeRequests, /niua_mcp:snapshot/);
   assert.match(runtimeState, /runtime_state\(\)/);
   assert.match(probe, /func _capture\(message: String, _data: Array\) -> bool:/);
-  assert.match(probe, /NiuaMcpRuntimeProbeState\.runtime_state\(self, "snapshot"/);
-  assert.match(probeState, /static func runtime_state\(probe: Node, kind: String, max_depth: int = 0, path_filter: String = ""\) -> Dictionary:/);
+  assert.match(probe, /NiuaMcpRuntimeProbeState\.runtime_state\(\s*self,\s*"snapshot",/);
+  assert.match(probeState, /static func runtime_state\(probe: Node, kind: String, max_depth: int = 0, path_filter: String = "", request_id: String = ""\) -> Dictionary:/);
   assert.match(probeState, /static func serialize_node/);
 });
 

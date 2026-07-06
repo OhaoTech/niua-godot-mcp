@@ -126,6 +126,7 @@ const ERROR_CODE_REGISTRY = new Set([
   "too_many_replacements",
   "unauthorized",
   "unknown_action",
+  "unknown_button",
   "unknown_property",
   "unsaved_scene",
   "unsupported_operation",

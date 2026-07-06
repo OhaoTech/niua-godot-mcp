@@ -17,12 +17,18 @@ static func send_runtime_input(debugger_probe, body: Dictionary) -> Dictionary:
 
 	var actions_value = body.get("actions", [])
 	var actions: Array = actions_value if typeof(actions_value) == TYPE_ARRAY else []
+	var keys_value = body.get("keys", [])
+	var keys: Array = keys_value if typeof(keys_value) == TYPE_ARRAY else []
+	var buttons_value = body.get("mouseButtons", [])
+	var mouse_buttons: Array = buttons_value if typeof(buttons_value) == TYPE_ARRAY else []
 	var hold_ms = body.get("holdMs", null)
 	var mouse_motion = body.get("mouseMotion", null)
 
 	var request_id: String = debugger_probe.next_runtime_request_id("send_input")
 	var requested_sessions: Array = debugger_probe.send_runtime_input_request(
 		actions,
+		keys,
+		mouse_buttons,
 		hold_ms,
 		mouse_motion,
 		request_id

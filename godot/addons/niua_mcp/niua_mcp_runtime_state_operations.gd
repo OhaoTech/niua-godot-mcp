@@ -13,8 +13,47 @@ static func runtime_state(debugger_probe, query: Dictionary) -> Dictionary:
 		"events": []
 	}
 	var requested_sessions := []
+	var request_id := ""
 	if debugger_probe != null:
-		requested_sessions = debugger_probe.send_runtime_snapshot_request(max_depth, path_filter)
+		request_id = debugger_probe.next_runtime_request_id("snapshot")
+		requested_sessions = debugger_probe.send_runtime_snapshot_request(max_depth, path_filter, request_id)
+		probe_state = debugger_probe.runtime_state()
+
+	var sessions: Array = probe_state.get("sessions", [])
+	# pending is true until the probe's response for THIS requestId lands in
+	# the store — the sessions returned here still hold the previous snapshot.
+	# Callers poll /runtime/state/result to trade the cached tree for the
+	# requested one instead of mistaking old state for current truth.
+	return {
+		"ok": true,
+		"data": {
+			"available": debugger_probe != null,
+			"requestId": request_id,
+			"pending": requested_sessions.size() > 0,
+			"sessionCount": sessions.size(),
+			"sessions": sessions,
+			"events": probe_state.get("events", []),
+			"snapshotRequestedSessions": requested_sessions
+		}
+	}
+
+
+static func runtime_state_result(debugger_probe, query: Dictionary) -> Dictionary:
+	var request_id := str(query.get("requestId", ""))
+	if request_id.is_empty():
+		return {
+			"ok": false,
+			"error": "runtime state requestId is required",
+			"errorCode": "bad_request"
+		}
+
+	var responses := []
+	var probe_state := {
+		"sessions": [],
+		"events": []
+	}
+	if debugger_probe != null:
+		responses = debugger_probe.runtime_snapshot_result(request_id)
 		probe_state = debugger_probe.runtime_state()
 
 	var sessions: Array = probe_state.get("sessions", [])
@@ -22,10 +61,12 @@ static func runtime_state(debugger_probe, query: Dictionary) -> Dictionary:
 		"ok": true,
 		"data": {
 			"available": debugger_probe != null,
+			"requestId": request_id,
+			"pending": debugger_probe != null and responses.size() == 0,
 			"sessionCount": sessions.size(),
 			"sessions": sessions,
 			"events": probe_state.get("events", []),
-			"snapshotRequestedSessions": requested_sessions
+			"snapshotRequestedSessions": []
 		}
 	}
 

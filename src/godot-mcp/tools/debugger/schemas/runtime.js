@@ -14,6 +14,14 @@ export const RUNTIME_STATE_SCHEMA = {
     pathFilter: {
       type: "string",
       description: "Only serialize the runtime subtree rooted at this live node path, for example /root/Player. An unknown path reports an error in the snapshot naming get_runtime_node_properties."
+    },
+    timeoutMsec: {
+      type: "number",
+      description: "How long to poll for the freshly requested snapshot before returning. Defaults to 3000. On timeout the response reports pending: true and the sessions still hold the previous snapshot."
+    },
+    pollIntervalMsec: {
+      type: "number",
+      description: "Delay between snapshot result polling requests. Defaults to 100."
     }
   },
   additionalProperties: false
@@ -169,9 +177,62 @@ export const SEND_RUNTIME_INPUT_SCHEMA = {
         additionalProperties: false
       }
     },
+    keys: {
+      type: "array",
+      description: "Raw keyboard events fed via Input.parse_input_event as InputEventKey, for games that check keys directly (Input.is_physical_key_pressed, match event.physical_keycode) instead of input-map actions. Use physicalKeycode for layout-independent game keys (the common case); keycode targets the logical key. Godot key constants, for example R = 82, F1 = 4194332.",
+      items: {
+        type: "object",
+        properties: {
+          keycode: {
+            type: "integer",
+            description: "Logical Key constant to stamp on the event. At least one of keycode or physicalKeycode is required."
+          },
+          physicalKeycode: {
+            type: "integer",
+            description: "Physical Key constant to stamp on the event — what Input.is_physical_key_pressed and physical-key bindings check."
+          },
+          pressed: {
+            type: "boolean",
+            description: "true sends a key-down event; false sends the matching key-up."
+          }
+        },
+        required: ["pressed"],
+        additionalProperties: false
+      }
+    },
+    mouseButtons: {
+      type: "array",
+      description: "Mouse button events fed via Input.parse_input_event as InputEventMouseButton. Pass position to click at a viewport point (UI buttons route by position).",
+      items: {
+        type: "object",
+        properties: {
+          button: {
+            type: "string",
+            enum: ["left", "right", "middle", "wheel_up", "wheel_down"],
+            description: "Which mouse button the event carries."
+          },
+          pressed: {
+            type: "boolean",
+            description: "true sends button-down; false sends button-up. Send both for a full click."
+          },
+          position: {
+            type: "object",
+            description: "Viewport position for the event in pixels. Omit for position-independent checks.",
+            properties: {
+              x: { type: "number" },
+              y: { type: "number" }
+            },
+            required: ["x", "y"],
+            additionalProperties: false
+          }
+        },
+        required: ["button", "pressed"],
+        additionalProperties: false
+      }
+    },
     holdMs: {
       type: "number",
-      description: "When set, press the actions, wait this many milliseconds, then release the pressed actions (a timed tap). Omit to leave the press/release states applied so the caller can release them in a later call. Set timeoutMsec above holdMs so the tap completes before the poll deadline."
+      description: "When set, press the actions and keys, wait this many milliseconds, then release what was pressed (a timed tap). Omit to leave the press/release states applied so the caller can release them in a later call. Set timeoutMsec above holdMs so the tap completes before the poll deadline."
     },
     mouseMotion: {
       type: "object",

@@ -67,6 +67,10 @@ func runtime_input_send_result(request_id: String) -> Array:
 	return _input_data.runtime_input_send_result(request_id)
 
 
+func runtime_snapshot_result(request_id: String) -> Array:
+	return _core.runtime_snapshot_result(request_id)
+
+
 func runtime_payload(data: Array) -> Dictionary:
 	return NiuaMcpDebuggerProbeRuntimeDataUtils.runtime_payload(data)
 

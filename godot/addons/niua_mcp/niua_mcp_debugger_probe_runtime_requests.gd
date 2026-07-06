@@ -16,7 +16,7 @@ func next_runtime_request_id(prefix: String) -> String:
 	return "%s:%d:%d" % [prefix, Time.get_ticks_msec(), _runtime_request_counter]
 
 
-func send_runtime_snapshot_request(debugger_probe: EditorDebuggerPlugin, session_ids: Array[int], max_depth: int, path_filter: String, record_event: Callable) -> Array:
+func send_runtime_snapshot_request(debugger_probe: EditorDebuggerPlugin, session_ids: Array[int], max_depth: int, path_filter: String, request_id: String, record_event: Callable) -> Array:
 	var requested_sessions := []
 	for session_id in session_ids:
 		var session := debugger_probe.get_session(session_id)
@@ -25,13 +25,15 @@ func send_runtime_snapshot_request(debugger_probe: EditorDebuggerPlugin, session
 
 		session.send_message(SNAPSHOT_MESSAGE, [{
 			"maxDepth": max_depth,
-			"pathFilter": path_filter
+			"pathFilter": path_filter,
+			"requestId": request_id
 		}])
 		requested_sessions.append(session_id)
 
 	_record(record_event, "runtime_snapshot_requested", {
 		"maxDepth": max_depth,
 		"pathFilter": path_filter,
+		"requestId": request_id,
 		"requestedSessions": requested_sessions
 	})
 	return requested_sessions
@@ -106,7 +108,7 @@ func send_runtime_node_method_call_request(debugger_probe: EditorDebuggerPlugin,
 	return requested_sessions
 
 
-func send_runtime_input_request(debugger_probe: EditorDebuggerPlugin, session_ids: Array[int], actions: Array, hold_ms, mouse_motion, request_id: String, record_event: Callable) -> Array:
+func send_runtime_input_request(debugger_probe: EditorDebuggerPlugin, session_ids: Array[int], actions: Array, keys: Array, mouse_buttons: Array, hold_ms, mouse_motion, request_id: String, record_event: Callable) -> Array:
 	var requested_sessions := []
 	for session_id in session_ids:
 		var session := debugger_probe.get_session(session_id)
@@ -116,7 +118,11 @@ func send_runtime_input_request(debugger_probe: EditorDebuggerPlugin, session_id
 		session.send_message(SEND_INPUT_MESSAGE, [{
 			"requestId": request_id,
 			"actions": actions,
-			"holdMs": hold_ms,
+			"keys": keys,
+			"mouseButtons": mouse_buttons,
+			# An omitted holdMs reaches this layer as an explicit null; the
+			# probe planner casts to int, so never forward null downstream.
+			"holdMs": 0 if hold_ms == null else int(hold_ms),
 			"mouseMotion": mouse_motion
 		}])
 		requested_sessions.append(session_id)

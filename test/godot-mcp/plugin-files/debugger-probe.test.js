@@ -286,7 +286,7 @@ test("Godot debugger probe delegates focused plugin domains", async () => {
   assert.match(runtimeRequests, /const RUNTIME_SCREENSHOT_MESSAGE := "niua_mcp:runtime_screenshot"/);
   assert.match(runtimeRequests, /var _runtime_request_counter := 0/);
   assert.match(runtimeRequests, /func next_runtime_request_id\(prefix: String\) -> String:/);
-  assert.match(runtimeRequests, /func send_runtime_snapshot_request\(debugger_probe: EditorDebuggerPlugin, session_ids: Array\[int\], max_depth: int, path_filter: String, record_event: Callable\) -> Array:/);
+  assert.match(runtimeRequests, /func send_runtime_snapshot_request\(debugger_probe: EditorDebuggerPlugin, session_ids: Array\[int\], max_depth: int, path_filter: String, request_id: String, record_event: Callable\) -> Array:/);
   assert.match(runtimeRequests, /func send_runtime_node_properties_request\(debugger_probe: EditorDebuggerPlugin, session_ids: Array\[int\], node_path: String, request_id: String, record_event: Callable\) -> Array:/);
   assert.match(runtimeRequests, /func send_runtime_node_property_set_request\(debugger_probe: EditorDebuggerPlugin, session_ids: Array\[int\], node_path: String, property_name: String, value, request_id: String, record_event: Callable\) -> Array:/);
   assert.match(runtimeRequests, /func send_runtime_node_method_call_request\(debugger_probe: EditorDebuggerPlugin, session_ids: Array\[int\], node_path: String, method_name: String, args: Array, request_id: String, record_event: Callable\) -> Array:/);

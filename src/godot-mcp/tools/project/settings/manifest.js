@@ -131,7 +131,7 @@ export const PROJECT_SETTINGS_TOOL_MANIFEST = [
     name: "set_input_action",
     description: "Create or replace a Godot Input Map action with keyboard or joypad button events.",
     profile: "full",
-    tier: "standard",
+    tier: "essential",
     category: "project-settings",
     inputSchema: SET_INPUT_ACTION_SCHEMA,
     bridge: {

@@ -46,6 +46,10 @@ static func runtime_state(debugger_probe, query: Dictionary) -> Dictionary:
 	return NiuaMcpRuntimeStateOperations.runtime_state(debugger_probe, query)
 
 
+static func runtime_state_result(debugger_probe, query: Dictionary) -> Dictionary:
+	return NiuaMcpRuntimeStateOperations.runtime_state_result(debugger_probe, query)
+
+
 static func runtime_events(debugger_probe, query: Dictionary) -> Dictionary:
 	return NiuaMcpRuntimeStateOperations.runtime_events(debugger_probe, query)
 

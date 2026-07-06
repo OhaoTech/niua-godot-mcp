@@ -8,7 +8,7 @@ const MAX_CHILDREN_PER_NODE := NiuaMcpRuntimeProbeProtocol.MAX_CHILDREN_PER_NODE
 const MAX_TREE_DEPTH := NiuaMcpRuntimeProbeProtocol.MAX_TREE_DEPTH
 
 
-static func runtime_state(probe: Node, kind: String, max_depth: int = 0, path_filter: String = "") -> Dictionary:
+static func runtime_state(probe: Node, kind: String, max_depth: int = 0, path_filter: String = "", request_id: String = "") -> Dictionary:
 	var tree := probe.get_tree()
 	var root := tree.root if tree != null else null
 	var current_scene := tree.current_scene if tree != null else null
@@ -23,13 +23,18 @@ static func runtime_state(probe: Node, kind: String, max_depth: int = 0, path_fi
 		if subtree_root == null:
 			return {
 				"kind": kind,
+				"requestId": request_id,
 				"timeMsec": Time.get_ticks_msec(),
 				"currentScene": current_scene_path,
 				"error": "pathFilter node not found: %s (call get_runtime_node_properties to inspect live node paths)" % path_filter
 			}
 
+	# requestId correlates a requested snapshot with its response so the editor
+	# store can tell "the snapshot you asked for" from whatever state was
+	# already cached (the boot-time ready state has no requestId).
 	return {
 		"kind": kind,
+		"requestId": request_id,
 		"timeMsec": Time.get_ticks_msec(),
 		"currentScene": current_scene_path,
 		"root": serialize_node(subtree_root, 0, max_depth)

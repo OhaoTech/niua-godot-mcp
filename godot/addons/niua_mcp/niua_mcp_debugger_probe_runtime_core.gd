@@ -15,6 +15,23 @@ func runtime_session_data(session_id: int) -> Dictionary:
 	}
 
 
+func runtime_snapshot_result(request_id: String) -> Array:
+	# A stored state matches only when the probe stamped it with this exact
+	# requestId — the boot-time ready state (empty requestId) can never satisfy
+	# a requested snapshot, which is what makes first reads truthful.
+	var responses := []
+	if request_id.is_empty():
+		return responses
+	for session_id in _runtime_states:
+		var state: Dictionary = _runtime_states[session_id]
+		if str(state.get("requestId", "")) == request_id:
+			responses.append({
+				"sessionId": session_id,
+				"runtimeState": state
+			})
+	return responses
+
+
 func store_runtime_message(kind: String, data: Array, session_id: int, record_event: Callable) -> void:
 	var payload := NiuaMcpDebuggerProbeRuntimeDataUtils.runtime_payload(data)
 	var message := {

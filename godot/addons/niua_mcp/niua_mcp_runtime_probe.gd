@@ -53,7 +53,13 @@ func _capture(message: String, _data: Array) -> bool:
 	match message:
 		"snapshot":
 			var snapshot_request := NiuaMcpRuntimeProbeProtocol.request_payload(_data)
-			_send_debugger_message(RUNTIME_STATE_MESSAGE, NiuaMcpRuntimeProbeState.runtime_state(self, "snapshot", int(snapshot_request.get("maxDepth", 0)), str(snapshot_request.get("pathFilter", ""))))
+			_send_debugger_message(RUNTIME_STATE_MESSAGE, NiuaMcpRuntimeProbeState.runtime_state(
+				self,
+				"snapshot",
+				int(snapshot_request.get("maxDepth", 0)),
+				str(snapshot_request.get("pathFilter", "")),
+				str(snapshot_request.get("requestId", ""))
+			))
 			return true
 		"node_properties":
 			_send_debugger_message(NODE_PROPERTIES_MESSAGE, NiuaMcpRuntimeProbeNodeProperties.node_properties(self, NiuaMcpRuntimeProbeProtocol.request_payload(_data)))
@@ -90,13 +96,15 @@ func _handle_send_input(request: Dictionary) -> void:
 
 	var hold_ms: int = int(input_plan.get("holdMs", 0))
 	var held: Array = NiuaMcpRuntimeProbeInput.held_actions(input_plan)
+	var held_keys: Array = NiuaMcpRuntimeProbeInput.held_keys(input_plan)
 	var held_ms = null
-	if hold_ms > 0 and held.size() > 0:
+	if hold_ms > 0 and (held.size() > 0 or held_keys.size() > 0):
 		held_ms = hold_ms
 		var tree := get_tree()
 		if tree != null:
 			await tree.create_timer(float(hold_ms) / 1000.0).timeout
 		NiuaMcpRuntimeProbeInput.release(held)
+		NiuaMcpRuntimeProbeInput.release_keys(held_keys)
 
 	_send_debugger_message(RUNTIME_INPUT_RESULT_MESSAGE, {
 		"requestId": input_plan.get("requestId", ""),

@@ -5,6 +5,7 @@ import {
   resolveToolProfile,
   selectProfileTools
 } from "./tool-profiles.js";
+import { createUsageRecorder } from "./usage-stats.js";
 
 export const SERVER_INFO = {
   name: "niua-godot-mcp",
@@ -12,6 +13,15 @@ export const SERVER_INFO = {
 };
 
 export const ACTIVE_TOOL_PROFILE = resolveToolProfile();
+
+// Local-only usage counters (see usage-stats.js): which tools sessions
+// actually call is the evidence base for usage-derived core tiers. In the
+// compact profile the router tool name is recorded, not the routed action —
+// acceptable for the rails; leaf-level attribution can come with the router.
+export const USAGE_RECORDER = createUsageRecorder({
+  profile: ACTIVE_TOOL_PROFILE,
+  serverVersion: SERVER_INFO.version
+});
 
 const FULL_TOOL_NAMES = new Set(GODOT_MCP_TOOLS.map((tool) => tool.name));
 
@@ -23,8 +33,13 @@ export const TOOL_DEFINITIONS = TOOL_REGISTRY.definitions;
 
 export async function callTool(name, args = {}) {
   try {
-    return await TOOL_REGISTRY.call(name, args);
+    const result = await TOOL_REGISTRY.call(name, args);
+    USAGE_RECORDER.record(name, true);
+    return result;
   } catch (error) {
+    if (error?.code !== -32601) {
+      USAGE_RECORDER.record(name, false);
+    }
     if (error?.code === -32601) {
       if (FULL_TOOL_NAMES.has(name)) {
         throw Object.assign(

@@ -2,7 +2,7 @@
 
 The NIUA Godot MCP lets an AI agent build, run, and debug real Godot 4 games by talking to a **live Godot editor**. It exposes Godot's editor and a running game as a set of Model Context Protocol (MCP) tools, so a client like Claude or Codex can create scenes, wire scripts, place nodes, launch the game, watch it run, and screenshot the result — the same actions a developer performs by hand, driven by natural language.
 
-This manual covers what it is, everything it can do (grouped by subsystem), the **Safe Build Loop** you should follow every time, the `v1` vs `full` tool profiles, setup, and a Troubleshooting guide for the sharp edges you may hit on camera.
+This manual covers what it is, everything it can do (grouped by subsystem), the **Safe Build Loop** you should follow every time, the `core`/`full`/`compact` tool profiles, setup, and a Troubleshooting guide for the sharp edges you may hit on camera.
 
 ---
 
@@ -231,7 +231,7 @@ npx niua-godot-mcp setup --client claude --project-root /abs/path/to/runs --writ
       "command": "node",
       "args": ["/abs/path/to/lab-niua/src/godot-mcp/server.js"],
       "env": {
-        "NIUA_MCP_PROFILE": "v1",
+        "NIUA_MCP_PROFILE": "core",
         "GODOT_BIN": "godot",
         "GODOT_MCP_ALLOWED_PROJECT_ROOTS": "/abs/path/to/runs"
       }
@@ -251,7 +251,7 @@ args = ["/abs/path/to/lab-niua/src/godot-mcp/server.js"]
 startup_timeout_sec = 120
 
 [mcp_servers.niua-godot.env]
-NIUA_MCP_PROFILE = "v1"
+NIUA_MCP_PROFILE = "core"
 GODOT_BIN = "godot"
 GODOT_MCP_ALLOWED_PROJECT_ROOTS = "/abs/path/to/runs"
 ```
@@ -262,13 +262,17 @@ GODOT_MCP_ALLOWED_PROJECT_ROOTS = "/abs/path/to/runs"
 
 | Variable | Purpose | Default |
 |---|---|---|
-| `NIUA_MCP_PROFILE` | Tool profile (`v1`/`full`) | `v1` |
+| `NIUA_MCP_PROFILE` | Tool profile (`core`/`full`/`compact`; `v1` and `dispatch` remain aliases) | `core` |
 | `GODOT_BIN` | Godot executable | `godot` |
 | `GODOT_MCP_ALLOWED_PROJECT_ROOTS` | Allowed project roots | `./runs` |
 | `NIUA_MCP_PORT` / `GODOT_MCP_PORT` | Bridge port | `9174` |
 | `NIUA_MCP_TOKEN` / `GODOT_MCP_TOKEN` | Bridge auth token | per-session generated |
 | `GODOT_MCP_HEADLESS` / `NIUA_MCP_HEADLESS` | Launch headless | off |
 | `NIUA_MCP_MAX_PAYLOAD_BYTES` | File-write payload cap | 64 MiB |
+| `NIUA_MCP_USAGE_STATS` | Local tool-usage counters (set `off` to disable) | on |
+| `NIUA_MCP_USAGE_DIR` | Where usage counter files are written | `runs/tool-usage` |
+
+Usage counters are local-only and counts-only: per-session JSON files record tool names, call counts, and error counts — never arguments, paths, or project names, and nothing leaves the machine. They exist so future default profiles can be derived from real usage instead of guesses.
 
 ### Pre-flight doctor
 

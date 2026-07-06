@@ -41,6 +41,12 @@ static func set_node_property(editor: EditorInterface, body: Dictionary, path_va
 		decoded = NiuaMcpVariantCodec.json_to_variant(raw_value, path_validator)
 		decoded = NiuaMcpVariantCodec.coerce_to_declared_type(decoded, declared_type)
 
+	# A bare res:// string is the natural agent input for a stream/texture/
+	# material property; resolve it through the same validated loader as the
+	# { type: "Resource", path } wrapper instead of demanding the wrapper.
+	if declared_type == TYPE_OBJECT and typeof(decoded) == TYPE_STRING:
+		decoded = NiuaMcpVariantCodec.resource_from_json({ "path": decoded }, path_validator)
+
 	# For an Object/Resource-typed property, a non-null caller value that failed to
 	# resolve to an Object (unresolved res:// path, unknown type) would otherwise be
 	# written as null and reported as success. Reject it so the failure is visible.

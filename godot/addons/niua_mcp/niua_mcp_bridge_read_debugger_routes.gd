@@ -6,6 +6,7 @@ const NiuaMcpDebuggerRuntimeOperations = preload("niua_mcp_debugger_runtime_oper
 const HANDLERS := {
 	"_debugger_state": true,
 	"_runtime_state": true,
+	"_runtime_state_result": true,
 	"_runtime_events": true,
 	"_runtime_node_properties": true,
 	"_runtime_node_property_set_result": true,
@@ -31,6 +32,10 @@ func _debugger_state() -> Dictionary:
 
 func _runtime_state(query: Dictionary) -> Dictionary:
 	return NiuaMcpDebuggerRuntimeOperations.runtime_state(_context.debugger_probe(), query)
+
+
+func _runtime_state_result(query: Dictionary) -> Dictionary:
+	return NiuaMcpDebuggerRuntimeOperations.runtime_state_result(_context.debugger_probe(), query)
 
 
 func _runtime_events(query: Dictionary) -> Dictionary:

@@ -78,6 +78,10 @@ func runtime_input_send_result(request_id: String) -> Array:
 	return _runtime.runtime_input_send_result(request_id)
 
 
+func runtime_snapshot_result(request_id: String) -> Array:
+	return _runtime.runtime_snapshot_result(request_id)
+
+
 func runtime_payload(data: Array) -> Dictionary:
 	return _runtime.runtime_payload(data)
 

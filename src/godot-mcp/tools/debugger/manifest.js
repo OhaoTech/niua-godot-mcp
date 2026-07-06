@@ -159,9 +159,9 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
   },
   {
     name: "get_runtime_state",
-    description: "Read runtime scene-tree state captured from NIUA runtime probe debugger messages. Pass maxDepth to keep large runtime trees shallow (truncated nodes report childrenTruncated) and pathFilter to serialize only the subtree rooted at a live node path.",
+    description: "Read a FRESH runtime scene-tree snapshot from the running game: the call requests a snapshot and polls until the probe answers (pending: false, sessions[].runtimeState.kind == \"snapshot\"), so the returned tree is current truth rather than a cached earlier state. Pass maxDepth to keep large runtime trees shallow (truncated nodes report childrenTruncated) and pathFilter to serialize only the subtree rooted at a live node path.",
     profile: "full",
-    tier: "standard",
+    tier: "essential",
     category: "debugger",
     inputSchema: RUNTIME_STATE_SCHEMA,
     bridge: {
@@ -233,7 +233,7 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
     name: "get_runtime_node_properties",
     description: "Inspect runtime node properties from the running Godot game through the NIUA runtime probe. Pass properties: [\"hp\", \"score\"] to return only those properties instead of the full ~100-entry dump.",
     profile: "full",
-    tier: "standard",
+    tier: "essential",
     category: "debugger",
     inputSchema: RUNTIME_NODE_PROPERTIES_SCHEMA,
     bridge: {
@@ -276,7 +276,7 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
     name: "set_runtime_node_property",
     description: "Set a live runtime node property in the running Godot game through the NIUA runtime probe.",
     profile: "full",
-    tier: "standard",
+    tier: "essential",
     category: "debugger",
     inputSchema: SET_RUNTIME_NODE_PROPERTY_SCHEMA,
     bridge: {
@@ -335,9 +335,9 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
   },
   {
     name: "send_runtime_input",
-    description: "Inject input into the running Godot game through the NIUA runtime probe: press or release input-map actions (for example move_forward, jump) with an optional timed hold, and feed relative mouse-look motion. Lets an agent script a playthrough and verify gameplay without a human.",
+    description: "Inject input into the running Godot game through the NIUA runtime probe: press or release input-map actions (for example move_forward, jump) with an optional timed hold, send raw key events (for games that check physical keycodes directly — restart keys, menu shortcuts), click mouse buttons at viewport positions, and feed relative mouse-look motion. Lets an agent script a playthrough and verify gameplay without a human.",
     profile: "full",
-    tier: "standard",
+    tier: "essential",
     category: "debugger",
     inputSchema: SEND_RUNTIME_INPUT_SCHEMA,
     bridge: {
@@ -355,11 +355,11 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
       methodError: "runtime input send requires POST"
     },
     conformance: {
-      happy: "inject runtime input-map actions and mouse motion through the probe",
+      happy: "inject runtime input-map actions, raw key events, and mouse motion through the probe",
       error: "reject unknown input actions and surface timeouts when the runtime probe is unavailable"
     },
     docs: {
-      summary: "Injects input-map actions and mouse-look motion into the running Godot game through the NIUA runtime probe."
+      summary: "Injects input-map actions, raw key and mouse-button events, and mouse-look motion into the running Godot game through the NIUA runtime probe."
     }
   },
   {
