@@ -10,6 +10,20 @@ Everything is local: your files, your Godot, your ports. The agent can only touc
 
 ---
 
+## Fastest start: let your AI install it
+
+You already have an AI agent — put it to work. Paste this into Claude Code, Codex, Cursor, or any agent with shell access:
+
+> Install the NIUA Godot MCP for me by following
+> https://raw.githubusercontent.com/OhaoTech/niua-godot-mcp/main/docs/godot-mcp/INSTALL-BY-AGENT.md
+> Ask me before writing any config.
+
+The agent will check your Node and Godot, clone the repo, ask you three questions in chat (where projects may live, which tool profile, whether to enable under-development tools), write the config for its own client, and verify with the health check. The only thing it can't do is restart itself — it will tell you when.
+
+Prefer to do it by hand? The rest of this README is the same walk, step by step.
+
+---
+
 ## What you need first
 
 Three things. Check each one — the rest of this guide assumes they pass.
