@@ -49,5 +49,5 @@ This checkout does not include `.github` workflow files. If CI is added, it shou
 ## Runtime Notes
 
 - `capture_runtime_screenshot`, `capture_editor_screenshot`, and `capture_viewport_screenshot` can return `available:false` in headless or display-less environments.
-- The default MCP tool profile is `v1`; specialized subsystem tools require `NIUA_MCP_PROFILE=full`.
+- The default MCP tool profile is `core`; specialized stable subsystems require `NIUA_MCP_PROFILE=full`, and experimental subsystems additionally require `NIUA_MCP_EXPERIMENTAL=on`.
 - Project-management operations are restricted by `GODOT_MCP_ALLOWED_PROJECT_ROOTS`.

@@ -21,7 +21,7 @@ This manual covers what it is, everything it can do (grouped by subsystem), the 
 | Editor bridge | HTTP/1.1 on `127.0.0.1:9174` (default), `x-niua-mcp-token` auth |
 | Godot version | 4.6.x |
 | Node version | >= 20 |
-| Default tool profile | `core` (~47 tools); `full` = 175 tools across ~26 domains; `compact` = full surface behind 13 routers |
+| Default tool profile | `core` (55 game-proven tools); `full` = every stable tool (~146); `compact` = the stable surface behind 13 routers; 32 experimental tools hidden unless `NIUA_MCP_EXPERIMENTAL=on` |
 | Filesystem writes | `res://` only, 64 MiB payload cap |
 | Managed projects | Confined to `GODOT_MCP_ALLOWED_PROJECT_ROOTS` (default `./runs`) |
 
@@ -45,7 +45,7 @@ The entire tool surface is **manifest-driven**: each domain declares tools as da
 
 ## 3. Capability surface (by subsystem)
 
-The `full` profile exposes 135+ tools across ~26 domains. Here is the whole surface, grouped by what you'll actually reach for. Tools marked with a leading dot are the same MCP tools your client sees (`mcp__niua-godot__<name>`).
+The catalog spans ~26 domains. Here is the whole surface, grouped by what you'll actually reach for. Subsystems marked **(experimental)** have passed the conformance gate but not yet been proven in real game builds — they are hidden from every profile unless `NIUA_MCP_EXPERIMENTAL=on` (see the environment table).
 
 ### Project & process lifecycle
 Launch and manage Godot editor processes and discover existing ones.
@@ -100,7 +100,7 @@ The runtime probe serializes the live scene tree (bounded to depth 8 / 64 childr
 - `get_selection`, `set_selection`
 - Inspector: `get_inspector_properties`
 
-### Debugger
+### Debugger **(experimental)**
 - `get_debugger_state`, `set_debugger_breakpoint`, `send_debugger_message`, `toggle_debugger_profiler`
 
 ### Animation
@@ -118,20 +118,20 @@ The runtime probe serializes the live scene tree (bounded to depth 8 / 64 childr
 ### Particles
 - `create_gpu_particles_2d`, `create_gpu_particles_3d`, `configure_particle_process_material`, `set_particles_emitting`
 
-### Navigation
+### Navigation **(experimental)**
 - `create_navigation_region_3d`, `bake_navigation_mesh_3d`, `create_navigation_agent_3d`, `create_navigation_target_follow_script`
 
-### Localization
+### Localization **(experimental)**
 - `create_csv_translation`, `register_translation_file`, `set_locale`, `get_localization_state`
 
-### Multiplayer
+### Multiplayer **(experimental)**
 - `create_multiplayer_synchronizer`, `create_multiplayer_spawner`, `create_enet_multiplayer_script`, `create_multiplayer_state_script`
 
 ### Project settings & input
 - `get_project_settings`, `get_project_setting`, `set_project_setting`, `set_project_setting_metadata`
 - `get_input_map`, `set_input_action`
 
-### Export
+### Export **(experimental)**
 - `list_export_presets`, `upsert_export_preset`, `validate_export_preset`, `diagnose_export_templates`, `export_project`
 
 ### High-level "playable" workflows
@@ -168,8 +168,8 @@ create/open scene  →  build nodes  →  save to a res:// path  →  set_main_s
 
 The advertised tool count is gated by the `NIUA_MCP_PROFILE` env var (or `--profile` at setup).
 
-- **`core` (default, ~47 tools).** A curated allowlist proven sufficient for the core build loop. Kept small on purpose: this MCP is designed to coexist in one session alongside the NIUA and Blender MCPs without blowing the context window.
-- **`full` (170+ tools).** Every tool across all ~26 domains — advanced animation trees, multiplayer, navigation baking, export presets, localization, etc. Schema cost: ~56K tokens injected per request on clients without deferred tool loading.
+- **`core` (default, 55 tools).** Derived from per-tool tier metadata; every member earned its place in a real game build. Kept small on purpose: this MCP is designed to coexist in one session alongside the NIUA and Blender MCPs without blowing the context window.
+- **`full` (~146 stable tools).** Every stable tool across all ~26 domains. Experimental subsystems stay hidden unless `NIUA_MCP_EXPERIMENTAL=on`. Schema cost: tens of thousands of tokens per request on clients without deferred tool loading.
 - **`compact` (13 tools, ~4K tokens).** The full surface behind ~12 action-routed domain tools (`godot_scene`, `godot_node`, `godot_builder`, …) plus `apply_scene_recipe`. Call `{ action: "describe" }` to list a domain's actions, `{ action: "describe", name: "<action>" }` for that action's full argument schema, then `{ action: "<action>", args: { … } }` to run it. Built for schema-injecting clients (Cursor, Codex, most non-Claude harnesses): ~92% less schema tax than `full` with nothing hidden.
 
 The historical profile names `v1` (now `core`) and `dispatch` (now `compact`) remain accepted as permanent aliases.
@@ -184,7 +184,7 @@ If an agent calls a `full`-only tool while running under `core`, the server retu
 
 **Prerequisites:** Node >= 20, Godot 4.6 on your PATH (or set `GODOT_BIN` to its full path).
 
-### Option A — from source (recommended while iterating)
+### From source
 
 ```bash
 git clone <lab-niua repo>
@@ -211,14 +211,6 @@ node src/godot-mcp/cli.js setup --client generic --project-root /abs/path/to/run
 ```
 
 Run the server directly if you wire it up by hand: `node src/godot-mcp/server.js` (equivalently `npm run godot:mcp`).
-
-### Option B — via npx (when published/linked)
-
-The package exposes the bins `niua-godot-mcp` (server + `setup`) and `niua-godot-mcp-doctor` (diagnostics):
-
-```bash
-npx niua-godot-mcp setup --client claude --project-root /abs/path/to/runs --write
-```
 
 ### Client config (what setup writes)
 

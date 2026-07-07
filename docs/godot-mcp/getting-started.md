@@ -152,7 +152,7 @@ node src/godot-mcp/cli.js setup --client <claude|codex|generic> --project-root <
 | `--write` | off | Writes the client config. Without this, setup prints a dry run. |
 | `--config-path <path>` | client default | Writes to a specific config path. |
 | `--server-name <name>` | `niua-godot` | MCP server name in the client config. |
-| `--profile <v1|full>` | `v1` | Chooses the advertised tool surface. |
+| `--profile <core|full|compact>` | `core` | Chooses the advertised tool surface (`v1`/`dispatch` remain aliases). |
 | `--godot-bin <path>` | `GODOT_BIN` or `godot` | Godot executable used by MCP tools. |
 | `--node-command <path>` | current Node executable | Node executable written to client config. |
 | `--server-path <path>` | bundled `server.js` | MCP server file written to client config. |
@@ -175,16 +175,6 @@ niua-godot-mcp-doctor
 ```
 
 If you later move or delete the checkout, rerun setup so the client config points at the right server path.
-
-## About `npx`
-
-If `npm view niua-godot-mcp version` returns a version, you can use the published package:
-
-```bash
-npx niua-godot-mcp@latest setup --client codex --project-root "$HOME/Godot/NIUAProjects" --write
-```
-
-If npm returns `404`, use the source-checkout path above.
 
 ## Next Step
 

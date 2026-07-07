@@ -44,8 +44,10 @@ When unsure of state, call `get_run_settings` (reports `mainScene` + `mainSceneE
 
 ## Tool profiles (context budget)
 
-- **`v1` (42 tools)** — project, scene, node, script, run, export, inspector, filesystem. The default; covers the whole core build loop. Stay here for normal work.
-- **`full` (171 tools)** — adds the specialized subsystems below. Switch only when a task needs one (env `NIUA_MCP_PROFILE=full`). Same code either way; `full` is just a wider menu, not "more production-ready".
+- **`core` (55 tools, default)** — project, scenes, nodes, scripts, run controls, runtime playtesting, audio, inspector. Every member proven in real game builds. Stay here for normal work.
+- **`full` (~146 stable tools)** — adds the specialized subsystems below (env `NIUA_MCP_PROFILE=full`). Same code either way; `full` is a wider menu, not "more production-ready".
+- **`compact` (13 router tools)** — the full stable surface behind action-routed domain tools, for context-constrained clients.
+- Experimental tools (multiplayer, localization, navigation, tilemaps, export, debugger control, animation trees, UI theming, 2D workflow builders) are hidden from every profile unless `NIUA_MCP_EXPERIMENTAL=on`. `describe_tools` lists them, labeled. Do not suggest them to the user unless that env is set.
 
 ## Subsystem reference (read on demand)
 

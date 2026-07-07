@@ -162,7 +162,7 @@ This is expected when Godot is running headless or the renderer cannot expose pi
 Symptom:
 
 ```text
-Tool "create_sprite_2d" is not in the "v1" tool profile.
+Tool "remove_audio_bus" is not in the "core" tool profile.
 ```
 
 Fix:
