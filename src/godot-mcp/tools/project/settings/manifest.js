@@ -102,7 +102,7 @@ export const PROJECT_SETTINGS_TOOL_MANIFEST = [
   },
   {
     name: "get_input_map",
-    description: "Read Godot Input Map actions and supported event bindings.",
+    description: "Read the project's input actions from ProjectSettings — the same source set_input_action writes and the running game loads. Actions list in sorted name order; built-in ui_* actions appear only if the project overrides them.",
     profile: "full",
     tier: "standard",
     category: "project-settings",

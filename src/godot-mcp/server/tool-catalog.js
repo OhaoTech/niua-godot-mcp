@@ -1,3 +1,7 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { GODOT_MCP_TOOLS } from "../tools/index.js";
 import { createToolRegistry } from "./registry.js";
 import {
@@ -7,9 +11,20 @@ import {
 } from "./tool-profiles.js";
 import { createUsageRecorder } from "./usage-stats.js";
 
+function packageVersion() {
+  // Single source of truth: a hardcoded copy here shipped 0.1.5 announcing
+  // itself as 0.1.0 at initialize.
+  try {
+    const packagePath = path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "..", "..", "package.json");
+    return String(JSON.parse(readFileSync(packagePath, "utf8")).version ?? "0.0.0");
+  } catch {
+    return "0.0.0";
+  }
+}
+
 export const SERVER_INFO = {
   name: "niua-godot-mcp",
-  version: "0.1.0"
+  version: packageVersion()
 };
 
 export const ACTIVE_TOOL_PROFILE = resolveToolProfile();

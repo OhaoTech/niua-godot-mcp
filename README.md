@@ -59,6 +59,19 @@ Create a simple saved 3D scene with a ground plane, a cube, a camera, and a ligh
 Set the scene as the main scene, run it, and report the run status.
 ```
 
+Then the part that is genuinely different — ask the agent to play what it just built:
+
+```text
+Add WASD movement to the cube: define the input actions, attach a small script.
+Then playtest it yourself: run the scene, install the runtime probe, inject the
+movement inputs, verify from runtime state that the cube actually moved, and
+capture a screenshot of the running game.
+```
+
+The agent drives the running game the way a player's keyboard would — input-map
+actions, raw key events, mouse clicks — and reads live state back as proof, so it
+verifies its own gameplay instead of assuming the code works.
+
 Keep this checkout in place. The setup command writes an absolute path to `src/godot-mcp/server.js` into your MCP client config.
 
 ## Install The Optional Agent Skill

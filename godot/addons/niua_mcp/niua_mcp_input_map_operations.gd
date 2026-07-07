@@ -6,23 +6,43 @@ const NiuaMcpProjectSettingsUtils = preload("niua_mcp_project_settings_utils.gd"
 
 
 static func input_map() -> Dictionary:
+	# The project's input actions live in ProjectSettings ("input/<name>") —
+	# the same source set_input_action writes and the running game loads at
+	# startup. The editor process's InputMap singleton holds editor shortcuts
+	# (ui_*, spatial_editor/*), never the game's actions, so reading it both
+	# violated read-your-writes and dumped ~90 actions of editor chrome.
 	var actions := []
-	for action in InputMap.get_actions():
-		var action_name := str(action)
+	for property in ProjectSettings.get_property_list():
+		var property_name := str(property.get("name", ""))
+		if not property_name.begins_with("input/"):
+			continue
+		var setting = ProjectSettings.get_setting(property_name)
+		if typeof(setting) != TYPE_DICTIONARY:
+			continue
+		# Built-in ui_* defaults are registered as project settings too; only a
+		# value that differs from its registered default is the project's own.
+		# var_to_str compares serialized content, not InputEvent object identity.
+		if var_to_str(setting) == var_to_str(ProjectSettings.property_get_revert(property_name)):
+			continue
 		var events := []
-		for event in InputMap.action_get_events(action):
-			events.append(NiuaMcpInputEventCodec.event_to_json(event))
-
+		var raw_events = setting.get("events", [])
+		if typeof(raw_events) == TYPE_ARRAY:
+			for event in raw_events:
+				if event is InputEvent:
+					events.append(NiuaMcpInputEventCodec.event_to_json(event))
 		actions.append({
-			"name": action_name,
-			"deadzone": InputMap.action_get_deadzone(action),
+			"name": property_name.substr(6),
+			"deadzone": float(setting.get("deadzone", 0.2)),
 			"events": events
 		})
+
+	actions.sort_custom(func(a, b): return str(a.name) < str(b.name))
 
 	return {
 		"ok": true,
 		"data": {
-			"actions": actions
+			"actions": actions,
+			"source": "project_settings"
 		}
 	}
 

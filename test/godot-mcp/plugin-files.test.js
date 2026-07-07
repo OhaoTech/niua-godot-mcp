@@ -1149,7 +1149,12 @@ test("Godot project settings operations delegate focused domain modules", async 
   assert.match(inputMap, /preload\("niua_mcp_project_settings_utils\.gd"\)/);
   assert.match(inputMap, /static func input_map\(\) -> Dictionary:/);
   assert.match(inputMap, /static func set_input_action\(body: Dictionary, save_project_settings: Callable\) -> Dictionary:/);
-  assert.match(inputMap, /InputMap\.get_actions/);
+  // Finding 10: the read path must use ProjectSettings ("input/<name>") — the
+  // source set_input_action writes and the game loads — never the editor
+  // process's InputMap singleton (editor shortcuts, not project actions).
+  assert.match(inputMap, /ProjectSettings\.get_property_list/);
+  assert.match(inputMap, /begins_with\("input\/"\)/);
+  assert.doesNotMatch(inputMap, /InputMap\.get_actions/);
   assert.match(inputMap, /InputMap\.add_action/);
   assert.match(inputMap, /ProjectSettings\.set_setting\("input\/%s"/);
   assert.match(inputMap, /NiuaMcpInputEventCodec\.event_from_json/);
