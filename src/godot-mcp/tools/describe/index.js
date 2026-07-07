@@ -2,7 +2,9 @@ import { toolDefinitionsFromManifest } from "../../manifest/index.js";
 import {
   DISPATCH_DOMAINS,
   DOMAIN_BY_CATEGORY,
+  EXPERIMENTAL_ENV_VAR,
   STANDALONE_TOOLS,
+  experimentalEnabled,
   firstSentence,
   resolveToolProfile
 } from "../../server/capability-graph.js";
@@ -49,18 +51,21 @@ export async function describeTools(args = {}) {
 
 function describeRootMap() {
   const grouped = groupCatalogByDomain(GODOT_MCP_TOOLS);
-  return {
-    ok: true,
-    data: {
-      domains: Object.entries(DISPATCH_DOMAINS).map(([domain, spec]) => ({
-        domain,
-        toolCount: grouped.get(domain).length,
-        summary: spec.summary
-      })),
-      totalTools: GODOT_MCP_TOOLS.length,
-      profile: resolveToolProfile()
-    }
+  const experimentalCount = GODOT_MCP_TOOLS.filter((tool) => tool.stability === "experimental").length;
+  const data = {
+    domains: Object.entries(DISPATCH_DOMAINS).map(([domain, spec]) => ({
+      domain,
+      toolCount: grouped.get(domain).length,
+      summary: spec.summary
+    })),
+    totalTools: GODOT_MCP_TOOLS.length,
+    profile: resolveToolProfile()
   };
+  if (experimentalCount > 0 && !experimentalEnabled()) {
+    data.experimentalHidden = experimentalCount;
+    data.experimentalNote = `${experimentalCount} tools are under development and hidden from all profiles; set ${EXPERIMENTAL_ENV_VAR}=on to expose them.`;
+  }
+  return { ok: true, data };
 }
 
 function describeDomainTools(domain) {
@@ -81,6 +86,7 @@ function describeDomainTools(domain) {
       tools: grouped.get(domain).map((tool) => ({
         name: tool.name,
         tier: tool.tier,
+        ...(tool.stability === "experimental" ? { stability: "experimental" } : {}),
         summary: firstSentence(tool.description)
       }))
     }
@@ -97,15 +103,19 @@ function describeOneTool(name) {
     };
   }
 
-  return {
-    ok: true,
-    data: {
-      name: tool.name,
-      description: tool.description,
-      tier: tool.tier,
-      inputSchema: tool.inputSchema
-    }
+  const data = {
+    name: tool.name,
+    description: tool.description,
+    tier: tool.tier,
+    inputSchema: tool.inputSchema
   };
+  if (tool.stability === "experimental") {
+    data.stability = "experimental";
+    if (!experimentalEnabled()) {
+      data.note = `Under development and hidden from all profiles. Set ${EXPERIMENTAL_ENV_VAR}=on and restart the server to use it.`;
+    }
+  }
+  return { ok: true, data };
 }
 
 export const DESCRIBE_TOOL_DEFINITIONS = toolDefinitionsFromManifest(DESCRIBE_TOOL_MANIFEST, {

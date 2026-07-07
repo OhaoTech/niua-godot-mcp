@@ -52,6 +52,7 @@ export const NODE2D_TOOL_MANIFEST = [
   },
   {
     name: "create_tile_map_layer",
+    stability: "experimental",
     description: "Create a TileMapLayer with an existing or generated TileSet and optional initial cell painting.",
     profile: "full",
     tier: "standard",
@@ -71,6 +72,7 @@ export const NODE2D_TOOL_MANIFEST = [
   },
   {
     name: "set_tile_map_layer_cells",
+    stability: "experimental",
     description: "Set or erase cells on an existing TileMapLayer using TileSet source ids and atlas coordinates.",
     profile: "full",
     tier: "standard",
@@ -90,6 +92,7 @@ export const NODE2D_TOOL_MANIFEST = [
   },
   {
     name: "paint_tile_map_layer_terrain",
+    stability: "experimental",
     description: "Paint terrain-aware cells on an existing TileMapLayer using Godot's terrain connect or path solver.",
     profile: "full",
     tier: "standard",

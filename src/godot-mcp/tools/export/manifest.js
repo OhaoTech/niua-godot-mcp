@@ -17,6 +17,7 @@ const LIST_EXPORT_PRESETS_SCHEMA = {
 export const EXPORT_PRESET_TOOL_MANIFEST = [
   {
     name: "list_export_presets",
+    stability: "experimental",
     description: "List Godot export presets configured in export_presets.cfg.",
     profile: "full",
     tier: "standard",
@@ -44,6 +45,7 @@ export const EXPORT_PRESET_TOOL_MANIFEST = [
   },
   {
     name: "upsert_export_preset",
+    stability: "experimental",
     description: "Create or update a Godot export preset through the visible editor bridge.",
     profile: "full",
     tier: "standard",
@@ -75,6 +77,7 @@ export const EXPORT_PRESET_TOOL_MANIFEST = [
 export const EXPORT_LOCAL_TOOL_MANIFEST = [
   {
     name: "diagnose_export_templates",
+    stability: "experimental",
     description: "Diagnose whether local Godot export templates are installed for the MCP Godot version.",
     profile: "full",
     tier: "standard",
@@ -94,6 +97,7 @@ export const EXPORT_LOCAL_TOOL_MANIFEST = [
   },
   {
     name: "validate_export_preset",
+    stability: "experimental",
     description: "Validate Godot export preset configuration before running a local export.",
     profile: "full",
     tier: "standard",
@@ -113,6 +117,7 @@ export const EXPORT_LOCAL_TOOL_MANIFEST = [
   },
   {
     name: "export_project",
+    stability: "experimental",
     description: "Export an allowlisted Godot project through the local Godot CLI.",
     profile: "full",
     tier: "standard",

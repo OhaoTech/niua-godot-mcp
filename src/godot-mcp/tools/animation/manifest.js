@@ -196,6 +196,7 @@ export const ANIMATION_TOOL_MANIFEST = [
   },
   {
     name: "create_animation_tree_state_machine",
+    stability: "experimental",
     description: "Create or update a basic AnimationTree StateMachine wired to an AnimationPlayer.",
     profile: "full",
     tier: "standard",
@@ -225,6 +226,7 @@ export const ANIMATION_TOOL_MANIFEST = [
   },
   {
     name: "travel_animation_tree",
+    stability: "experimental",
     description: "Travel an AnimationTree StateMachine playback to a named state.",
     profile: "full",
     tier: "standard",

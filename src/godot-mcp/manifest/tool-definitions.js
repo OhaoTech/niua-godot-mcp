@@ -9,6 +9,7 @@ export function toolDefinitionsFromManifest(manifest, { adapterHandlers = {}, lo
     description: entry.description,
     category: entry.category,
     tier: entry.tier,
+    stability: entry.stability,
     inputSchema: entry.inputSchema,
     async handler(args = {}) {
       if (manifestImplementation(entry) === "local") {

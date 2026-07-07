@@ -33,6 +33,9 @@ export function createMcpProcess(env = {}) {
       // The suite exercises the whole catalog; profile-specific tests
       // override this (e.g. NIUA_MCP_PROFILE: "" for the v1 default).
       NIUA_MCP_PROFILE: "full",
+      // Experimental tools stay under test even though users don't see them
+      // by default; experimental-gating.test.js pins the default hiding.
+      NIUA_MCP_EXPERIMENTAL: "on",
       ...env
     },
     stdio: ["pipe", "pipe", "pipe"]

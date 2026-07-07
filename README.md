@@ -180,10 +180,22 @@ mkdir -p ~/.agents/skills && cp -r skills/niua-godot-forge ~/.agents/skills/
 The server exposes a curated core of ~55 tools by default — enough for full games, light on your agent's context.
 
 - `core` *(default)* — project, scenes, nodes, scripts, run controls, runtime playtesting, audio, inspector.
-- `full` — everything: animation, UI, particles, navigation, localization, multiplayer, export, debugger (~180 tools).
+- `full` — every stable tool: animation, UI, particles, resources, viewport, import pipeline, and more.
 - `compact` — the full surface behind 13 routing tools, for context-constrained setups.
 
 Switch by re-running setup with `--profile full --write` (or set `NIUA_MCP_PROFILE` in your client config). In any profile, the agent can browse the complete catalog with the `describe_tools` tool. The generated reference is [docs/godot-mcp/tools.md](docs/godot-mcp/tools.md).
+
+## Under development (hidden by default)
+
+We hold tools to a simple bar: they count as **stable** only after they have built real games, not just passed tests. Subsystems that haven't cleared that bar yet — multiplayer, localization, navigation, tilemaps, export, debugger control, animation trees, UI theming, and the 2D workflow builders — are marked experimental and **hidden from every profile by default**, so you never meet an unproven tool by accident.
+
+They still exist, still run under our live conformance gate on every release, and the agent can see them (labeled) via `describe_tools`. To try them:
+
+```bash
+NIUA_MCP_EXPERIMENTAL=on
+```
+
+in your MCP client's env config. Feedback on experimental tools is very welcome — real usage is exactly what promotes them to stable.
 
 ## Security model, in one paragraph
 

@@ -16,6 +16,7 @@ import {
 export const DEBUGGER_CONTROL_TOOL_MANIFEST = [
   {
     name: "get_debugger_state",
+    stability: "experimental",
     description: "Read Godot debugger-panel state: sessions, breakpoints, recent debugger events, and performance monitors.",
     profile: "full",
     tier: "standard",
@@ -43,6 +44,7 @@ export const DEBUGGER_CONTROL_TOOL_MANIFEST = [
   },
   {
     name: "set_debugger_breakpoint",
+    stability: "experimental",
     description: "Set or clear a Godot debugger breakpoint in a GDScript file.",
     profile: "full",
     tier: "standard",
@@ -71,6 +73,7 @@ export const DEBUGGER_CONTROL_TOOL_MANIFEST = [
   },
   {
     name: "toggle_debugger_profiler",
+    stability: "experimental",
     description: "Enable or disable a Godot debugger profiler on active editor debugger sessions.",
     profile: "full",
     tier: "standard",
@@ -99,6 +102,7 @@ export const DEBUGGER_CONTROL_TOOL_MANIFEST = [
   },
   {
     name: "send_debugger_message",
+    stability: "experimental",
     description: "Send a low-level Godot debugger message to editor debugger sessions through the public debugger API.",
     profile: "full",
     tier: "standard",

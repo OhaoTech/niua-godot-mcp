@@ -270,6 +270,7 @@ GODOT_MCP_ALLOWED_PROJECT_ROOTS = "/abs/path/to/runs"
 | `GODOT_MCP_HEADLESS` / `NIUA_MCP_HEADLESS` | Launch headless | off |
 | `NIUA_MCP_MAX_PAYLOAD_BYTES` | File-write payload cap | 64 MiB |
 | `NIUA_MCP_USAGE_STATS` | Local tool-usage counters (set `off` to disable) | on |
+| `NIUA_MCP_EXPERIMENTAL` | Expose under-development tools (multiplayer, localization, navigation, tilemaps, export, debugger control, animation-tree, UI theming, 2D workflow builders) | off |
 | `NIUA_MCP_USAGE_DIR` | Where usage counter files are written | `runs/tool-usage` |
 
 Usage counters are local-only and counts-only: per-session JSON files record tool names, call counts, and error counts — never arguments, paths, or project names, and nothing leaves the machine. They exist so future default profiles can be derived from real usage instead of guesses.

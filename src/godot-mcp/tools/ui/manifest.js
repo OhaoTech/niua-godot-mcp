@@ -65,6 +65,7 @@ export const UI_TOOL_MANIFEST = [
   },
   {
     name: "create_ui_theme",
+    stability: "experimental",
     description: "Create a Godot Theme resource with curated font-size, color, constant, and StyleBoxFlat entries.",
     profile: "full",
     tier: "standard",
@@ -93,6 +94,7 @@ export const UI_TOOL_MANIFEST = [
   },
   {
     name: "apply_ui_theme_override",
+    stability: "experimental",
     description: "Assign a Theme resource or per-node Control theme overrides such as font_size and font_color.",
     profile: "full",
     tier: "standard",

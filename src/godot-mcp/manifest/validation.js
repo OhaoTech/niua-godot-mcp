@@ -1,5 +1,6 @@
 const VALID_PROFILES = new Set(["v1", "full"]);
 const VALID_TIERS = new Set(["essential", "standard"]);
+const VALID_STABILITIES = new Set(["stable", "experimental"]);
 const VALID_IMPLEMENTATIONS = new Set(["bridge", "local"]);
 const VALID_ROUTE_SIDES = new Set(["read", "write"]);
 const VALID_ROUTE_ARGS = new Set(["none", "query", "body"]);
@@ -51,6 +52,16 @@ function validateManifestEntry(entry) {
   // "essential" by evidence from real runs, everything else is "standard".
   if (!VALID_TIERS.has(entry.tier)) {
     throw new Error(`${label} manifest tier must be essential or standard`);
+  }
+  // stability marks maturity: "experimental" = works in conformance but has
+  // never been exercised by a real game build — hidden from every profile
+  // unless NIUA_MCP_EXPERIMENTAL=on, so nobody meets an unproven tool by
+  // accident. Absent means stable. An experimental tool cannot be essential.
+  if (entry.stability !== undefined && !VALID_STABILITIES.has(entry.stability)) {
+    throw new Error(`${label} manifest stability must be stable or experimental`);
+  }
+  if (entry.stability === "experimental" && entry.tier === "essential") {
+    throw new Error(`${label} manifest cannot be both experimental and essential`);
   }
   requireString(entry, "category", label);
 

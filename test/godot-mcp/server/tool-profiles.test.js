@@ -96,7 +96,7 @@ test("MCP server defaults to the core tool profile over stdio", async () => {
     assert.deepEqual([...names].sort(), [...V1_TOOL_NAMES].sort());
 
     const blocked = await server.request("tools/call", {
-      name: "list_export_presets",
+      name: "remove_audio_bus",
       arguments: {}
     });
     assert.match(blocked.error.message, /not in the "core" tool profile/);

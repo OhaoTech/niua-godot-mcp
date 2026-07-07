@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { GODOT_MCP_TOOLS } from "../tools/index.js";
+import { EXPERIMENTAL_ENV_VAR, experimentalEnabled, servableTools } from "./capability-graph.js";
 import { createToolRegistry } from "./registry.js";
 import {
   TOOL_PROFILE_ENV_VAR,
@@ -38,10 +39,8 @@ export const USAGE_RECORDER = createUsageRecorder({
   serverVersion: SERVER_INFO.version
 });
 
-const FULL_TOOL_NAMES = new Set(GODOT_MCP_TOOLS.map((tool) => tool.name));
-
 export const TOOL_REGISTRY = createToolRegistry([
-  selectProfileTools(GODOT_MCP_TOOLS, ACTIVE_TOOL_PROFILE)
+  selectProfileTools(servableTools(GODOT_MCP_TOOLS), ACTIVE_TOOL_PROFILE)
 ]);
 
 export const TOOL_DEFINITIONS = TOOL_REGISTRY.definitions;
@@ -56,7 +55,17 @@ export async function callTool(name, args = {}) {
       USAGE_RECORDER.record(name, false);
     }
     if (error?.code === -32601) {
-      if (FULL_TOOL_NAMES.has(name)) {
+      const catalogTool = GODOT_MCP_TOOLS.find((tool) => tool.name === name);
+      if (catalogTool?.stability === "experimental" && !experimentalEnabled()) {
+        throw Object.assign(
+          new Error(
+            `Tool "${name}" is under development and hidden by default. ` +
+              `Set ${EXPERIMENTAL_ENV_VAR}=on and restart the server to use it.`
+          ),
+          { code: -32602 }
+        );
+      }
+      if (catalogTool) {
         throw Object.assign(
           new Error(
             `Tool "${name}" is not in the "${ACTIVE_TOOL_PROFILE}" tool profile. ` +

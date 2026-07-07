@@ -6,7 +6,25 @@
 // describe_tools navigator both consume it, so the two views cannot drift.
 
 export const TOOL_PROFILE_ENV_VAR = "NIUA_MCP_PROFILE";
+export const EXPERIMENTAL_ENV_VAR = "NIUA_MCP_EXPERIMENTAL";
 export const DEFAULT_TOOL_PROFILE = "core";
+
+const EXPERIMENTAL_ON = new Set(["on", "1", "true", "yes"]);
+
+// Experimental tools exist in the catalog (describe_tools lists and labels
+// them) but are excluded from every serving profile by default: they pass
+// conformance yet no real game build has exercised them, and nobody should
+// meet an unproven tool by accident.
+export function experimentalEnabled(env = process.env) {
+  return EXPERIMENTAL_ON.has(String(env[EXPERIMENTAL_ENV_VAR] ?? "off").toLowerCase());
+}
+
+export function servableTools(tools, env = process.env) {
+  if (experimentalEnabled(env)) {
+    return tools;
+  }
+  return tools.filter((tool) => tool.stability !== "experimental");
+}
 export const TOOL_PROFILES = Object.freeze(["core", "full", "compact"]);
 export const TOOL_PROFILE_ALIASES = Object.freeze({
   v1: "core",

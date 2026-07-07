@@ -160,6 +160,7 @@ export const RESOURCE_TOOL_MANIFEST = [
   },
   {
     name: "create_tile_set",
+    stability: "experimental",
     description: "Create a TileSet resource from existing Texture2D atlases, explicit tile coordinates, and generated atlas grids.",
     profile: "full",
     tier: "standard",

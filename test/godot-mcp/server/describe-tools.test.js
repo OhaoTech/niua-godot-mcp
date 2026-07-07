@@ -21,7 +21,10 @@ test("describe_tools with no args returns the root domain map", async () => {
 
   assert.equal(result.ok, true);
   const { domains, totalTools, profile } = result.data;
-  assert.deepEqual(Object.keys(result.data).sort(), ["domains", "profile", "totalTools"]);
+  // experimentalHidden/Note appear because unit tests run without
+  // NIUA_MCP_EXPERIMENTAL: the root map tells agents what exists but is
+  // hidden, and how to enable it (experimental-gating.test.js pins content).
+  assert.deepEqual(Object.keys(result.data).sort(), ["domains", "experimentalHidden", "experimentalNote", "profile", "totalTools"]);
 
   // one entry per capability-graph domain, in graph order
   assert.deepEqual(domains.map(({ domain }) => domain), Object.keys(DISPATCH_DOMAINS));
@@ -89,7 +92,7 @@ test("describe_tools errors carry the fix: valid domains / the domain listing", 
 test("describe_tools describes the FULL catalog regardless of the active profile", async () => {
   // list_export_presets is standard-tier: hidden from the core projection,
   // but navigation must still reveal it — that pairing is the design.
-  assert.ok(!CORE_TOOL_NAMES.includes("list_export_presets"));
+  assert.ok(!CORE_TOOL_NAMES.includes("remove_audio_bus"));
 
   const server = createMcpProcess({ NIUA_MCP_PROFILE: "" }); // core default
 
@@ -98,11 +101,11 @@ test("describe_tools describes the FULL catalog regardless of the active profile
 
     const described = await server.request("tools/call", {
       name: "describe_tools",
-      arguments: { name: "list_export_presets" }
+      arguments: { name: "remove_audio_bus" }
     });
     const payload = JSON.parse(described.result.content[0].text);
     assert.equal(payload.ok, true);
-    assert.equal(payload.data.name, "list_export_presets");
+    assert.equal(payload.data.name, "remove_audio_bus");
     assert.equal(payload.data.tier, "standard");
     assert.ok(payload.data.inputSchema);
 
@@ -116,7 +119,7 @@ test("describe_tools describes the FULL catalog regardless of the active profile
 
     // calling the non-exposed tool still errors with the profile guidance
     const blocked = await server.request("tools/call", {
-      name: "list_export_presets",
+      name: "remove_audio_bus",
       arguments: {}
     });
     assert.match(blocked.error.message, /not in the "core" tool profile/);

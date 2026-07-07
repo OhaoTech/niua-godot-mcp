@@ -7,6 +7,7 @@ import {
 export const PLAYABLE2D_WORKFLOW_TOOL_MANIFEST = [
   {
     name: "create_2d_playable_blockout",
+    stability: "experimental",
     description: "Compose a practical 2D playable scene blockout with root, ground collision, player body, visible sprites, camera, inputs, and controller script.",
     profile: "full",
     tier: "standard",
@@ -26,6 +27,7 @@ export const PLAYABLE2D_WORKFLOW_TOOL_MANIFEST = [
   },
   {
     name: "create_2d_character_controller",
+    stability: "experimental",
     description: "Create default A/D/space input actions, write a curated CharacterBody2D movement script, and attach it to a player node.",
     profile: "full",
     tier: "standard",
@@ -45,6 +47,7 @@ export const PLAYABLE2D_WORKFLOW_TOOL_MANIFEST = [
   },
   {
     name: "create_2d_trigger_zone",
+    stability: "experimental",
     description: "Create an Area2D trigger zone with collision, an optional visible Sprite2D helper, and a generated runtime-probe script.",
     profile: "full",
     tier: "standard",
