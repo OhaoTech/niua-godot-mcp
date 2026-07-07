@@ -138,9 +138,11 @@ Ask:
 
 **What you'll see:** a real Godot editor window opens on your desktop, nodes appear in the scene tree, and then the game window launches. The agent reports `playing: true` — read back from the engine, not assumed.
 
-## Step 6 — Watch it play its own game
+## Step 6 — Watch it play its own game *(under development)*
 
-This is the part that's genuinely different. Ask:
+This is the part that's genuinely different — and the part we're still actively building, so treat it as a preview. The individual tools it uses are stable and this exact flow passes our test battery, but the end-to-end selfplay experience isn't yet as bulletproof as Steps 1–5, and a dedicated playtest-bot is in development. If your agent stumbles here, that report is gold: <team@ohao.tech>.
+
+Ask:
 
 > Add WASD movement to the cube: define the input actions and attach a small script.
 > Then playtest it yourself: run the scene, install the runtime probe, inject the
