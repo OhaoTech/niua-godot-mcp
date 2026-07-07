@@ -1,108 +1,81 @@
 # NIUA Godot MCP
 
-NIUA Godot MCP lets an AI agent drive a real local Godot 4.6 editor through MCP tools. The agent can create projects, add scenes and nodes, write GDScript, run the game, inspect runtime state, capture screenshots, and export builds without hand-clicking the editor.
+Give your AI assistant a real Godot editor.
 
-The repo ships two pieces:
+NIUA Godot MCP lets an AI agent (Claude, Codex, or any MCP client) drive a local Godot 4.6 editor the way you would: create projects, build scenes, write GDScript, run the game, **play it, and verify it works** — all through tools instead of hand-clicking.
 
-- A Node.js MCP server in `src/godot-mcp`
-- A Godot editor addon in `godot/addons/niua_mcp`
+Ten minutes from now you'll have an AI that builds a small 3D game on your machine, runs it, and playtests it itself.
 
-Local-first by design: it uses local files, local Godot, local ports, and project roots you explicitly allow.
+Everything is local: your files, your Godot, your ports. The agent can only touch project folders you explicitly allow.
 
-## Requirements
+---
 
-- Node.js 20 or newer
-- Godot 4.6.x on `PATH` as `godot`, or `GODOT_BIN=/absolute/path/to/godot`
-- Linux, macOS, or Windows
-- An MCP client such as Codex or Claude Desktop
+## What you need first
 
-## Quick Start From Source
+Three things. Check each one — the rest of this guide assumes they pass.
 
-The package name is not always available on npm. The reliable path today is to run it from a checkout.
+**1. Node.js 20 or newer**
+
+```bash
+node --version
+```
+
+You should see `v20.x` or higher. If not: [nodejs.org](https://nodejs.org).
+
+**2. Godot 4.6.x**
+
+```bash
+godot --version
+```
+
+You should see `4.6.x.stable...`. If the command isn't found but Godot is installed somewhere, note its full path — you'll pass it as `GODOT_BIN` in Step 3. If Godot isn't installed: [godotengine.org/download](https://godotengine.org/download).
+
+**3. An MCP-capable AI tool** — Claude Code, Codex, Claude Desktop, or any other MCP client.
+
+---
+
+## Step 1 — Get the code
 
 ```bash
 git clone https://github.com/OhaoTech/niua-godot-mcp.git
 cd niua-godot-mcp
-
-node --version
-godot --version   # or: export GODOT_BIN=/absolute/path/to/godot
 ```
 
-Pick one folder where NIUA is allowed to create and edit Godot projects:
+That's the whole install. There are no dependencies to download — `npm install` is not needed.
+
+Keep this folder where it is: your AI tool's config will point at it by absolute path.
+
+## Step 2 — Choose where games may live
+
+Pick one folder. The agent will only be able to create and open Godot projects inside it — everything else on your disk is off-limits to the project tools.
 
 ```bash
 mkdir -p "$HOME/Godot/NIUAProjects"
 ```
 
-Wire the MCP server into Codex:
+Use any path you like; just use the same one in Step 3.
+
+## Step 3 — Connect your AI tool
+
+Pick **your** tool below and do just that one section.
+
+### Claude Code
+
+One command (replace the two paths with yours):
 
 ```bash
-node src/godot-mcp/cli.js setup \
-  --client codex \
-  --project-root "$HOME/Godot/NIUAProjects" \
-  --write
+claude mcp add niua-godot -s user \
+  --env GODOT_MCP_ALLOWED_PROJECT_ROOTS="$HOME/Godot/NIUAProjects" \
+  -- node /absolute/path/to/niua-godot-mcp/src/godot-mcp/cli.js
 ```
 
-For Claude Desktop, use `--client claude` instead.
+If Godot is not on your `PATH`, add `--env GODOT_BIN=/absolute/path/to/godot` before the `--`.
 
-Restart your MCP client, then ask it:
+Restart Claude Code (or run `/mcp` and connect `niua-godot`).
 
-```text
-Call the niua-godot MCP tool get_godot_version.
-```
+### Codex
 
-If that works, ask it to create and run a first project:
-
-```text
-Use niua-godot-forge. Create a Godot project at ~/Godot/NIUAProjects/first-niua-game.
-Create a simple saved 3D scene with a ground plane, a cube, a camera, and a light.
-Set the scene as the main scene, run it, and report the run status.
-```
-
-Then the part that is genuinely different — ask the agent to play what it just built:
-
-```text
-Add WASD movement to the cube: define the input actions, attach a small script.
-Then playtest it yourself: run the scene, install the runtime probe, inject the
-movement inputs, verify from runtime state that the cube actually moved, and
-capture a screenshot of the running game.
-```
-
-The agent drives the running game the way a player's keyboard would — input-map
-actions, raw key events, mouse clicks — and reads live state back as proof, so it
-verifies its own gameplay instead of assuming the code works.
-
-Keep this checkout in place. The setup command writes an absolute path to `src/godot-mcp/server.js` into your MCP client config.
-
-## Install The Optional Agent Skill
-
-The MCP server provides the tools. The `niua-godot-forge` skill teaches the agent the safe Godot build loop: save the scene, set the main scene, run, observe, and recover from common editor modal traps.
-
-For Codex:
-
-```bash
-mkdir -p ~/.agents/skills
-cp -r skills/niua-godot-forge ~/.agents/skills/
-```
-
-For Claude Code:
-
-```bash
-mkdir -p ~/.claude/skills
-cp -r skills/niua-godot-forge ~/.claude/skills/
-```
-
-See [skills/niua-godot-forge/README.md](skills/niua-godot-forge/README.md) for platform notes.
-
-## Daily Commands
-
-Run the MCP server directly over stdio:
-
-```bash
-node src/godot-mcp/server.js
-```
-
-Run setup as a dry run before writing config:
+The setup command previews first, writes only when you add `--write`:
 
 ```bash
 node src/godot-mcp/cli.js setup \
@@ -110,84 +83,121 @@ node src/godot-mcp/cli.js setup \
   --project-root "$HOME/Godot/NIUAProjects"
 ```
 
-Run doctor checks:
+Read the preview — it shows exactly what will be written and runs a connection smoke test. Then run the same command again with `--write`, and restart Codex.
+
+### Claude Desktop
+
+Same flow with `--client claude`:
+
+```bash
+node src/godot-mcp/cli.js setup \
+  --client claude \
+  --project-root "$HOME/Godot/NIUAProjects" \
+  --write
+```
+
+Restart Claude Desktop.
+
+### Any other MCP client (Cursor, etc.)
+
+```bash
+node src/godot-mcp/cli.js setup --client generic --project-root "$HOME/Godot/NIUAProjects"
+```
+
+This prints a config block you can adapt to your client's MCP settings file (for Cursor: `~/.cursor/mcp.json`). The server command is `node /absolute/path/to/src/godot-mcp/cli.js` with the `GODOT_MCP_ALLOWED_PROJECT_ROOTS` environment variable.
+
+## Step 4 — Say hello
+
+In your AI tool, ask:
+
+> Call the niua-godot tool get_godot_version.
+
+**Checkpoint:** the agent replies with your Godot version, something like `4.6.3.stable`. If it errors instead, jump to [When something goes wrong](#when-something-goes-wrong).
+
+## Step 5 — Build your first game
+
+Ask:
+
+> Create a Godot project at ~/Godot/NIUAProjects/first-game.
+> Build a saved 3D scene with a ground plane, a cube, a camera, and a light.
+> Set it as the main scene, run it, and confirm the run status.
+
+**What you'll see:** a real Godot editor window opens on your desktop, nodes appear in the scene tree, and then the game window launches. The agent reports `playing: true` — read back from the engine, not assumed.
+
+## Step 6 — Watch it play its own game
+
+This is the part that's genuinely different. Ask:
+
+> Add WASD movement to the cube: define the input actions and attach a small script.
+> Then playtest it yourself: run the scene, install the runtime probe, inject the
+> movement inputs, verify from runtime state that the cube actually moved, and
+> capture a screenshot of the running game.
+
+The agent presses the same inputs a player's keyboard would — input-map actions, raw keys, mouse clicks — and reads live game state back as proof. It verifies its own gameplay instead of assuming the code works.
+
+From here, just describe the game you want.
+
+---
+
+## When something goes wrong
+
+| You see | Do this |
+|---|---|
+| `Unable to run Godot executable` | Godot isn't on `PATH`. Add `GODOT_BIN=/absolute/path/to/godot` to the env in your client config (or `--godot-bin` on the setup command). |
+| `outside allowed project roots` | The agent tried to create a project outside your Step 2 folder. Ask it to use a path inside that folder, or re-run setup with a different `--project-root`. |
+| `Godot bridge is not reachable` | No editor is running for that project. Ask the agent to call `open_project` first — the error message says exactly this. |
+| The tool isn't listed in your AI client | The client wasn't restarted after Step 3, or the config path was wrong. Re-run the setup command without `--write` — it prints the config path it detected and smoke-tests the server. |
+| Godot editor sits on a dialog and nothing responds | A scene was run before being saved. Press Escape in the editor, then ask the agent to save the scene and set the main scene before running. The bundled skill (below) teaches the agent to avoid this. |
+
+Deeper guides: [Getting started](docs/godot-mcp/getting-started.md) · [First project tutorial](docs/godot-mcp/first-project.md) · [Troubleshooting](docs/godot-mcp/troubleshooting.md) · [Full manual](docs/godot-mcp/MANUAL.md)
+
+Health check anytime:
 
 ```bash
 node src/godot-mcp/doctor.js
-node src/godot-mcp/doctor.js --project "$HOME/Godot/NIUAProjects/first-niua-game"
-node src/godot-mcp/doctor.js --profile full --godot-bin "$GODOT_BIN"
 ```
 
-Install or repair the Godot addon in an existing project:
+---
+
+## Optional: teach the agent the pro workflow
+
+The MCP server provides the tools; the bundled `niua-godot-forge` skill teaches your agent the safe build loop (save before running, recover from editor dialogs, keep responses small).
+
+Claude Code:
 
 ```bash
-node scripts/install-niua-godot-addon.js /path/to/project
+mkdir -p ~/.claude/skills && cp -r skills/niua-godot-forge ~/.claude/skills/
 ```
 
-Or through npm scripts:
+Codex:
 
 ```bash
-npm run godot:addon:install -- /path/to/project
+mkdir -p ~/.agents/skills && cp -r skills/niua-godot-forge ~/.agents/skills/
 ```
 
-## Tool Profiles
+## Optional: tool profiles
 
-- `v1` is the default. It exposes the compact core: project setup, filesystem, scenes, nodes, scripts, run controls, runtime screenshot, inspector, and core 3D helpers.
-- `full` exposes every subsystem: animation, UI, particles, navigation, audio, localization, multiplayer, resources, debugger, viewport, 2D helpers, and export helpers.
+The server exposes a curated core of ~55 tools by default — enough for full games, light on your agent's context.
 
-Use the full profile only when you need the wider tool menu:
+- `core` *(default)* — project, scenes, nodes, scripts, run controls, runtime playtesting, audio, inspector.
+- `full` — everything: animation, UI, particles, navigation, localization, multiplayer, export, debugger (~180 tools).
+- `compact` — the full surface behind 13 routing tools, for context-constrained setups.
 
-```bash
-NIUA_MCP_PROFILE=full node src/godot-mcp/server.js
-```
+Switch by re-running setup with `--profile full --write` (or set `NIUA_MCP_PROFILE` in your client config). In any profile, the agent can browse the complete catalog with the `describe_tools` tool. The generated reference is [docs/godot-mcp/tools.md](docs/godot-mcp/tools.md).
 
-If you already wrote client config, rerun setup with `--profile full --write`.
+## Security model, in one paragraph
 
-The generated catalog is [docs/godot-mcp/tools.md](docs/godot-mcp/tools.md).
-
-## Configuration
-
-The setup command writes these environment values into your MCP client config:
-
-```bash
-NIUA_MCP_PROFILE=v1
-GODOT_BIN=godot
-GODOT_MCP_ALLOWED_PROJECT_ROOTS=/absolute/path/to/GodotProjects
-```
-
-`GODOT_MCP_ALLOWED_PROJECT_ROOTS` is important. Local project-management tools refuse to create, import, open, export, or discover projects outside those roots.
-
-## Troubleshooting
-
-Use the hands-on guide first:
-
-- [Getting started](docs/godot-mcp/getting-started.md)
-- [First project tutorial](docs/godot-mcp/first-project.md)
-- [Troubleshooting](docs/godot-mcp/troubleshooting.md)
-
-Common fixes:
-
-- `npx niua-godot-mcp` returns `404`: use the source-checkout commands above, or install globally from this checkout with `npm install -g .`.
-- `Unable to run Godot executable`: install Godot 4.6.x, put it on `PATH`, or pass `--godot-bin /absolute/path/to/godot`.
-- `outside allowed project roots`: create/open projects under the folder passed to `--project-root`, or rerun setup with the root you want.
-- Bridge is unreachable: open the project through the MCP `open_project` tool, or run `node src/godot-mcp/doctor.js --project /path/to/project --port 9174`.
-- Godot shows a blocking run dialog: save the scene to `res://...`, set the main scene, press Escape in the editor if a modal is already open, then retry.
+The Godot bridge binds to `127.0.0.1` only and requires a per-session token. Project management is confined to the folders you allowlisted; in-project file writes are confined to `res://`. The agent is trusted with the projects you gave it — treat it like a collaborator with commit access to those folders, nothing more. Details: [SECURITY.md](SECURITY.md).
 
 ## Development
 
-This repo currently has no external npm dependencies. Run the unit suite directly:
-
 ```bash
-npm test
-npm run godot:mcp:docs
+npm test                    # unit + contract suite, no dependencies needed
+npm run godot:mcp:docs      # regenerate the tool catalog (never edit it by hand)
 ```
 
-`npm run godot:mcp:docs` regenerates the tool catalog and the skill reference docs. Do not edit generated reference files by hand.
-
-## Security
-
-The bridge binds to localhost, can use a per-session auth token, and restricts project filesystem writes to `res://` paths. Treat any MCP client with access to the bridge as trusted to edit the current Godot project. See [SECURITY.md](SECURITY.md).
+Architecture notes live in [docs/godot-mcp/capability-graph-architecture.md](docs/godot-mcp/capability-graph-architecture.md).
 
 ## License
 
-[PolyForm Small Business License 1.0.0](LICENSE.md) is free for individuals and small businesses with fewer than 100 people and under about $1M USD annual revenue. Larger organizations need a commercial license: contact OhaoTech at <team@ohao.tech>.
+[PolyForm Small Business License 1.0.0](LICENSE.md) — free for individuals and organizations under 100 people and ~$1M USD annual revenue. Larger organizations: contact OhaoTech at <team@ohao.tech> for a commercial license.

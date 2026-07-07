@@ -11,7 +11,7 @@ After setup, your MCP client can call tools such as `get_godot_version`, `create
 - Node.js 20 or newer
 - Godot 4.6.x
 - A local checkout of this repository
-- Codex or Claude Desktop
+- An MCP client: Claude Code, Codex, Claude Desktop, or another MCP-capable tool
 - One folder where AI-assisted Godot projects are allowed to live
 
 Check Node and Godot:
@@ -49,6 +49,16 @@ You can use a different path. Use the same path in `--project-root`.
 
 ## 3. Run Setup For Your MCP Client
 
+For Claude Code, one command registers the server (no setup script needed):
+
+```bash
+claude mcp add niua-godot -s user \
+  --env GODOT_MCP_ALLOWED_PROJECT_ROOTS="$HOME/Godot/NIUAProjects" \
+  -- node /absolute/path/to/niua-godot-mcp/src/godot-mcp/cli.js
+```
+
+Add `--env GODOT_BIN=/absolute/path/to/godot` before the `--` if Godot is not on `PATH`. Then restart Claude Code (or run `/mcp` and connect `niua-godot`) and skip to step 5.
+
 For Codex:
 
 ```bash
@@ -79,7 +89,7 @@ node src/godot-mcp/cli.js setup \
 
 ## 4. Restart Your MCP Client
 
-After setup writes config, restart Codex or Claude Desktop so it reloads the MCP server entry.
+After setup writes config, restart your MCP client so it reloads the MCP server entry.
 
 Then ask:
 
