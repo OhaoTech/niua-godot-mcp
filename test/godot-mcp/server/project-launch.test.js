@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -11,6 +11,7 @@ import {
   getFreeHttpPort,
   waitForFileText
 } from "../helpers/server-harness.js";
+import { bridgeSessionPath } from "../../../src/godot-mcp/services/bridge-session.js";
 
 test("Godot MCP server rejects opening projects outside allowed roots", async () => {
   const allowedRoot = await mkdtemp(path.join(tmpdir(), "niua-godot-allowed-"));
@@ -86,6 +87,13 @@ test("Godot MCP server passes requested bridge ports to launched editors", async
       assert.equal(fakeLaunch.env.GODOT_MCP_TOKEN, fakeLaunch.env.NIUA_MCP_TOKEN);
       assert.equal(openPayload.data.bridge.tokenConfigured, true);
       assert.equal("token" in openPayload.data.bridge, false);
+
+      // Local session file so SDK/scripts need no token env
+      const sessionFile = bridgeSessionPath(projectRoot);
+      assert.equal(openPayload.data.sessionPath, sessionFile);
+      const session = JSON.parse(await readFile(sessionFile, "utf8"));
+      assert.equal(session.port, bridgePort);
+      assert.equal(session.token, fakeLaunch.env.NIUA_MCP_TOKEN);
 
       await server.request("tools/call", {
         name: "close_project",

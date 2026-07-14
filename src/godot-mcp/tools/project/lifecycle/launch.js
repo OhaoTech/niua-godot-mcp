@@ -14,6 +14,21 @@ import {
   resolveLaunchProject
 } from "./launch/project.js";
 import { rememberOpenedGodotProject } from "./launch/registry.js";
+import { getRunningProjectByRoot } from "../../../services/process-manager.js";
+import { writeBridgeSession } from "../../../services/bridge-session.js";
+
+function persistLocalSession(projectRoot, { host, port, token } = {}) {
+  if (!projectRoot || port == null) return null;
+  try {
+    return writeBridgeSession(projectRoot, {
+      host: host ?? "127.0.0.1",
+      port,
+      token: token ?? null
+    });
+  } catch {
+    return null;
+  }
+}
 
 export async function openGodotProject(args = {}) {
   const {
@@ -22,7 +37,19 @@ export async function openGodotProject(args = {}) {
   } = await resolveLaunchProject(args);
   const reused = reusableProjectResponse(args, projectRoot);
   if (reused) {
-    return reused;
+    const live = getRunningProjectByRoot(projectRoot);
+    const sessionPath = persistLocalSession(projectRoot, {
+      host: live?.bridge?.host ?? reused.data?.bridge?.host,
+      port: live?.bridge?.port ?? reused.data?.bridge?.port,
+      token: live?.bridgeToken ?? null
+    });
+    return {
+      ...reused,
+      data: {
+        ...reused.data,
+        sessionPath: sessionPath ?? undefined
+      }
+    };
   }
 
   const addon = await installProjectAddonForLaunch(args, projectRoot);
@@ -45,12 +72,18 @@ export async function openGodotProject(args = {}) {
     };
   }
   const registryRecord = await rememberOpenedGodotProject(projectRoot);
+  const sessionPath = persistLocalSession(projectRoot, {
+    host: bridgeOptions.bridgeHost,
+    port: bridgeOptions.bridgePort,
+    token: bridgeOptions.bridgeToken
+  });
 
   return {
     ok: true,
     data: {
       ...serializeOpenProjectProcessEntry(entry),
-      registryRecord
+      registryRecord,
+      sessionPath: sessionPath ?? undefined
     }
   };
 }

@@ -1,38 +1,34 @@
 #!/usr/bin/env node
 /**
- * JS SDK quickstart — multi-step Godot work with intermediates kept local.
+ * JS SDK quickstart — no token setup.
  *
- * Prerequisites:
- *   1. Godot editor open on a project with the NIUA addon + bridge up
- *   2. Shared token in env, e.g. GODOT_MCP_TOKEN / NIUA_MCP_TOKEN
+ * Happy path:
+ *   1. In your AI client, open the project once with open_project (writes a local session file)
+ *   2. Run:
+ *        node examples/sdk-quickstart.mjs /path/to/project
  *
- * Usage (from repo root):
- *   GODOT_MCP_TOKEN=… node examples/sdk-quickstart.mjs /path/to/project
- *
- * Or after `npm link` / install:
- *   node --input-type=module -e "import { connect } from 'niua-godot-mcp/sdk'; …"
+ * The SDK reads host/port/token from <project>/.godot/niua_mcp_bridge.json automatically.
  */
 import path from "node:path";
-import { connect } from "../src/godot-mcp/sdk/index.js";
+import { connect, loadBridgeSession } from "../src/godot-mcp/sdk/index.js";
 
-const projectRoot = path.resolve(process.argv[2] ?? process.cwd());
-const host = process.env.GODOT_MCP_HOST ?? process.env.NIUA_GODOT_BRIDGE_HOST ?? "127.0.0.1";
-const port = Number(process.env.GODOT_MCP_PORT ?? process.env.NIUA_GODOT_BRIDGE_PORT ?? 9174);
-const token = process.env.GODOT_MCP_TOKEN ?? process.env.NIUA_MCP_TOKEN;
-
-if (!token) {
-  console.error("Set GODOT_MCP_TOKEN (or NIUA_MCP_TOKEN) to match the editor bridge.");
+const projectRoot = path.resolve(process.argv[2] ?? "");
+if (!projectRoot || projectRoot === path.resolve("")) {
+  console.error("Usage: node examples/sdk-quickstart.mjs /path/to/GodotProject");
+  console.error("Tip: open the project once via MCP open_project first — no token env needed.");
   process.exit(2);
 }
 
-const godot = connect({
-  host,
-  port,
-  token,
-  expectedProjectRoot: projectRoot,
-});
+const session = loadBridgeSession(projectRoot);
+if (!session) {
+  console.error(`No local bridge session at ${path.join(projectRoot, ".godot", "niua_mcp_bridge.json")}`);
+  console.error("Ask your AI to call open_project on this folder first, then re-run this script.");
+  process.exit(2);
+}
 
-// Bracket keys: some domains contain hyphens (nodes-common, project-management, …).
+// Friction-free: only the project path. Token/host/port come from the session file.
+const godot = connect({ expectedProjectRoot: projectRoot });
+
 const scene = godot.scene;
 const nodes = godot["nodes-common"];
 const run = godot.run;
@@ -46,8 +42,7 @@ const notes = [];
 async function step(label, fn) {
   try {
     const result = await fn();
-    const failed = result && result.ok === false;
-    if (failed) {
+    if (result && result.ok === false) {
       fail += 1;
       notes.push(`${label}: ${result.error ?? "ok:false"}`);
       return result;
@@ -70,14 +65,14 @@ await step("create_scene", () =>
     rootType: "Node3D",
     rootName: "SdkQuickstart",
     open: true,
-    overwrite: true,
+    overwrite: true
   })
 );
 await step("create_node", () =>
   nodes.create_node({
     type: "MeshInstance3D",
     name: "Marker",
-    parentPath: "",
+    parentPath: ""
   })
 );
 await step("save", () => scene.save_scene_as({ path: scenePath }));
@@ -87,6 +82,5 @@ await step("probe", () => dbg.install_runtime_probe({ save: true }));
 await step("events", () => dbg.get_runtime_events({}));
 await step("stop", () => run.stop_running_scene({}));
 
-// Only this line is meant for model/human context — not every step payload.
 console.log(godot.summarize("sdk-quickstart", { ok, fail, notes }));
 process.exit(fail > 0 ? 1 : 0);
