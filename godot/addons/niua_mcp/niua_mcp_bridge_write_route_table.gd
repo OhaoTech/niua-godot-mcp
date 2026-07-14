@@ -52,6 +52,7 @@ const ROUTES := {
 	"/scene/open": { "handler": "_open_scene", "arg": "body", "methodError": "scene open requires POST" },
 	"/scene/create": { "handler": "_create_scene", "arg": "body", "methodError": "scene creation requires POST" },
 	"/scene/node/create": { "handler": "_create_node", "arg": "body", "methodError": "node creation requires POST" },
+	"/scene/node/instance": { "handler": "_instance_scene", "arg": "body", "methodError": "scene instance requires POST" },
 	"/scene/node/create-with-script": { "handler": "_create_node_with_script", "arg": "body", "methodError": "node creation with script requires POST" },
 	"/scene/node/rename": { "handler": "_rename_node", "arg": "body", "methodError": "node rename requires POST" },
 	"/scene/node/delete": { "handler": "_delete_node", "arg": "body", "methodError": "node delete requires POST" },

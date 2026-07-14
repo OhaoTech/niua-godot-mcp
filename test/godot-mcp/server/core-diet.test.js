@@ -17,6 +17,8 @@ const FORBIDDEN_IN_CORE = [
 const REQUIRED_IN_CORE = [
   "create_node",
   "create_resource",
+  "find_nodes",
+  "instance_scene",
   "save_scene_as",
   "run_main_scene",
   "run_playtest_evidence",

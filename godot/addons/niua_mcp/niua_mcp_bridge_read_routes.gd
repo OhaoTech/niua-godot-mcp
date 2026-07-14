@@ -20,6 +20,7 @@ const HANDLERS := {
 	"_project_info": true,
 	"_editor_state": true,
 	"_scene_tree": true,
+	"_find_nodes": true,
 	"_open_scene_tabs": true,
 	"_selection": true,
 	"_logs_response": true,

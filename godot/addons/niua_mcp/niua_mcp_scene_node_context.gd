@@ -38,9 +38,12 @@ static func set_owner_recursive(node: Node, owner: Node) -> void:
 		set_owner_recursive(child, owner)
 
 
-static func error(message: String, code: String = "bad_request") -> Dictionary:
-	return {
+static func error(message: String, code: String = "bad_request", recovery: Dictionary = {}) -> Dictionary:
+	var out := {
 		"ok": false,
 		"error": message,
 		"errorCode": code
 	}
+	if not recovery.is_empty():
+		out["recovery"] = recovery
+	return out

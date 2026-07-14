@@ -69,10 +69,20 @@ import {
 } from "./workflows/playable3d/index.js";
 
 const COMMON_NODE_CREATION_TOOL_DEFINITIONS = COMMON_NODE_TOOL_DEFINITIONS
-  .filter(({ name }) => name === "search_node_types" || name === "create_node");
+  .filter(({ name }) =>
+    name === "search_node_types" ||
+    name === "create_node" ||
+    name === "find_nodes" ||
+    name === "instance_scene"
+  );
 
 const COMMON_NODE_MUTATION_TOOL_DEFINITIONS = COMMON_NODE_TOOL_DEFINITIONS
-  .filter(({ name }) => name !== "search_node_types" && name !== "create_node");
+  .filter(({ name }) =>
+    name !== "search_node_types" &&
+    name !== "create_node" &&
+    name !== "find_nodes" &&
+    name !== "instance_scene"
+  );
 
 export const GODOT_MCP_TOOLS = [
   ...RUNTIME_TOOL_DEFINITIONS,

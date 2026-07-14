@@ -5,6 +5,7 @@ const NiuaMcpSceneGraphOperations = preload("niua_mcp_scene_graph_operations.gd"
 
 const HANDLERS := {
 	"_create_node": true,
+	"_instance_scene": true,
 	"_rename_node": true,
 	"_delete_node": true,
 	"_duplicate_node": true,
@@ -28,6 +29,15 @@ func handles(handler: String) -> bool:
 
 func _create_node(body: Dictionary) -> Dictionary:
 	return NiuaMcpSceneGraphOperations.create_node_with_side_effects(
+		_context.editor,
+		body,
+		Callable(_context, "validate_res_path"),
+		Callable(_context, "remember")
+	)
+
+
+func _instance_scene(body: Dictionary) -> Dictionary:
+	return NiuaMcpSceneGraphOperations.instance_scene_with_side_effects(
 		_context.editor,
 		body,
 		Callable(_context, "validate_res_path"),

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.8 - Wake-ready kernel tools
+
+- **`find_nodes`:** search large scenes by name/type/path/scene file without full tree dumps.
+- **`instance_scene`:** instance PackedScene/GLB under a parent with a stable name + properties.
+- **`run_playtest_evidence` scenarios:** `wait` / `input` / `assert_property` (equals|near|exists).
+- Local link helper: `scripts/install-local-mcp-link.sh` (point `~/.local/bin/niua-godot-mcp` at this checkout).
+
 ## 0.1.7 - P0–P2 first-success loop
 
 - **Run safety:** `saveBeforeRun` defaults to **true**; unsaved / no-main errors include `recovery.tool` + hint (no modal traps).

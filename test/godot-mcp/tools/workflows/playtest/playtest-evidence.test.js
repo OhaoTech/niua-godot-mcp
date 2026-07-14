@@ -42,6 +42,41 @@ test("run_playtest_evidence returns compact evidence on happy path", async () =>
   assert.ok(calls.includes("stop_running_scene"));
 });
 
+test("run_playtest_evidence scenarios can assert properties after input", async () => {
+  const callTool = async (name, args) => {
+    if (name === "get_run_settings") {
+      return { ok: true, data: { mainScene: "res://main.tscn", mainSceneExists: true } };
+    }
+    if (name === "get_runtime_node_properties") {
+      return {
+        ok: true,
+        data: { properties: { global_position: { value: { x: 1, y: 0, z: 2 } } } }
+      };
+    }
+    if (name === "capture_runtime_screenshot") {
+      return { ok: true, data: { available: false, reason: "headless" } };
+    }
+    return { ok: true, data: { playing: true, events: [] } };
+  };
+  const run = createRunPlaytestEvidence({ callTool });
+  const result = await run({
+    settleMs: 0,
+    scenarios: [
+      { type: "wait", ms: 1 },
+      {
+        type: "assert_property",
+        nodePath: "Player",
+        property: "global_position",
+        near: [1, 0, 2],
+        epsilon: 0.1
+      }
+    ]
+  });
+  assert.equal(result.ok, true);
+  assert.equal(result.evidence.claims.scenariosPassed, true);
+  assert.equal(result.evidence.scenarios.length, 2);
+});
+
 test("run_playtest_evidence fails clearly without main or scenePath", async () => {
   const callTool = async (name) => {
     if (name === "get_run_settings") {

@@ -6,7 +6,8 @@ const NiuaMcpSceneTabOperations = preload("niua_mcp_scene_tab_operations.gd")
 
 const HANDLERS := {
 	"_scene_tree": true,
-	"_open_scene_tabs": true
+	"_open_scene_tabs": true,
+	"_find_nodes": true
 }
 
 var _context
@@ -22,6 +23,10 @@ func handles(handler: String) -> bool:
 
 func _scene_tree(query: Dictionary) -> Dictionary:
 	return NiuaMcpEditorStateOperations.scene_tree(_context.current_scene_path(), _context.edited_scene_root(), query)
+
+
+func _find_nodes(query: Dictionary) -> Dictionary:
+	return NiuaMcpEditorStateOperations.find_nodes(_context.editor, query)
 
 
 func _open_scene_tabs() -> Dictionary:

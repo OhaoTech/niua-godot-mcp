@@ -16,6 +16,7 @@ const HANDLERS := {
 	"_redo_editor_action": true,
 	"_create_scene": true,
 	"_create_node": true,
+	"_instance_scene": true,
 	"_set_tile_map_layer_cells": true,
 	"_paint_tile_map_layer_terrain": true,
 	"_create_node_with_script": true,
