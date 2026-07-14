@@ -8,6 +8,8 @@ Ten minutes from now you'll have an AI that builds a small 3D game on your machi
 
 Everything is local: your files, your Godot, your ports. The agent can only touch project folders you explicitly allow.
 
+This package is the **open Godot agent kernel** (MCP tools, CLI, doctor, JS SDK). Higher-level “make a game from a prompt” studio orchestration is intentionally out of scope — see [KERNEL-CONTRACT.md](docs/godot-mcp/KERNEL-CONTRACT.md). For multi-step builds without stuffing every intermediate into the model context, use recipes/batch ops or the [JS SDK](docs/godot-mcp/code-execution-facade-design.md) (`import { connect } from 'niua-godot-mcp/sdk'`).
+
 ---
 
 ## Fastest start: let your AI install it

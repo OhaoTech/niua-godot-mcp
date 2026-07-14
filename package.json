@@ -34,7 +34,9 @@
     "godot:addon:install": "node scripts/install-niua-godot-addon.js",
     "godot:mcp": "node src/godot-mcp/server.js",
     "godot:mcp:doctor": "node src/godot-mcp/doctor.js",
-    "godot:mcp:docs": "node scripts/generate-godot-mcp-docs.mjs && node scripts/generate-godot-mcp-skill-reference.mjs"
+    "godot:mcp:docs": "node scripts/generate-godot-mcp-docs.mjs && node scripts/generate-godot-mcp-skill-reference.mjs",
+    "gen:sdk": "node scripts/gen-sdk.mjs",
+    "probe:sdk-ruler": "node scripts/probes/sdk-token-ruler.mjs"
   },
   "keywords": [
     "mcp",
@@ -48,5 +50,10 @@
   "engines": {
     "node": ">=20"
   },
-  "license": "PolyForm-Small-Business-1.0.0"
+  "license": "PolyForm-Small-Business-1.0.0",
+  "exports": {
+    ".": "./src/godot-mcp/server.js",
+    "./sdk": "./src/godot-mcp/sdk/index.js",
+    "./bridge-client": "./src/godot-mcp/bridge-client.js"
+  }
 }
