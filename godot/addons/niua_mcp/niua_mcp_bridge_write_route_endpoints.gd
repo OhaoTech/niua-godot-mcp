@@ -52,6 +52,7 @@ const ENDPOINTS := [
 	"/scene/open",
 	"/scene/create",
 	"/scene/node/create",
+	"/scene/node/instance",
 	"/scene/node/create-with-script",
 	"/scene/node/rename",
 	"/scene/node/delete",

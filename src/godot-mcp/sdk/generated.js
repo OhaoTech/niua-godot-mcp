@@ -1309,6 +1309,32 @@ export function buildNamespaces(call) {
      */
       "duplicate_node": (args = {}) => call("duplicate_node", args),
       /**
+     * Search the edited scene for nodes by name/type/path/scene file without dumping the full tree. Essential for large scenes.
+     * @param {object} [args]
+     * @param {string} [args.expectedProjectRoot]
+     * @param {string} [args.host]
+     * @param {number} [args.maxResults] Max matches to return (default 50, max 200).
+     * @param {string} [args.nameContains] Case-insensitive substring match on node name.
+     * @param {string} [args.pathPrefix] Only nodes under this path (e.g. World or Player).
+     * @param {number} [args.port]
+     * @param {string} [args.sceneFileContains] Match sceneFilePath substring (e.g. bed_lite.glb).
+     * @param {string} [args.type] Godot class name filter (is_class), e.g. CharacterBody3D, MeshInstance3D.
+     */
+      "find_nodes": (args = {}) => call("find_nodes", args),
+      /**
+     * Instance a PackedScene (including imported GLB) under a parent with an optional stable name and properties. Prefer this for props over create_node of MeshInstance3D.
+     * @param {object} [args]
+     * @param {string} [args.expectedProjectRoot]
+     * @param {string} [args.host]
+     * @param {string} [args.name] Stable node name for the instance (strongly recommended).
+     * @param {string} [args.parentPath] Parent node path under the scene root. Empty = root.
+     * @param {string} args.path res:// path to a PackedScene (.tscn/.scn) or imported GLB scene.
+     * @param {number} [args.port]
+     * @param {object} [args.properties] Optional property bag (e.g. position as [x,y,z]).
+     * @param {string} [args.scenePath] Alias of path.
+     */
+      "instance_scene": (args = {}) => call("instance_scene", args),
+      /**
      * Rename a node in the current edited Godot scene.
      * @param {object} [args]
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
@@ -1593,9 +1619,11 @@ export function buildNamespaces(call) {
      * @param {number} [args.port] Bridge port (default 9174).
      * @param {boolean} [args.saveBeforeRun] Save edited scene before run. Default true.
      * @param {string} [args.savePath] Optional disk path for runtime screenshot PNG (keeps base64 out of context).
+     * @param {Array} [args.scenarios] Optional playtest steps after run+probe. Types: wait {ms}, input {action|actions|events, holdMs?, re
      * @param {string} [args.scenePath] Optional res:// scene to run (custom). If omitted, runs the project main scene.
      * @param {number} [args.settleMs] Wait after run before observing (ms). Default 250.
      * @param {boolean} [args.stopAfter] Stop the running scene after observe. Default true.
+     * @param {boolean} [args.stopOnScenarioFail] Stop remaining scenarios when one fails. Default true.
      */
       "run_playtest_evidence": (args = {}) => call("run_playtest_evidence", args),
     },

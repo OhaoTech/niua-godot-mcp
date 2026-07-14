@@ -141,7 +141,7 @@ test("migrated manifest registry validates every migrated domain", () => {
     "viewport"
   ]);
   validateToolManifest(MIGRATED_TOOL_MANIFESTS);
-  assert.equal(MIGRATED_TOOL_MANIFESTS.length, 177);
+  assert.equal(MIGRATED_TOOL_MANIFESTS.length, 179);
 });
 
 test("animation manifest defines imported-scene and editor animation contracts", () => {
@@ -338,6 +338,8 @@ test("common node manifest preserves shared scene node bridge contracts", () => 
   validateToolManifest(COMMON_NODE_TOOL_MANIFEST);
 
   assert.deepEqual(COMMON_NODE_TOOL_MANIFEST.map((entry) => entry.name), [
+    "find_nodes",
+    "instance_scene",
     "search_node_types",
     "create_node",
     "create_node_with_script",
@@ -351,6 +353,8 @@ test("common node manifest preserves shared scene node bridge contracts", () => 
   assert.deepEqual(
     Object.keys(bridgeMethodsFromManifest(COMMON_NODE_TOOL_MANIFEST)),
     [
+      "findNodes",
+      "instanceScene",
       "searchNodeTypes",
       "createNode",
       "createNodeWithScript",
@@ -364,6 +368,7 @@ test("common node manifest preserves shared scene node bridge contracts", () => 
   assert.deepEqual(
     godotRoutesFromManifest(COMMON_NODE_TOOL_MANIFEST).write.map((route) => route.endpoint),
     [
+      "/scene/node/instance",
       "/scene/node/create",
       "/scene/node/create-with-script",
       "/scene/node/rename",

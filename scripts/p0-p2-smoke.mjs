@@ -49,6 +49,8 @@ try {
 const names = new Set(GODOT_MCP_TOOLS.map((t) => t.name));
 check("run_playtest_evidence registered", names.has("run_playtest_evidence"));
 check("run_playtest_evidence in core", CORE_TOOL_NAMES.includes("run_playtest_evidence"));
+check("find_nodes in core", CORE_TOOL_NAMES.includes("find_nodes"));
+check("instance_scene in core", CORE_TOOL_NAMES.includes("instance_scene"));
 
 // P2 import wait + diet
 check("wait_for_imported_asset registered", names.has("wait_for_imported_asset"));

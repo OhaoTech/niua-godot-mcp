@@ -39,6 +39,17 @@ static func create_node(editor: EditorInterface, body: Dictionary, path_validato
 	return NiuaMcpSceneNodeCreationOperations.create_node(editor, body, path_validator)
 
 
+static func instance_scene(editor: EditorInterface, body: Dictionary, path_validator: Callable) -> Dictionary:
+	return NiuaMcpSceneNodeCreationOperations.instance_scene(editor, body, path_validator)
+
+
+static func instance_scene_with_side_effects(editor: EditorInterface, body: Dictionary, path_validator: Callable, remember: Callable) -> Dictionary:
+	var result := instance_scene(editor, body, path_validator)
+	if bool(result.get("ok", false)) and remember.is_valid():
+		remember.call("instanced scene %s" % str(body.get("path", body.get("scenePath", ""))))
+	return result
+
+
 static func create_node_with_script(editor: EditorInterface, body: Dictionary, path_validator: Callable, create_script: Callable, attach_script: Callable) -> Dictionary:
 	return NiuaMcpSceneNodeCreationOperations.create_node_with_script(editor, body, path_validator, create_script, attach_script)
 

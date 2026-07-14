@@ -9,7 +9,135 @@ import {
   SEARCH_NODE_TYPES_SCHEMA
 } from "./schemas.js";
 
+const FIND_NODES_SCHEMA = {
+  type: "object",
+  properties: {
+    nameContains: {
+      type: "string",
+      description: "Case-insensitive substring match on node name."
+    },
+    type: {
+      type: "string",
+      description: "Godot class name filter (is_class), e.g. CharacterBody3D, MeshInstance3D."
+    },
+    pathPrefix: {
+      type: "string",
+      description: "Only nodes under this path (e.g. World or Player)."
+    },
+    sceneFileContains: {
+      type: "string",
+      description: "Match sceneFilePath substring (e.g. bed_lite.glb)."
+    },
+    maxResults: {
+      type: "number",
+      description: "Max matches to return (default 50, max 200)."
+    },
+    host: { type: "string" },
+    port: { type: "number" },
+    expectedProjectRoot: { type: "string" }
+  },
+  additionalProperties: false
+};
+
+const INSTANCE_SCENE_SCHEMA = {
+  type: "object",
+  properties: {
+    path: {
+      type: "string",
+      description: "res:// path to a PackedScene (.tscn/.scn) or imported GLB scene."
+    },
+    scenePath: {
+      type: "string",
+      description: "Alias of path."
+    },
+    name: {
+      type: "string",
+      description: "Stable node name for the instance (strongly recommended)."
+    },
+    parentPath: {
+      type: "string",
+      description: "Parent node path under the scene root. Empty = root."
+    },
+    properties: {
+      type: "object",
+      additionalProperties: true,
+      description: "Optional property bag (e.g. position as [x,y,z])."
+    },
+    host: { type: "string" },
+    port: { type: "number" },
+    expectedProjectRoot: { type: "string" }
+  },
+  required: ["path"],
+  additionalProperties: false
+};
+
 export const COMMON_NODE_TOOL_MANIFEST = [
+  {
+    name: "find_nodes",
+    description:
+      "Search the edited scene for nodes by name/type/path/scene file without dumping the full tree. Essential for large scenes.",
+    profile: "v1",
+    tier: "essential",
+    category: "nodes-common",
+    inputSchema: FIND_NODES_SCHEMA,
+    bridge: {
+      clientMethod: "findNodes",
+      endpoint: "/scene/nodes/find",
+      method: "GET",
+      request: "query",
+      query: {
+        fields: {
+          nameContains: { omitEmpty: true },
+          type: { omitEmpty: true },
+          pathPrefix: { omitEmpty: true },
+          sceneFileContains: { omitEmpty: true },
+          maxResults: { default: 50 }
+        }
+      }
+    },
+    godotRoute: {
+      side: "read",
+      endpoint: "/scene/nodes/find",
+      handler: "_find_nodes",
+      arg: "query"
+    },
+    conformance: {
+      happy: "return matching nodes with compact path/type metadata",
+      error: "not_found when no scene is open"
+    },
+    docs: {
+      summary: "Finds nodes in the edited scene by name, type, path, or scene file."
+    }
+  },
+  {
+    name: "instance_scene",
+    description:
+      "Instance a PackedScene (including imported GLB) under a parent with an optional stable name and properties. Prefer this for props over create_node of MeshInstance3D.",
+    profile: "v1",
+    tier: "essential",
+    category: "nodes-common",
+    inputSchema: INSTANCE_SCENE_SCHEMA,
+    bridge: {
+      clientMethod: "instanceScene",
+      endpoint: "/scene/node/instance",
+      method: "POST",
+      request: "body"
+    },
+    godotRoute: {
+      side: "write",
+      endpoint: "/scene/node/instance",
+      handler: "_instance_scene",
+      arg: "body",
+      methodError: "scene instance requires POST"
+    },
+    conformance: {
+      happy: "instance a packed scene with a stable name",
+      error: "not_found when asset missing/unimported, with wait_for_imported_asset recovery"
+    },
+    docs: {
+      summary: "Instances a PackedScene or imported GLB into the edited scene."
+    }
+  },
   {
     name: "search_node_types",
     description: "Search Godot ClassDB node types for Create Node dialog workflows, including instantiability, enabled-state, and inheritance metadata.",

@@ -7,6 +7,7 @@ const NiuaMcpSceneInspectorOperations = preload("niua_mcp_scene_inspector_operat
 const NiuaMcpSceneMaterialOperations = preload("niua_mcp_scene_material_operations.gd")
 const NiuaMcpSceneNodeOperations = preload("niua_mcp_scene_node_operations.gd")
 const NiuaMcpScenePropertyOperations = preload("niua_mcp_scene_property_operations.gd")
+const NiuaMcpEditorStateOperations = preload("niua_mcp_editor_state_operations.gd")
 
 
 static func create_scene_with_side_effects(editor: EditorInterface, body: Dictionary, refresh_filesystem: Callable, remember: Callable) -> Dictionary:
@@ -63,6 +64,18 @@ static func create_scene(editor: EditorInterface, body: Dictionary, refresh_file
 
 static func create_node(editor: EditorInterface, body: Dictionary, path_validator: Callable) -> Dictionary:
 	return NiuaMcpSceneNodeOperations.create_node(editor, body, path_validator)
+
+
+static func instance_scene_with_side_effects(editor: EditorInterface, body: Dictionary, path_validator: Callable, remember: Callable) -> Dictionary:
+	return NiuaMcpSceneNodeOperations.instance_scene_with_side_effects(editor, body, path_validator, remember)
+
+
+static func instance_scene(editor: EditorInterface, body: Dictionary, path_validator: Callable) -> Dictionary:
+	return NiuaMcpSceneNodeOperations.instance_scene(editor, body, path_validator)
+
+
+static func find_nodes(editor: EditorInterface, query: Dictionary) -> Dictionary:
+	return NiuaMcpEditorStateOperations.find_nodes(editor, query)
 
 
 static func create_node_with_script(editor: EditorInterface, body: Dictionary, path_validator: Callable, create_script: Callable, attach_script: Callable) -> Dictionary:

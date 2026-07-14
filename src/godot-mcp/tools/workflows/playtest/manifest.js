@@ -27,6 +27,19 @@ const RUN_PLAYTEST_EVIDENCE_SCHEMA = {
     saveBeforeRun: {
       type: "boolean",
       description: "Save edited scene before run. Default true."
+    },
+    scenarios: {
+      type: "array",
+      description:
+        "Optional playtest steps after run+probe. Types: wait {ms}, input {action|actions|events, holdMs?, release?}, assert_property {nodePath, property, equals|near|exists, epsilon?}.",
+      items: {
+        type: "object",
+        additionalProperties: true
+      }
+    },
+    stopOnScenarioFail: {
+      type: "boolean",
+      description: "Stop remaining scenarios when one fails. Default true."
     }
   },
   additionalProperties: false
