@@ -12,7 +12,9 @@ export function createBridgeClient(args = {}) {
       host,
       port,
       token: args.token,
-      bridgeToken: args.bridgeToken
+      bridgeToken: args.bridgeToken,
+      expectedProjectRoot: args.expectedProjectRoot,
+      projectRoot: args.projectRoot ?? args.expectedProjectRoot
     })
   });
 }

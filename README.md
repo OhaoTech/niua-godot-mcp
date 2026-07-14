@@ -14,40 +14,32 @@ This package is the **open Godot agent kernel** (MCP tools, CLI, doctor, JS SDK)
 
 ## JS SDK (live on `main`)
 
-Same tools as MCP, callable from Node so multi-step builds keep intermediate results **out of the model context**.
+Same tools as MCP, from Node — multi-step builds keep intermediates **out of the model context**.
+
+**No token setup.** Your AI opens the project once with `open_project`; that writes a local session file. Then:
 
 ```bash
-git clone https://github.com/OhaoTech/niua-godot-mcp.git
-cd niua-godot-mcp
-# editor open + bridge up, then:
-GODOT_MCP_TOKEN=… node examples/sdk-quickstart.mjs /path/to/GodotProject
+node examples/sdk-quickstart.mjs /path/to/GodotProject
 ```
 
 ```js
 import { connect } from "niua-godot-mcp/sdk";
-// or from a clone: import { connect } from "./src/godot-mcp/sdk/index.js";
 
-const godot = connect({
-  host: "127.0.0.1",
-  port: 9174,
-  token: process.env.GODOT_MCP_TOKEN,
-  expectedProjectRoot: "/path/to/project",
-});
+// Only the project path. Host/port/auth come from the local session file.
+const godot = connect({ expectedProjectRoot: "/path/to/project" });
 
 await godot.scene.create_scene({ path: "res://main.tscn", open: true, overwrite: true });
 await godot["nodes-common"].create_node({ type: "Node3D", name: "World" });
-// …many more steps; only print a summary for the agent…
 console.log(godot.summarize("build", { ok: 12, fail: 0 }));
 ```
 
 | Piece | Location |
 | --- | --- |
-| Entry | `import { connect } from "niua-godot-mcp/sdk"` (`package.json` exports `./sdk`) |
-| Design | [docs/godot-mcp/code-execution-facade-design.md](docs/godot-mcp/code-execution-facade-design.md) |
+| Entry | `import { connect } from "niua-godot-mcp/sdk"` |
 | Example | [examples/sdk-quickstart.mjs](examples/sdk-quickstart.mjs) |
-| Token ruler | `npm run probe:sdk-ruler` (needs a live bridge) |
+| Design | [docs/godot-mcp/code-execution-facade-design.md](docs/godot-mcp/code-execution-facade-design.md) |
 
-Domain names with hyphens use brackets: `godot["nodes-common"]`, `godot["project-management"]`.
+Domain names with hyphens use brackets: `godot["nodes-common"]`.
 
 ---
 

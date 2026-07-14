@@ -14,19 +14,28 @@ an agent can build gameplay.
 
 ## Local Bridge Authentication
 
-When the MCP server launches Godot with `open_project`, it generates a
-per-session token and passes it to the editor as `NIUA_MCP_TOKEN` and
-`GODOT_MCP_TOKEN`. The Godot bridge rejects requests that do not include the
-matching `X-NIUA-MCP-Token` header.
+**Users do not configure tokens.** On the happy path, `open_project` generates a
+per-session secret, starts Godot with it, and writes a project-local session
+file at `<project>/.godot/niua_mcp_bridge.json` (mode 0600 when the OS allows).
+The MCP client and JS SDK resolve auth automatically from that file or the
+server's in-memory process table.
 
-For manual editor launches, set the same token in the editor environment and
-the MCP server environment before connecting:
+The Godot bridge only accepts requests that present the matching
+`X-NIUA-MCP-Token` header when a token was configured for that editor process.
+If the editor was started with an empty token (advanced/manual), the bridge
+accepts localhost requests without a header.
+
+### Advanced: manual editor + tools
+
+Only needed if you launch Godot yourself and still want a locked bridge:
 
 ```bash
 export NIUA_MCP_TOKEN="$(openssl rand -base64 32 | tr '+/' '-_' | tr -d '=')"
 export GODOT_MCP_TOKEN="$NIUA_MCP_TOKEN"
 godot --path /path/to/project --editor
 ```
+
+Prefer `open_project` so session handoff stays automatic.
 
 If a bridge cannot be reached, run `diagnose_project_setup` with
 `checkBridge=true` and verify the project is open with the NIUA addon enabled.

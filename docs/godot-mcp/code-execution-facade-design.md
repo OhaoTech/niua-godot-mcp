@@ -52,13 +52,10 @@ editor** — confirmed feasible with minor init. Two facts drive the design:
   in `GODOT_MCP_TOOLS` (`tools/index.js`), so it exposes the full surface independent of
   profile. The SDK is thus **another projection of the capability graph**, consistent with
   the existing architecture.
-- **Token propagation is the one operational prerequisite.** `resolveBridgeToken`
-  (`services/bridge-auth.js:16-33`) finds a MCP-launched editor's token only via an
-  in-memory `Map` (`services/process-store.js:5`) that a separate process cannot read. So
-  the runner must get the token another way. **Resolution:** set a fixed `GODOT_MCP_TOKEN`
-  in a shared environment that both the MCP server and the runner read (add it to the
-  `niua-godot` env block alongside the existing vars), OR run a token-less local bridge.
-  The runner passes `token`/host/port explicitly to every SDK call from env.
+- **Token propagation is automatic on the happy path.** `open_project` writes
+  `<project>/.godot/niua_mcp_bridge.json` (host/port/token). SDK `connect({ expectedProjectRoot })`
+  loads that session file so users never set `GODOT_MCP_TOKEN`. In-process MCP still uses
+  the process-store Map; env tokens remain an advanced/CI override only.
 
 ## 3. Architecture — three units
 
@@ -146,7 +143,7 @@ ruler (blockout built 2 ways)        ── Unit C: identical-outcome check + to
    tool; if small, stop and document why.
 
 ## 6. Risks & resolutions
-- **Token propagation** (biggest) → shared `GODOT_MCP_TOKEN` env or token-less local
+- **Token propagation** → project session file from `open_project` (primary); env only advanced
   bridge; runner passes token explicitly. Documented as a setup step.
 - **Profile gate** → SDK binds to `GODOT_MCP_TOOLS`, bypassing `callTool`'s filter.
 - **Routing accuracy regression** (the dispatch-profile concern) is not in scope here — the
