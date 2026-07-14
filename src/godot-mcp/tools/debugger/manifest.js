@@ -198,8 +198,8 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
   {
     name: "get_runtime_events",
     description: "Read filtered runtime/debugger events captured by the NIUA Godot debugger probe without requesting a fresh runtime snapshot.",
-    profile: "full",
-    tier: "standard",
+    profile: "v1",
+    tier: "essential",
     category: "debugger",
     inputSchema: RUNTIME_EVENTS_SCHEMA,
     bridge: {

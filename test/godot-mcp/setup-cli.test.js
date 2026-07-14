@@ -93,7 +93,7 @@ test("cli without arguments still serves MCP over stdio", async () => {
   assert.equal(init.result.serverInfo.name, "niua-godot-mcp");
   // 0.1.5 tier triage: runtime quartet + set_input_action + audio pair
   // promoted into core with admission tickets (slice-0-findings.md #16).
-  assert.equal(tools.result.tools.length, 55);
+  assert.equal(tools.result.tools.length, 52);
 });
 
 function runCli(args) {

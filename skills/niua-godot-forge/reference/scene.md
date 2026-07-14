@@ -2,7 +2,7 @@
 
 Generated from the manifest-backed tool catalog. Do not edit by hand; run `npm run godot:mcp:docs`.
 
-- Tools: 16 (5 in v1, 11 full-only)
+- Tools: 16 (6 in v1, 10 full-only)
 - Argument names with `*` are required.
 
 | Tool | Profiles | Description | Arguments |
@@ -16,7 +16,7 @@ Generated from the manifest-backed tool catalog. Do not edit by hand; run `npm r
 | `focus_node` | full | Select and focus a scene-tree node in the visible Godot editor. | host:string, port:number, expectedProjectRoot:string, nodePath*:string |
 | `open_scene` | v1, full | Open an existing scene in the visible Godot editor. | host:string, port:number, expectedProjectRoot:string, path*:string |
 | `create_scene` | v1, full | Create a new scene file with a configurable root node and optionally open it in the visible Godot editor. | host:string, port:number, expectedProjectRoot:string, path*:string, rootType:string, rootName:string, open:boolean, overwrite:boolean |
-| `save_scene_as` | full | Save the current edited scene to a new scene path under res://. | host:string, port:number, expectedProjectRoot:string, path*:string |
+| `save_scene_as` | v1, full | Save the current edited scene to a new scene path under res://. | host:string, port:number, expectedProjectRoot:string, path*:string |
 | `switch_scene_tab` | full | Switch the visible Godot editor to an open scene tab, opening it if needed. | host:string, port:number, expectedProjectRoot:string, path*:string |
 | `close_scene` | full | Close the current Godot scene tab, optionally switching to and saving a target scene first. | host:string, port:number, expectedProjectRoot:string, path:string, saveBeforeClose:boolean |
 | `mark_scene_unsaved` | full | Mark the current or target Godot scene tab as unsaved for dirty-state workflows. | host:string, port:number, expectedProjectRoot:string, path*:string |

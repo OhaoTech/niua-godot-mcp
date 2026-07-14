@@ -408,18 +408,14 @@ test("Node3D manifest captures curated local 3D node tools and v1 profile member
     "create_static_body_3d",
     "create_area_3d"
   ]);
+  // L1 3D creators are standard/full; core uses create_node + create_resource + recipes.
   assert.deepEqual(
     NODE3D_TOOL_MANIFEST
       .filter((entry) => entry.profile === "v1")
       .map((entry) => entry.name),
-    [
-      "create_light_3d",
-      "create_camera_3d",
-      "create_mesh_instance_3d",
-      "create_character_body_3d",
-      "create_static_body_3d"
-    ]
+    []
   );
+  assert.ok(NODE3D_TOOL_MANIFEST.every((entry) => entry.tier === "standard"));
   assert.ok(NODE3D_TOOL_MANIFEST.every((entry) => entry.category === "nodes-3d"));
   assert.ok(NODE3D_TOOL_MANIFEST.every((entry) => entry.implementation === "local"));
 });

@@ -38,7 +38,7 @@ export const AUDIO_TOOL_MANIFEST = [
     name: "upsert_audio_bus",
     description: "Create, rename, route, mute, or set volume for an audio bus, then persist the bus layout.",
     profile: "full",
-    tier: "essential",
+    tier: "standard",
     category: "audio",
     inputSchema: UPSERT_AUDIO_BUS_SCHEMA,
     bridge: {
@@ -122,7 +122,7 @@ export const AUDIO_TOOL_MANIFEST = [
     name: "create_audio_stream_player",
     description: "Create an AudioStreamPlayer with an AudioStreamGenerator stream and route it to a named bus.",
     profile: "full",
-    tier: "essential",
+    tier: "standard",
     category: "audio",
     inputSchema: CREATE_AUDIO_STREAM_PLAYER_SCHEMA,
     bridge: {

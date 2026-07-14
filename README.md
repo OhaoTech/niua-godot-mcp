@@ -195,7 +195,7 @@ mkdir -p ~/.agents/skills && cp -r skills/niua-godot-forge ~/.agents/skills/
 
 ## Optional: tool profiles
 
-The server exposes a curated core of ~55 tools by default — enough for full games, light on your agent's context.
+The server exposes a curated core of ~52 tools by default — enough for full games, light on your agent's context.
 
 - `core` *(default)* — project, scenes, nodes, scripts, run controls, runtime playtesting, audio, inspector.
 - `full` — every stable tool: animation, UI, particles, resources, viewport, import pipeline, and more.

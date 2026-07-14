@@ -50,8 +50,8 @@ export const RUN_TOOL_MANIFEST = [
   {
     name: "get_run_settings",
     description: "Read Godot run settings such as the configured main scene.",
-    profile: "full",
-    tier: "standard",
+    profile: "v1",
+    tier: "essential",
     category: "run",
     inputSchema: BRIDGE_INPUT_SCHEMA,
     bridge: {
@@ -188,8 +188,8 @@ export const RUN_TOOL_MANIFEST = [
   {
     name: "run_custom_scene",
     description: "Run a specific scene path from the visible Godot editor.",
-    profile: "full",
-    tier: "standard",
+    profile: "v1",
+    tier: "essential",
     category: "run",
     inputSchema: RUN_CUSTOM_SCENE_SCHEMA,
     bridge: {

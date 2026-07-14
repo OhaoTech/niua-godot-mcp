@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.6 - Kernel surface diet
+
+- `core` profile rebalanced around L0 primitives + recipes + safe run/observe (~52 tools; was 55).
+- Demoted L1 3D/audio convenience creators from essential to standard (still available in `full`).
+- Promoted `create_resource`, `save_scene_as`, `get_run_settings`, `run_custom_scene`, `get_runtime_events` into essential.
+- Documented diet policy in `docs/godot-mcp/SURFACE-DIET.md`.
+
+
 ## 0.1.5
 
 - Selfplay: `send_runtime_input` gains raw keyboard events (`keys`: keycode/physicalKeycode via `Input.parse_input_event`, reaching both `_input` handlers and `Input.is_physical_key_pressed`) and mouse-button events with viewport positions — games that check raw keys (restart keys, menus, upgrade pickers) are now drivable end to end. `holdMs` releases keys symmetrically with actions.

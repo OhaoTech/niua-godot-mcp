@@ -21,7 +21,7 @@ This manual covers what it is, everything it can do (grouped by subsystem), the 
 | Editor bridge | HTTP/1.1 on `127.0.0.1:9174` (default), `x-niua-mcp-token` auth |
 | Godot version | 4.6.x |
 | Node version | >= 20 |
-| Default tool profile | `core` (55 game-proven tools); `full` = every stable tool (~146); `compact` = the stable surface behind 13 routers; 32 experimental tools hidden unless `NIUA_MCP_EXPERIMENTAL=on` |
+| Default tool profile | `core` (~52 kernel tools); `full` = every stable tool (~146); `compact` = the stable surface behind 13 routers; 32 experimental tools hidden unless `NIUA_MCP_EXPERIMENTAL=on` |
 | Filesystem writes | `res://` only, 64 MiB payload cap |
 | Managed projects | Confined to `GODOT_MCP_ALLOWED_PROJECT_ROOTS` (default `./runs`) |
 
