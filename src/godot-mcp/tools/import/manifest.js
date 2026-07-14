@@ -7,6 +7,32 @@ import {
   SET_IMPORT_OPTIONS_SCHEMA
 } from "./schemas.js";
 
+const WAIT_FOR_IMPORTED_ASSET_SCHEMA = {
+  type: "object",
+  properties: {
+    path: {
+      type: "string",
+      description: "res:// asset path to wait for (e.g. res://assets/mesh.glb)."
+    },
+    assetPath: {
+      type: "string",
+      description: "Alias of path."
+    },
+    timeoutMs: {
+      type: "number",
+      description: "Max wait in ms. Default 30000."
+    },
+    pollMs: {
+      type: "number",
+      description: "Poll interval in ms. Default 400."
+    },
+    host: { type: "string" },
+    port: { type: "number" },
+    expectedProjectRoot: { type: "string" }
+  },
+  additionalProperties: false
+};
+
 export const IMPORT_TOOL_MANIFEST = [
   {
     name: "import_project_assets",
@@ -25,6 +51,26 @@ export const IMPORT_TOOL_MANIFEST = [
     },
     docs: {
       summary: "Runs Godot --headless --import --quit for an allowlisted project."
+    }
+  },
+  {
+    name: "wait_for_imported_asset",
+    description:
+      "Poll until a res:// asset is import-ready (metadata or listing), or timeout. Use after write/reimport to avoid import races.",
+    profile: "v1",
+    tier: "essential",
+    category: "import",
+    implementation: "local",
+    inputSchema: WAIT_FOR_IMPORTED_ASSET_SCHEMA,
+    local: {
+      handler: "waitForImportedAsset"
+    },
+    conformance: {
+      happy: "return ready:true once import metadata exists",
+      error: "timeout with recovery hint to reimport"
+    },
+    docs: {
+      summary: "Waits until a res:// asset finishes import registration."
     }
   },
   {

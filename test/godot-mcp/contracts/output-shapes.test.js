@@ -153,7 +153,8 @@ function extractAddonErrorCodes(source) {
     if (!/(?:\berror|_error|error_payload)\(/.test(line)) {
       continue;
     }
-    const match = line.match(/,\s*"([a-z][a-z_0-9]*)"\s*\)\s*$/);
+    // trailing code: error("…", "code") OR error("…", "code", recoveryDict)
+    const match = line.match(/,\s*"([a-z][a-z_0-9]*)"\s*(?:,|\))/);
     if (match) {
       codes.add(match[1]);
     }

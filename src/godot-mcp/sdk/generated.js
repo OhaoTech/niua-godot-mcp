@@ -540,6 +540,18 @@ export function buildNamespaces(call) {
      * @param {boolean} [args.reimport] Reimport the asset after saving import options. Defaults to false.
      */
       "set_import_options": (args = {}) => call("set_import_options", args),
+      /**
+     * Poll until a res:// asset is import-ready (metadata or listing), or timeout. Use after write/reimport to avoid import races.
+     * @param {object} [args]
+     * @param {string} [args.assetPath] Alias of path.
+     * @param {string} [args.expectedProjectRoot]
+     * @param {string} [args.host]
+     * @param {string} [args.path] res:// asset path to wait for (e.g. res://assets/mesh.glb).
+     * @param {number} [args.pollMs] Poll interval in ms. Default 400.
+     * @param {number} [args.port]
+     * @param {number} [args.timeoutMs] Max wait in ms. Default 30000.
+     */
+      "wait_for_imported_asset": (args = {}) => call("wait_for_imported_asset", args),
     },
     "inspector": {
       /**
@@ -1571,6 +1583,22 @@ export function buildNamespaces(call) {
      */
       "create_3d_playable_blockout": (args = {}) => call("create_3d_playable_blockout", args),
     },
+    "playtest-workflow": {
+      /**
+     * One call playtest job: ensure main/custom scene, run, install runtime probe, read compact state/events, capture screenshot (or headless available:false), stop, return engine evidence pack. Prefer this over hand-rolling run/probe loops.
+     * @param {object} [args]
+     * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
+     * @param {string} [args.host] Bridge host (default 127.0.0.1).
+     * @param {number} [args.maxDepth] Runtime tree maxDepth. Default 2.
+     * @param {number} [args.port] Bridge port (default 9174).
+     * @param {boolean} [args.saveBeforeRun] Save edited scene before run. Default true.
+     * @param {string} [args.savePath] Optional disk path for runtime screenshot PNG (keeps base64 out of context).
+     * @param {string} [args.scenePath] Optional res:// scene to run (custom). If omitted, runs the project main scene.
+     * @param {number} [args.settleMs] Wait after run before observing (ms). Default 250.
+     * @param {boolean} [args.stopAfter] Stop the running scene after observe. Default true.
+     */
+      "run_playtest_evidence": (args = {}) => call("run_playtest_evidence", args),
+    },
     "project-management": {
       /**
      * Terminate a Godot editor process launched by open_project.
@@ -1923,7 +1951,7 @@ export function buildNamespaces(call) {
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
      * @param {number} [args.port] Bridge port (default 9174).
-     * @param {boolean} [args.saveBeforeRun] Save all open scenes before starting play. Defaults to false.
+     * @param {boolean} [args.saveBeforeRun] Save the edited scene before play. Defaults to true (prevents Godot Save As modal traps).
      */
       "reload_running_scene": (args = {}) => call("reload_running_scene", args),
       /**
@@ -1932,7 +1960,7 @@ export function buildNamespaces(call) {
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
      * @param {number} [args.port] Bridge port (default 9174).
-     * @param {boolean} [args.saveBeforeRun] Save all open scenes before starting play. Defaults to false.
+     * @param {boolean} [args.saveBeforeRun] Save the edited scene before play. Defaults to true (prevents Godot Save As modal traps).
      */
       "run_current_scene": (args = {}) => call("run_current_scene", args),
       /**
@@ -1942,7 +1970,7 @@ export function buildNamespaces(call) {
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
      * @param {string} args.path Godot scene path to run, for example res://scenes/smoke.tscn.
      * @param {number} [args.port] Bridge port (default 9174).
-     * @param {boolean} [args.saveBeforeRun] Save all open scenes before starting play. Defaults to false.
+     * @param {boolean} [args.saveBeforeRun] Save the edited scene before play. Defaults to true (prevents Godot Save As modal traps).
      */
       "run_custom_scene": (args = {}) => call("run_custom_scene", args),
       /**
@@ -1951,7 +1979,7 @@ export function buildNamespaces(call) {
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
      * @param {number} [args.port] Bridge port (default 9174).
-     * @param {boolean} [args.saveBeforeRun] Save all open scenes before starting play. Defaults to false.
+     * @param {boolean} [args.saveBeforeRun] Save the edited scene before play. Defaults to true (prevents Godot Save As modal traps).
      */
       "run_main_scene": (args = {}) => call("run_main_scene", args),
       /**

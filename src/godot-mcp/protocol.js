@@ -33,11 +33,15 @@ export function normalizeBridgeResponse(response) {
   const errorCode = typeof response.errorCode === "string" && response.errorCode.length > 0
     ? response.errorCode
     : undefined;
+  const recovery = response.recovery && typeof response.recovery === "object" && !Array.isArray(response.recovery)
+    ? response.recovery
+    : undefined;
 
   return {
     ok: false,
     error: String(response.error ?? response.message ?? "unknown bridge error"),
     ...(errorCode === undefined ? {} : { errorCode }),
+    ...(recovery === undefined ? {} : { recovery }),
     data: response.data ?? null
   };
 }

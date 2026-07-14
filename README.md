@@ -58,10 +58,10 @@ Ask your AI:
 ```text
 Create a Godot project at ~/Godot/NIUAProjects/first-game.
 Build a 3D scene with a ground, a cube, a camera, and a light.
-Save it, set it as main, run it, and tell me if it's playing.
+Save it, set it as main, then call run_playtest_evidence and tell me the evidence claims.
 ```
 
-You should see Godot open and a real game window. That’s it.
+You should see Godot open and a real game window. The agent gets one compact evidence pack (run + observe + screenshot contract) instead of a hand-rolled tool loop.
 
 ---
 
