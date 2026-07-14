@@ -2,14 +2,14 @@
 
 Generated from the manifest-backed tool catalog. Do not edit by hand; run `npm run godot:mcp:docs`.
 
-- Tools: 9 (0 in v1, 9 full-only)
+- Tools: 9 (1 in v1, 8 full-only)
 - Argument names with `*` are required.
 
 | Tool | Profiles | Description | Arguments |
 | --- | --- | --- | --- |
 | `open_resource` | full | Open a scene/resource/script in the visible Godot editor. | host:string, port:number, expectedProjectRoot:string, path*:string |
 | `focus_resource` | full | Reveal and inspect a resource path in the visible Godot editor when supported by the local editor API. | host:string, port:number, expectedProjectRoot:string, path*:string |
-| `create_resource` | full | Create and save a Godot Resource-derived asset under res://, such as a material .tres. | host:string, port:number, expectedProjectRoot:string, path*:string, className*:string, properties:object, open:boolean, overwrite:boolean |
+| `create_resource` | v1, full | Create and save a Godot Resource-derived asset under res://, such as a material .tres. | host:string, port:number, expectedProjectRoot:string, path*:string, className*:string, properties:object, open:boolean, overwrite:boolean |
 | `save_resource` | full | Load, update, and save an existing Godot Resource asset under res://. | host:string, port:number, expectedProjectRoot:string, path*:string, properties:object, open:boolean |
 | `create_sprite_frames` | full | Create a SpriteFrames resource from named animations and existing Texture2D frame resources. | host:string, port:number, expectedProjectRoot:string, path*:string, resourceName:string, animations*:array, open:boolean, overwrite:boolean |
 | `create_tile_set` | full | Create a TileSet resource from existing Texture2D atlases, explicit tile coordinates, and generated atlas grids. | host:string, port:number, expectedProjectRoot:string, path*:string, resourceName:string, tileSize:any, sources*:array, physicsLayers:array, terrainSets:array, open:boolean, overwrite:boolean |

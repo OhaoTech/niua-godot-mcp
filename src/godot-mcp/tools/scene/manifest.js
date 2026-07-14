@@ -343,8 +343,8 @@ export const SCENE_TOOL_MANIFEST = [
   {
     name: "save_scene_as",
     description: "Save the current edited scene to a new scene path under res://.",
-    profile: "full",
-    tier: "standard",
+    profile: "v1",
+    tier: "essential",
     category: "scene",
     inputSchema: SCENE_PATH_SCHEMA,
     bridge: {

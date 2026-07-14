@@ -27,7 +27,7 @@ export const PLAYABLE3D_WORKFLOW_TOOL_MANIFEST = [
     name: "create_3d_character_controller",
     description: "Create default WASD/space input actions, write a curated CharacterBody3D movement script, and attach it to a player node.",
     profile: "full",
-    tier: "essential",
+    tier: "standard",
     category: "playable3d-workflow",
     implementation: "local",
     inputSchema: CREATE_3D_CHARACTER_CONTROLLER_SCHEMA,

@@ -16,8 +16,8 @@ Playbook for driving a real Godot 4.6 editor through the NIUA Godot MCP tools. T
 Follow this order. Steps 4–5 are the ones agents skip.
 
 1. **Ensure a scene exists.** `create_scene(path: "res://<name>.tscn", open: true)` for new work, or `open_scene` for existing. Creating with an explicit `path` means the scene already has a file — no untitled trap.
-2. **Build.** `create_node` / `create_mesh_instance_3d` / `set_node_property` / `attach_script`, etc.
-3. **Make it visible** (3D): ensure a `Camera3D` framing the content and a light (`create_light_3d`) exist, or the run is a black window.
+2. **Build.** Prefer `apply_scene_recipe` / `batch_scene_operations`, or `create_node` + `create_resource` + `set_node_property` + `attach_script`. Specialized creators (`create_mesh_instance_3d`, …) remain available in `full`.
+3. **Make it visible** (3D): ensure a `Camera3D` framing the content and a light exist (via recipe, `create_node`, or full-profile L1 helpers), or the run is a black window.
 4. **Save to a `res://` path.** If the scene has a file, `save_current_scene`. If it is untitled (no path), you MUST use `save_scene_as(path: "res://<name>.tscn")` — `save_current_scene` errors on an untitled scene.
 5. **Define what runs.** For `run_main_scene`: call `set_main_scene(path)` first. To skip that, use `run_custom_scene(path, saveBeforeRun: true)` with the saved scene's path.
 6. **Run.** `run_main_scene` / `run_current_scene` / `run_custom_scene` (pass `saveBeforeRun: true`).
@@ -44,7 +44,7 @@ When unsure of state, call `get_run_settings` (reports `mainScene` + `mainSceneE
 
 ## Tool profiles (context budget)
 
-- **`core` (55 tools, default)** — project, scenes, nodes, scripts, run controls, runtime playtesting, audio, inspector. Every member proven in real game builds. Stay here for normal work.
+- **`core` (~52 tools, default)** — project, scenes, primitives (`create_node`/`create_resource`/`set_node_property`), scripts, run controls, runtime playtesting, inspector, recipes/batch. Prefer recipes or `create_node` over specialized L1 creators when possible.
 - **`full` (~146 stable tools)** — adds the specialized subsystems below (env `NIUA_MCP_PROFILE=full`). Same code either way; `full` is a wider menu, not "more production-ready".
 - **`compact` (13 router tools)** — the full stable surface behind action-routed domain tools, for context-constrained clients.
 - Experimental tools (multiplayer, localization, navigation, tilemaps, export, debugger control, animation trees, UI theming, 2D workflow builders) are hidden from every profile unless `NIUA_MCP_EXPERIMENTAL=on`. `describe_tools` lists them, labeled. Do not suggest them to the user unless that env is set.

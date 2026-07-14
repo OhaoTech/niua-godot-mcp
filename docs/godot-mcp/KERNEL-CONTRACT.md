@@ -22,6 +22,10 @@ Bootstrap project · author scenes/resources/scripts · import assets · run · 
 | CLI / doctor | Setup and health |
 | JS SDK (`connect`) | Scripts and orchestration that keep intermediate results local |
 
+## Core surface diet
+
+`core` is derived from `tier: essential` and is intentionally **not** “every convenience creator.” Prefer L0 primitives + recipes; L1 typed creators live in `full`. See [SURFACE-DIET.md](./SURFACE-DIET.md).
+
 ## Non-goals
 
 Game design, asset cloud generation, multi-role studio planning, and proprietary production pipelines live **outside** this package.

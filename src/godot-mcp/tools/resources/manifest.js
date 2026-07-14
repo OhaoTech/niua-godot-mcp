@@ -71,8 +71,8 @@ export const RESOURCE_TOOL_MANIFEST = [
   {
     name: "create_resource",
     description: "Create and save a Godot Resource-derived asset under res://, such as a material .tres.",
-    profile: "full",
-    tier: "standard",
+    profile: "v1",
+    tier: "essential",
     category: "resources",
     inputSchema: CREATE_RESOURCE_SCHEMA,
     bridge: {
