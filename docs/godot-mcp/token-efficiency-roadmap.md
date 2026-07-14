@@ -66,3 +66,17 @@ Every tool result is a cost imposed on the caller's context window.
   on demand via the `describe` action (search-first, server-side, works on any
   client). Contract tests enforce full coverage (every tool reachable exactly once)
   and a 20K-char schema budget.
+- MEASURED (Tier 3 #8): SDK code-execution facade — the intermediate-results half.
+  An identical 12-node blockout built via `callTool` (baseline) vs one `connect()`
+  SDK script (facade, summary-only), context bytes diffed, identical-outcome gated
+  (scripts/probes/sdk-token-ruler.mjs). Live run against a token-authenticated
+  editor bridge (127.0.0.1:9174, shared `GODOT_MCP_TOKEN`): **baseline ~4969 B
+  (~1242 tok) of intermediate results vs facade ~27 B (~7 tok) summary → ~99% cut,
+  identical scene tree**, ~4 chars/tok approx, per-op; the generated SDK module read
+  amortizes across a session. Stable across 3 runs (1242→7 each). Matches the
+  Anthropic (98.7%) / Cloudflare (99.9%) order on a real fan-out. This is a small,
+  screenshot-free build — real builds (screenshots, tree dumps) carry far larger
+  intermediates, so the absolute win scales up. Both the schema-tax half (Tier 3 #7,
+  dispatch) and the intermediate-results half (#8) are now measured on this server.
+  → Stage 2 (`run_script` MCP tool exposing the facade to other clients) is
+  evidence-justified; queue it.
