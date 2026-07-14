@@ -1,6 +1,6 @@
 {
   "name": "niua-godot-mcp",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Local MCP server + bundled Godot editor addon that lets an agent create, inspect, run, debug, and export Godot 4.6 games through tools instead of clicking the editor.",
   "type": "module",
   "author": "FrankYin (https://github.com/qervas)",
@@ -38,7 +38,8 @@
     "godot:mcp:doctor": "node src/godot-mcp/doctor.js",
     "godot:mcp:docs": "node scripts/generate-godot-mcp-docs.mjs && node scripts/generate-godot-mcp-skill-reference.mjs",
     "gen:sdk": "node scripts/gen-sdk.mjs",
-    "probe:sdk-ruler": "node scripts/probes/sdk-token-ruler.mjs"
+    "probe:sdk-ruler": "node scripts/probes/sdk-token-ruler.mjs",
+    "smoke:p0-p2": "node scripts/p0-p2-smoke.mjs"
   },
   "keywords": [
     "mcp",

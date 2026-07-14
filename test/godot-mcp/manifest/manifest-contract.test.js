@@ -141,7 +141,7 @@ test("migrated manifest registry validates every migrated domain", () => {
     "viewport"
   ]);
   validateToolManifest(MIGRATED_TOOL_MANIFESTS);
-  assert.equal(MIGRATED_TOOL_MANIFESTS.length, 176);
+  assert.equal(MIGRATED_TOOL_MANIFESTS.length, 177);
 });
 
 test("animation manifest defines imported-scene and editor animation contracts", () => {

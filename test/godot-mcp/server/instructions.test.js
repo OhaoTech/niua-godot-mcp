@@ -9,10 +9,11 @@ test("initialize serves golden-path instructions to every client", async () => {
   assert.equal(typeof result.instructions, "string");
   // the load-bearing guidance must survive edits
   assert.match(result.instructions, /apply_scene_recipe/);
-  assert.match(result.instructions, /save_current_scene/);
+  assert.match(result.instructions, /save_scene_as|saveBeforeRun/);
+  assert.match(result.instructions, /run_playtest_evidence/);
+  assert.match(result.instructions, /wait_for_imported_asset/);
   assert.match(result.instructions, /maxDepth/);
   assert.match(result.instructions, /savePath/);
-  assert.match(result.instructions, /install_runtime_probe/);
   // it lands in system context once per session — keep it terse
   assert.ok(result.instructions.length < 2500, `instructions grew to ${result.instructions.length} chars`);
 });

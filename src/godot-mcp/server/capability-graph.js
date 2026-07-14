@@ -94,8 +94,8 @@ export const DISPATCH_DOMAINS = Object.freeze({
     summary: "Audio buses, localization, multiplayer, navigation, and UI controls/themes."
   },
   godot_workflows: {
-    categories: ["playable2d-workflow", "playable3d-workflow"],
-    summary: "High-level playable blockout and character-controller workflows."
+    categories: ["playable2d-workflow", "playable3d-workflow", "playtest-workflow", "recipe-workflow"],
+    summary: "High-level playable blockouts, playtest evidence, and recipe/batch executors."
   }
 });
 
@@ -105,6 +105,7 @@ export const DISPATCH_DOMAINS = Object.freeze({
 export const STANDALONE_TOOLS = Object.freeze(new Set([
   "apply_scene_recipe",
   "batch_scene_operations",
+  "run_playtest_evidence",
   "describe_tools"
 ]));
 

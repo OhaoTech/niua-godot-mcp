@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.7 - P0–P2 first-success loop
+
+- **Run safety:** `saveBeforeRun` defaults to **true**; unsaved / no-main errors include `recovery.tool` + hint (no modal traps).
+- **`run_playtest_evidence`:** one-call playtest → compact engine evidence pack (headless screenshots `available:false` is not a failure).
+- **`wait_for_imported_asset`:** poll until import-ready to kill write→use races.
+- **P0–P2 smoke:** `npm run smoke:p0-p2` (no live Godot for package checks).
+- Core diet guard tests: L1 creators stay out of essential; play loop tools required.
+
 ## 0.1.6 - Kernel surface diet
 
 - `core` profile rebalanced around L0 primitives + recipes + safe run/observe (~52 tools; was 55).

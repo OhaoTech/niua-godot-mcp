@@ -42,7 +42,9 @@ static func require_editor_method(editor: EditorInterface, method_name: String) 
 
 
 static func save_before_run_if_requested(editor: EditorInterface, body: Dictionary) -> Dictionary:
-	if not bool(body.get("saveBeforeRun", false)):
+	# Default true: agents forget saveBeforeRun and then stall on Godot's Save As modal.
+	# Pass saveBeforeRun:false only when you intentionally want dirty-run behavior.
+	if body.has("saveBeforeRun") and not bool(body.get("saveBeforeRun")):
 		return {
 			"ok": true
 		}
@@ -66,7 +68,14 @@ static func save_edited_scene(editor: EditorInterface) -> Dictionary:
 
 	var scene_path := str(root.scene_file_path)
 	if scene_path.is_empty():
-		return error("current scene has never been saved; save it to a res:// path before running", "unsaved_scene")
+		return error(
+			"current scene has never been saved; call save_scene_as with a res:// path, then run again",
+			"unsaved_scene",
+			{
+				"tool": "save_scene_as",
+				"hint": "save_scene_as({ path: \"res://main.tscn\" }) then run with saveBeforeRun true (default)"
+			}
+		)
 
 	var packed := PackedScene.new()
 	var pack_error := packed.pack(root)
@@ -88,9 +97,23 @@ static func save_edited_scene(editor: EditorInterface) -> Dictionary:
 static func require_main_scene_defined() -> Dictionary:
 	var main_scene := str(ProjectSettings.get_setting(MAIN_SCENE_SETTING, ""))
 	if main_scene.is_empty():
-		return error("no main scene is defined; call set_main_scene before run_main_scene", "no_main_scene")
+		return error(
+			"no main scene is defined; call set_main_scene before run_main_scene (or use run_custom_scene)",
+			"no_main_scene",
+			{
+				"tool": "set_main_scene",
+				"hint": "set_main_scene({ path: \"res://main.tscn\" }) or run_custom_scene({ path: \"res://main.tscn\" })"
+			}
+		)
 	if not FileAccess.file_exists(main_scene) and not ResourceLoader.exists(main_scene):
-		return error("main scene does not exist: %s" % main_scene, "not_found")
+		return error(
+			"main scene does not exist: %s — set_main_scene to a saved res:// scene" % main_scene,
+			"not_found",
+			{
+				"tool": "set_main_scene",
+				"hint": "create_scene + save, then set_main_scene to that path"
+			}
+		)
 	return {
 		"ok": true
 	}
@@ -106,7 +129,14 @@ static func require_current_scene_saved(editor: EditorInterface) -> Dictionary:
 	if root == null:
 		return error("no edited scene is open", "not_found")
 	if str(root.scene_file_path).is_empty():
-		return error("current scene has never been saved; save it to a res:// path before running", "unsaved_scene")
+		return error(
+			"current scene has never been saved; call save_scene_as with a res:// path before running",
+			"unsaved_scene",
+			{
+				"tool": "save_scene_as",
+				"hint": "save_scene_as({ path: \"res://main.tscn\" }) then run_current_scene or run_custom_scene"
+			}
+		)
 	return {
 		"ok": true
 	}
@@ -117,9 +147,12 @@ static func remember(remember: Callable, message: String) -> void:
 		remember.call(message)
 
 
-static func error(message: String, code: String = "bad_request") -> Dictionary:
-	return {
+static func error(message: String, code: String = "bad_request", recovery: Dictionary = {}) -> Dictionary:
+	var out := {
 		"ok": false,
 		"error": message,
 		"errorCode": code
 	}
+	if not recovery.is_empty():
+		out["recovery"] = recovery
+	return out

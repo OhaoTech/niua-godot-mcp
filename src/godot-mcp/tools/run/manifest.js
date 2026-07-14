@@ -6,7 +6,7 @@ const RUN_CONTROL_SCHEMA = {
     ...CONNECTION_PROPERTIES,
     saveBeforeRun: {
       type: "boolean",
-      description: "Save all open scenes before starting play. Defaults to false."
+      description: "Save the edited scene before play. Defaults to true (prevents Godot Save As modal traps)."
     }
   },
   additionalProperties: false
@@ -22,7 +22,7 @@ const RUN_CUSTOM_SCENE_SCHEMA = {
     },
     saveBeforeRun: {
       type: "boolean",
-      description: "Save all open scenes before starting play. Defaults to false."
+      description: "Save the edited scene before play. Defaults to true (prevents Godot Save As modal traps)."
     }
   },
   required: ["path"],
