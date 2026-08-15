@@ -142,6 +142,30 @@ export const CREATE_UI_CONTROL_SCHEMA = {
   additionalProperties: false
 };
 
+const OFFSET_TRANSFORM_PROPERTIES = {
+  enabled: {
+    type: "boolean",
+    description: "Enable Control offset transforms (Godot 4.7). Defaults to true when any offset-transform field is set."
+  },
+  position: VECTOR2_SCHEMA,
+  positionRatio: VECTOR2_SCHEMA,
+  rotationDegrees: {
+    type: "number",
+    description: "Offset transform rotation in degrees. Converted to radians for Control.offset_transform_rotation."
+  },
+  rotation: {
+    type: "number",
+    description: "Offset transform rotation in radians. Ignored when rotationDegrees is set."
+  },
+  scale: VECTOR2_SCHEMA,
+  pivot: VECTOR2_SCHEMA,
+  pivotRatio: VECTOR2_SCHEMA,
+  visualOnly: {
+    type: "boolean",
+    description: "When true (default), the transform is visual only and does not move the input hit box."
+  }
+};
+
 export const SET_CONTROL_LAYOUT_SCHEMA = {
   type: "object",
   properties: {
@@ -150,7 +174,22 @@ export const SET_CONTROL_LAYOUT_SCHEMA = {
       type: "string",
       description: "Control node path under the edited scene root."
     },
-    ...LAYOUT_PROPERTIES
+    ...LAYOUT_PROPERTIES,
+    ...OFFSET_TRANSFORM_PROPERTIES
+  },
+  required: ["nodePath"],
+  additionalProperties: false
+};
+
+export const SET_CONTROL_OFFSET_TRANSFORM_SCHEMA = {
+  type: "object",
+  properties: {
+    ...CONNECTION_PROPERTIES,
+    nodePath: {
+      type: "string",
+      description: "Control node path under the edited scene root."
+    },
+    ...OFFSET_TRANSFORM_PROPERTIES
   },
   required: ["nodePath"],
   additionalProperties: false

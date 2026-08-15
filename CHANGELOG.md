@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.9 - Godot 4.7 kernel
+
+- **Target Godot 4.7.x** as the supported editor line. 4.6.x and 4.8.x stay best-effort; older/newer minors are untested.
+- **`create_light_3d`:** `kind: "area"` creates `AreaLight3D` with `areaSize`, `areaRange`, `areaAttenuation`, `areaNormalizeEnergy`, and `areaTexturePath`.
+- **`set_control_offset_transform`:** Godot 4.7 Control offset transforms (translate/rotate/scale without fighting container layout). `set_control_layout` also accepts the same fields and reports `offsetTransform` on read-back.
+- **`create_drawable_texture_2d` / `blit_drawable_texture_2d`:** create, `setup()`, and blit Godot 4.7 `DrawableTexture2D` resources.
+- **`configure_hdr_output`:** set `display/window/hdr/request_hdr_output` and optional `rendering/viewport/hdr_2d`.
+- **`get_editor_state`:** includes `unsavedScenes` / `unsavedSceneCount` when `EditorInterface.get_unsaved_scenes()` is available (Godot 4.7).
+- Unknown-class errors for `AreaLight3D` and `DrawableTexture2D` name the 4.7 requirement.
+
 ## 0.1.8 - Wake-ready kernel tools
 
 - **`find_nodes`:** search large scenes by name/type/path/scene file without full tree dumps.

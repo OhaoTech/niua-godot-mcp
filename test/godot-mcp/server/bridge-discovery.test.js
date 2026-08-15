@@ -48,7 +48,7 @@ test("Godot MCP server discovers active editor bridges and matches known project
           data: {
             projectRoot,
             projectName: "Bridge Demo",
-            godotVersion: { string: "4.6.2.test" }
+            godotVersion: { string: "4.7.1.test" }
           }
         }));
         return;

@@ -8,7 +8,7 @@ Install is done ([README](../../README.md)). Just talk.
 Call get_godot_version.
 ```
 
-You want a version like `4.6.x.stable`. If not: [troubleshooting](troubleshooting.md).
+You want a version like `4.7.1.stable`. If not: [troubleshooting](troubleshooting.md).
 
 ## 2. Build something
 

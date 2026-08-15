@@ -3,7 +3,8 @@ import {
   CONNECT_UI_SIGNAL_SCHEMA,
   CREATE_UI_CONTROL_SCHEMA,
   CREATE_UI_THEME_SCHEMA,
-  SET_CONTROL_LAYOUT_SCHEMA
+  SET_CONTROL_LAYOUT_SCHEMA,
+  SET_CONTROL_OFFSET_TRANSFORM_SCHEMA
 } from "./schemas.js";
 
 export const UI_TOOL_MANIFEST = [
@@ -37,7 +38,7 @@ export const UI_TOOL_MANIFEST = [
   },
   {
     name: "set_control_layout",
-    description: "Set anchors, offsets, minimum size, and size flags on a Godot Control node.",
+    description: "Set anchors, offsets, minimum size, size flags, and Godot 4.7 Control offset transforms on a Godot Control node.",
     profile: "full",
     tier: "standard",
     category: "ui",
@@ -60,7 +61,35 @@ export const UI_TOOL_MANIFEST = [
       error: "reject missing Control node paths"
     },
     docs: {
-      summary: "Sets anchors, offsets, minimum size, and size flags on a Control node."
+      summary: "Sets anchors, offsets, minimum size, size flags, and 4.7 offset transforms on a Control node."
+    }
+  },
+  {
+    name: "set_control_offset_transform",
+    description: "Set Godot 4.7 Control offset transforms so a UI node can translate, rotate, or scale without fighting container layout.",
+    profile: "full",
+    tier: "standard",
+    category: "ui",
+    inputSchema: SET_CONTROL_OFFSET_TRANSFORM_SCHEMA,
+    bridge: {
+      clientMethod: "setControlOffsetTransform",
+      endpoint: "/ui/control/offset-transform",
+      method: "POST",
+      request: "body"
+    },
+    godotRoute: {
+      side: "write",
+      endpoint: "/ui/control/offset-transform",
+      handler: "_set_control_offset_transform",
+      arg: "body",
+      methodError: "UI control offset transform requires POST"
+    },
+    conformance: {
+      happy: "set Control offset transform fields",
+      error: "reject missing Control node paths or editors older than Godot 4.7"
+    },
+    docs: {
+      summary: "Applies Godot 4.7 Control offset transforms without changing container layout."
     }
   },
   {

@@ -3,6 +3,7 @@ extends RefCounted
 
 const NiuaMcpPathUtils = preload("niua_mcp_path_utils.gd")
 const NiuaMcpVariantCodec = preload("niua_mcp_variant_codec.gd")
+const NiuaMcpVersionSupport = preload("niua_mcp_version_support.gd")
 
 
 static func build(body: Dictionary) -> Dictionary:
@@ -31,7 +32,7 @@ static func instantiate_resource(resource_class_name: String) -> Dictionary:
 	if type_name.is_empty():
 		return _error("resource className is required")
 	if not ClassDB.class_exists(type_name):
-		return _error("unknown Godot class: %s" % type_name)
+		return _error(NiuaMcpVersionSupport.unknown_class_message(type_name))
 	if type_name != "Resource" and not ClassDB.is_parent_class(type_name, "Resource"):
 		return _error("Godot class is not a Resource: %s" % type_name)
 	if not ClassDB.can_instantiate(type_name):

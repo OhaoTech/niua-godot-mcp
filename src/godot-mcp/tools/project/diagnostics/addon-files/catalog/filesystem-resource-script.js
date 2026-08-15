@@ -18,6 +18,7 @@ export const FILESYSTEM_RESOURCE_SCRIPT_ADDON_FILE_CHECKS = [
   ["addon_resource_shader_material_operations", "niua_mcp_resource_shader_material_operations.gd"],
   ["addon_resource_sprite_frames_operations", "niua_mcp_resource_sprite_frames_operations.gd"],
   ["addon_resource_tile_set_operations", "niua_mcp_resource_tile_set_operations.gd"],
+  ["addon_resource_drawable_texture_operations", "niua_mcp_resource_drawable_texture_operations.gd"],
   ["addon_resource_side_effects", "niua_mcp_resource_side_effects.gd"],
   ["addon_resource_builder", "niua_mcp_resource_builder.gd"],
   ["addon_script_file_operations", "niua_mcp_script_file_operations.gd"],

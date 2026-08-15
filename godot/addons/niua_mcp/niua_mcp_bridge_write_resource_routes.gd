@@ -12,6 +12,8 @@ const HANDLERS := {
 	"_create_shader_material_resource": true,
 	"_create_sprite_frames_resource": true,
 	"_create_tile_set_resource": true,
+	"_create_drawable_texture_2d": true,
+	"_blit_drawable_texture_2d": true,
 	"_upsert_export_preset": true
 }
 
@@ -48,6 +50,14 @@ func _create_sprite_frames_resource(body: Dictionary) -> Dictionary:
 
 func _create_tile_set_resource(body: Dictionary) -> Dictionary:
 	return NiuaMcpResourceOperations.create_tile_set_resource_with_side_effects(_context.editor, body, Callable(_context, "refresh_filesystem"), Callable(_context, "remember"))
+
+
+func _create_drawable_texture_2d(body: Dictionary) -> Dictionary:
+	return NiuaMcpResourceOperations.create_drawable_texture_2d_with_side_effects(_context.editor, body, Callable(_context, "refresh_filesystem"), Callable(_context, "remember"))
+
+
+func _blit_drawable_texture_2d(body: Dictionary) -> Dictionary:
+	return NiuaMcpResourceOperations.blit_drawable_texture_2d_with_side_effects(_context.editor, body, Callable(_context, "refresh_filesystem"), Callable(_context, "remember"))
 
 
 func _upsert_export_preset(body: Dictionary) -> Dictionary:

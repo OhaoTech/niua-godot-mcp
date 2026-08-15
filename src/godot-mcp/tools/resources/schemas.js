@@ -18,3 +18,8 @@ export {
   CREATE_MATERIAL_SCHEMA,
   CREATE_SHADER_MATERIAL_SCHEMA
 } from "./schemas/materials.js";
+
+export {
+  BLIT_DRAWABLE_TEXTURE_2D_SCHEMA,
+  CREATE_DRAWABLE_TEXTURE_2D_SCHEMA
+} from "./schemas/drawable-texture.js";

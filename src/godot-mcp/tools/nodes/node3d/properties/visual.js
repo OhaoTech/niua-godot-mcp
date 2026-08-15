@@ -1,5 +1,6 @@
 import { colorToGodotColor } from "../../../../shared/colors.js";
 import { normalizeFiniteNumber } from "../../../../shared/numbers.js";
+import { vector2ToGodotVector } from "../../../../shared/vectors.js";
 import { normalizeCamera3DProjection } from "../kinds.js";
 import {
   applyNode3DTransformProperties,
@@ -53,6 +54,36 @@ export function buildLight3DProperties(payload, lightKind) {
       throw new Error("angleDegrees is only supported for spot lights");
     }
     properties[lightKind.angleProperty] = normalizeFiniteNumber(payload.angleDegrees, "angleDegrees");
+  }
+  if (payload.areaSize !== undefined) {
+    if (lightKind.kind !== "area") {
+      throw new Error("areaSize is only supported for area lights");
+    }
+    properties.area_size = vector2ToGodotVector(payload.areaSize, "areaSize");
+  }
+  if (payload.areaRange !== undefined) {
+    if (lightKind.kind !== "area") {
+      throw new Error("areaRange is only supported for area lights");
+    }
+    properties.area_range = normalizeFiniteNumber(payload.areaRange, "areaRange");
+  }
+  if (payload.areaAttenuation !== undefined) {
+    if (lightKind.kind !== "area") {
+      throw new Error("areaAttenuation is only supported for area lights");
+    }
+    properties.area_attenuation = normalizeFiniteNumber(payload.areaAttenuation, "areaAttenuation");
+  }
+  if (payload.areaNormalizeEnergy !== undefined) {
+    if (lightKind.kind !== "area") {
+      throw new Error("areaNormalizeEnergy is only supported for area lights");
+    }
+    properties.area_normalize_energy = Boolean(payload.areaNormalizeEnergy);
+  }
+  if (payload.areaTexturePath !== undefined) {
+    if (lightKind.kind !== "area") {
+      throw new Error("areaTexturePath is only supported for area lights");
+    }
+    properties.area_texture = String(payload.areaTexturePath);
   }
   mergeCustomProperties(properties, payload.properties, "properties");
 

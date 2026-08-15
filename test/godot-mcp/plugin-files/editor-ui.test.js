@@ -24,7 +24,9 @@ test("Godot editor state operations live in their own Godot module", async () =>
   assert.match(operations, /preload\("niua_mcp_node_snapshot\.gd"\)/);
   assert.match(operations, /static func health\(running: bool, host: String, port: int, read_endpoints: Array, write_endpoints: Array\) -> Dictionary:/);
   assert.match(operations, /static func project_info\(\) -> Dictionary:/);
-  assert.match(operations, /static func editor_state\(current_scene: String, open_scenes: Array, main_screen: Dictionary, selection: Array, logs: Array\) -> Dictionary:/);
+  assert.match(operations, /static func editor_state\(current_scene: String, open_scenes: Array, main_screen: Dictionary, selection: Array, logs: Array, editor: EditorInterface = null\) -> Dictionary:/);
+  assert.match(operations, /unsavedScenes/);
+  assert.match(operations, /get_unsaved_scenes/);
   assert.match(operations, /static func scene_tree\(current_scene: String, root: Node, query: Dictionary = \{\}\) -> Dictionary:/);
   assert.match(operations, /ProjectSettings\.globalize_path\("res:\/\/"\)/);
   assert.match(operations, /ProjectSettings\.get_setting/);

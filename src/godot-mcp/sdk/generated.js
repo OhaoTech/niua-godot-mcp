@@ -1133,20 +1133,25 @@ export function buildNamespaces(call) {
      */
       "create_collision_shape_3d": (args = {}) => call("create_collision_shape_3d", args),
       /**
-     * Create a DirectionalLight3D, OmniLight3D, or SpotLight3D with practical transform and lighting fields.
+     * Create a DirectionalLight3D, OmniLight3D, SpotLight3D, or Godot 4.7 AreaLight3D with practical transform and lighting fields.
      * @param {object} [args]
      * @param {number} [args.angleDegrees] SpotLight3D spot_angle value.
+     * @param {number} [args.areaAttenuation] AreaLight3D area_attenuation. Use 2.0 for inverse-square. Godot 4.7+.
+     * @param {boolean} [args.areaNormalizeEnergy] AreaLight3D area_normalize_energy. When true, size does not change total energy. Godot 4.7+.
+     * @param {number} [args.areaRange] AreaLight3D area_range in meters. Godot 4.7+.
+     * @param {*} [args.areaSize] AreaLight3D rectangle extents in meters as [width, height] or { x, y }. Godot 4.7+.
+     * @param {string} [args.areaTexturePath] Optional res:// Texture2D path for AreaLight3D.area_texture. Godot 4.7+.
      * @param {*} [args.color] Light color as #RRGGBB, #RRGGBBAA, or { r, g, b, a } values in 0..1.
      * @param {number} [args.energy] Light3D light_energy value.
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
-     * @param {string} [args.kind] Light kind to create: directional, omni, point, or spot. Defaults to omni.
+     * @param {string} [args.kind] Light kind to create: directional, omni, point, spot, or area (Godot 4.7 AreaLight3D). Defaults to o
      * @param {string} [args.name] Optional light node name.
      * @param {string} [args.parentPath] Path under the edited scene root. Empty string means the scene root.
      * @param {number} [args.port] Bridge port (default 9174).
      * @param {*} [args.position] Optional Node3D position as [x,y,z] or { x, y, z }.
      * @param {object} [args.properties] Advanced Godot light node properties merged after curated fields.
-     * @param {number} [args.range] OmniLight3D omni_range or SpotLight3D spot_range value.
+     * @param {number} [args.range] OmniLight3D omni_range, SpotLight3D spot_range, or AreaLight3D area_range value.
      * @param {*} [args.rotationDegrees] Optional Node3D rotation_degrees as [x,y,z] or { x, y, z }.
      * @param {*} [args.scale] Optional Node3D scale as [x,y,z] or { x, y, z }.
      * @param {boolean} [args.shadowEnabled] Whether shadows are enabled for the light.
@@ -1744,6 +1749,17 @@ export function buildNamespaces(call) {
     },
     "project-settings": {
       /**
+     * Enable or disable Godot 4.7 HDR monitor output and optional HDR 2D via Project Settings.
+     * @param {object} [args]
+     * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
+     * @param {boolean} [args.hdr2d] Set rendering/viewport/hdr_2d so 2D can keep HDR values.
+     * @param {string} [args.host] Bridge host (default 127.0.0.1).
+     * @param {number} [args.port] Bridge port (default 9174).
+     * @param {boolean} [args.requestHdrOutput] Set display/window/hdr/request_hdr_output (Godot 4.7 HDR monitor output).
+     * @param {boolean} [args.save] Save project.godot after applying the settings. Defaults to true.
+     */
+      "configure_hdr_output": (args = {}) => call("configure_hdr_output", args),
+      /**
      * Read the project's input actions from ProjectSettings — the same source set_input_action writes and the running game loads. Actions list in sorted name order; built-in ui_* actions appear only if the project overrides them.
      * @param {object} [args]
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
@@ -1840,6 +1856,37 @@ export function buildNamespaces(call) {
      * @param {number} [args.surfaceIndex] Optional mesh surface index. When omitted, assigns material_override.
      */
       "assign_material": (args = {}) => call("assign_material", args),
+      /**
+     * Blit a Texture2D into an existing Godot 4.7 DrawableTexture2D and save the result.
+     * @param {object} [args]
+     * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
+     * @param {string} [args.host] Bridge host (default 127.0.0.1).
+     * @param {number} [args.mipmap] Mipmap level to blit into. Defaults to 0.
+     * @param {*} [args.modulate] Optional Color modulate as #RRGGBB, #RRGGBBAA, or { type: 'Color', r, g, b, a }.
+     * @param {boolean} [args.open] Open the resource in the visible editor after blit. Defaults to false.
+     * @param {string} args.path Existing DrawableTexture2D path under res://.
+     * @param {number} [args.port] Bridge port (default 9174).
+     * @param {object} [args.rect]
+     * @param {string} args.sourcePath res:// Texture2D path to blit from.
+     */
+      "blit_drawable_texture_2d": (args = {}) => call("blit_drawable_texture_2d", args),
+      /**
+     * Create a Godot 4.7 DrawableTexture2D, call setup() with size/format/fill color, optionally blit a source texture, and save it under res://.
+     * @param {object} [args]
+     * @param {object} [args.blit] Optional first blit after setup().
+     * @param {*} [args.color] Initial fill color as #RRGGBB, #RRGGBBAA, or { type: 'Color', r, g, b, a }.
+     * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
+     * @param {string} [args.format] DrawableTexture2D format. Defaults to rgba8.
+     * @param {number} [args.height] Texture height in pixels. Defaults to 256.
+     * @param {string} [args.host] Bridge host (default 127.0.0.1).
+     * @param {boolean} [args.open] Open the resource in the visible editor after creation. Defaults to true.
+     * @param {boolean} [args.overwrite] Overwrite an existing resource file. Defaults to false.
+     * @param {string} args.path DrawableTexture2D output path under res://.
+     * @param {number} [args.port] Bridge port (default 9174).
+     * @param {boolean} [args.useMipmaps] Whether to allocate mipmaps. Defaults to false.
+     * @param {number} [args.width] Texture width in pixels. Defaults to 256.
+     */
+      "create_drawable_texture_2d": (args = {}) => call("create_drawable_texture_2d", args),
       /**
      * Create a StandardMaterial3D asset from practical material fields and optionally assign it to a scene node.
      * @param {object} [args]
@@ -2410,21 +2457,48 @@ export function buildNamespaces(call) {
      */
       "create_ui_theme": (args = {}) => call("create_ui_theme", args),
       /**
-     * Set anchors, offsets, minimum size, and size flags on a Godot Control node.
+     * Set anchors, offsets, minimum size, size flags, and Godot 4.7 Control offset transforms on a Godot Control node.
      * @param {object} [args]
      * @param {object} [args.anchors]
      * @param {object} [args.customMinimumSize]
+     * @param {boolean} [args.enabled] Enable Control offset transforms (Godot 4.7). Defaults to true when any offset-transform field is se
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
      * @param {string} [args.horizontalSizeFlags]
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
      * @param {boolean} [args.keepOffsets] When using preset, preserve offsets. Defaults to false.
      * @param {string} args.nodePath Control node path under the edited scene root.
      * @param {object} [args.offsets]
+     * @param {object} [args.pivot]
+     * @param {object} [args.pivotRatio]
      * @param {number} [args.port] Bridge port (default 9174).
+     * @param {object} [args.position]
+     * @param {object} [args.positionRatio]
      * @param {string} [args.preset] Optional Godot Control layout preset.
+     * @param {number} [args.rotation] Offset transform rotation in radians. Ignored when rotationDegrees is set.
+     * @param {number} [args.rotationDegrees] Offset transform rotation in degrees. Converted to radians for Control.offset_transform_rotation.
+     * @param {object} [args.scale]
      * @param {string} [args.verticalSizeFlags]
+     * @param {boolean} [args.visualOnly] When true (default), the transform is visual only and does not move the input hit box.
      */
       "set_control_layout": (args = {}) => call("set_control_layout", args),
+      /**
+     * Set Godot 4.7 Control offset transforms so a UI node can translate, rotate, or scale without fighting container layout.
+     * @param {object} [args]
+     * @param {boolean} [args.enabled] Enable Control offset transforms (Godot 4.7). Defaults to true when any offset-transform field is se
+     * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
+     * @param {string} [args.host] Bridge host (default 127.0.0.1).
+     * @param {string} args.nodePath Control node path under the edited scene root.
+     * @param {object} [args.pivot]
+     * @param {object} [args.pivotRatio]
+     * @param {number} [args.port] Bridge port (default 9174).
+     * @param {object} [args.position]
+     * @param {object} [args.positionRatio]
+     * @param {number} [args.rotation] Offset transform rotation in radians. Ignored when rotationDegrees is set.
+     * @param {number} [args.rotationDegrees] Offset transform rotation in degrees. Converted to radians for Control.offset_transform_rotation.
+     * @param {object} [args.scale]
+     * @param {boolean} [args.visualOnly] When true (default), the transform is visual only and does not move the input hit box.
+     */
+      "set_control_offset_transform": (args = {}) => call("set_control_offset_transform", args),
     },
     "viewport": {
       /**

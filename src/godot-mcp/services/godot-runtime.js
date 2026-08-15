@@ -19,7 +19,7 @@ export async function getGodotVersion() {
   } catch (error) {
     throw new Error(
       `Unable to run Godot executable "${godotBin}" for --version: ${error.message}. ` +
-        "Install Godot 4.6 or set GODOT_BIN to the full path of a working Godot executable."
+        "Install Godot 4.7 or set GODOT_BIN to the full path of a working Godot executable."
     );
   }
 

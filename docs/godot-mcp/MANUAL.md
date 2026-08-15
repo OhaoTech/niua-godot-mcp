@@ -19,7 +19,7 @@ This manual covers what it is, everything it can do (grouped by subsystem), the 
 |---|---|
 | Transport | JSON-RPC 2.0 over stdio, NDJSON framing |
 | Editor bridge | HTTP/1.1 on `127.0.0.1:9174` (default), `x-niua-mcp-token` auth |
-| Godot version | 4.6.x |
+| Godot version | 4.7.x (verified 4.7.1.stable) |
 | Node version | >= 20 |
 | Default tool profile | `core` (~52 kernel tools); `full` = every stable tool (~146); `compact` = the stable surface behind 13 routers; 32 experimental tools hidden unless `NIUA_MCP_EXPERIMENTAL=on` |
 | Filesystem writes | `res://` only, 64 MiB payload cap |
@@ -65,7 +65,7 @@ Launch and manage Godot editor processes and discover existing ones.
 ### Node authoring
 - Generic tree ops: `create_node`, `create_node_with_script`, `delete_node`, `rename_node`, `duplicate_node`, `reparent_node`, `reorder_node`, `set_node_property`, `focus_node`, `search_node_types`
 - 2D primitives: `create_sprite_2d`, `create_animated_sprite_2d`, `create_camera_2d`, `create_character_body_2d`, `create_static_body_2d`, `create_area_2d`, `create_collision_shape_2d`
-- 3D primitives: `create_mesh_instance_3d`, `create_camera_3d`, `create_light_3d`, `create_character_body_3d`, `create_rigid_body_3d`, `create_static_body_3d`, `create_area_3d`, `create_collision_shape_3d`
+- 3D primitives: `create_mesh_instance_3d`, `create_camera_3d`, `create_light_3d` (including Godot 4.7 `AreaLight3D`), `create_character_body_3d`, `create_rigid_body_3d`, `create_static_body_3d`, `create_area_3d`, `create_collision_shape_3d`
 
 ### Scripting
 - `create_script`, `write_script`, `attach_script`, `read_script`, `replace_in_scripts`
@@ -77,6 +77,7 @@ Scripts allow arbitrary GDScript by design — the agent is trusted.
 ### Resources & materials
 - `create_resource`, `save_resource`, `open_resource`, `focus_resource`
 - `create_material`, `assign_material`, `create_shader_material`
+- `create_drawable_texture_2d`, `blit_drawable_texture_2d` (Godot 4.7 DrawableTexture2D)
 - `create_sprite_frames`, `create_tile_set`, `create_tile_map_layer`, `set_tile_map_layer_cells`, `paint_tile_map_layer_terrain`
 
 ### Filesystem (`res://` only)
@@ -112,7 +113,7 @@ The runtime probe serializes the live scene tree (bounded to depth 8 / 64 childr
 - `create_audio_stream_player`, `list_audio_buses`, `upsert_audio_bus`, `remove_audio_bus`, `upsert_audio_bus_effect`
 
 ### UI & theming
-- `create_ui_control`, `set_control_layout`, `connect_ui_signal`
+- `create_ui_control`, `set_control_layout`, `set_control_offset_transform`, `connect_ui_signal`
 - `create_ui_theme`, `apply_ui_theme_override`
 
 ### Particles
@@ -129,6 +130,7 @@ The runtime probe serializes the live scene tree (bounded to depth 8 / 64 childr
 
 ### Project settings & input
 - `get_project_settings`, `get_project_setting`, `set_project_setting`, `set_project_setting_metadata`
+- `configure_hdr_output` (Godot 4.7 HDR monitor output + optional HDR 2D)
 - `get_input_map`, `set_input_action`
 
 ### Export **(experimental)**
@@ -182,7 +184,7 @@ If an agent calls a `full`-only tool while running under `core`, the server retu
 
 ## 6. Setup
 
-**Prerequisites:** Node >= 20, Godot 4.6 on your PATH (or set `GODOT_BIN` to its full path).
+**Prerequisites:** Node >= 20, Godot 4.7 on your PATH (or set `GODOT_BIN` to its full path).
 
 ### From source
 

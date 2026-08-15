@@ -1,4 +1,5 @@
 import {
+  CONFIGURE_HDR_OUTPUT_SCHEMA,
   INPUT_MAP_SCHEMA,
   PROJECT_SETTINGS_SCHEMA,
   SET_INPUT_ACTION_SCHEMA,
@@ -70,6 +71,25 @@ export const PROJECT_SETTINGS_TOOL_MANIFEST = [
     },
     docs: {
       summary: "Sets a Project Settings value and optionally saves project.godot."
+    }
+  },
+  {
+    name: "configure_hdr_output",
+    description: "Enable or disable Godot 4.7 HDR monitor output and optional HDR 2D via Project Settings.",
+    profile: "full",
+    tier: "standard",
+    category: "project-settings",
+    implementation: "local",
+    inputSchema: CONFIGURE_HDR_OUTPUT_SCHEMA,
+    local: {
+      handler: "configureHdrOutput"
+    },
+    conformance: {
+      happy: "set display/window/hdr/request_hdr_output and/or rendering/viewport/hdr_2d",
+      error: "reject calls that set neither HDR field"
+    },
+    docs: {
+      summary: "Turns Godot 4.7 HDR output and optional HDR 2D on or off."
     }
   },
   {

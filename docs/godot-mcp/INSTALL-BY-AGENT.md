@@ -16,7 +16,7 @@ godot --version
 ```
 
 - Node must be **20+**. If missing: send them to https://nodejs.org and wait.
-- Godot must be **4.6.x**. If `godot` not found, ask for the binary path → `GODOT_BIN`. If they don’t have Godot: https://godotengine.org/download and wait.
+- Godot must be **4.7.x**. If `godot` not found, ask for the binary path → `GODOT_BIN`. If they don’t have Godot: https://godotengine.org/download and wait.
 
 ## 2. One question
 

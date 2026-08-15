@@ -6,6 +6,7 @@ const NiuaMcpUiOperations = preload("niua_mcp_ui_operations.gd")
 const HANDLERS := {
 	"_create_ui_control": true,
 	"_set_control_layout": true,
+	"_set_control_offset_transform": true,
 	"_create_ui_theme": true,
 	"_apply_ui_theme_override": true,
 	"_connect_ui_signal": true
@@ -33,6 +34,14 @@ func _create_ui_control(body: Dictionary) -> Dictionary:
 
 func _set_control_layout(body: Dictionary) -> Dictionary:
 	return NiuaMcpUiOperations.set_control_layout_with_side_effects(
+		_context.editor,
+		body,
+		Callable(_context, "remember")
+	)
+
+
+func _set_control_offset_transform(body: Dictionary) -> Dictionary:
+	return NiuaMcpUiOperations.set_control_offset_transform_with_side_effects(
 		_context.editor,
 		body,
 		Callable(_context, "remember")

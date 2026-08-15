@@ -44,6 +44,7 @@ test("PROJECT_SETTINGS_TOOL_DEFINITIONS exposes settings and input map descripto
   assert.deepEqual(PROJECT_SETTINGS_TOOL_DEFINITIONS.map(({ name }) => name), [
     "get_project_settings",
     "set_project_setting",
+    "configure_hdr_output",
     "set_project_setting_metadata",
     "get_input_map",
     "set_input_action"
@@ -77,6 +78,7 @@ test("project settings facade delegates schemas and tool descriptors", async () 
   assert.match(projectSchemas, /export const PROJECT_SETTINGS_SCHEMA/);
   assert.match(projectSchemas, /export const SET_PROJECT_SETTING_SCHEMA/);
   assert.match(projectSchemas, /export const SET_PROJECT_SETTING_METADATA_SCHEMA/);
+  assert.match(projectSchemas, /export const CONFIGURE_HDR_OUTPUT_SCHEMA/);
   assert.match(projectSchemas, /restartIfChanged/);
   assert.doesNotMatch(projectSchemas, /SET_INPUT_ACTION_SCHEMA/);
 
@@ -87,7 +89,8 @@ test("project settings facade delegates schemas and tool descriptors", async () 
   assert.doesNotMatch(inputMapSchemas, /SET_PROJECT_SETTING_SCHEMA/);
 
   assert.match(tools, /export const PROJECT_SETTINGS_TOOL_DEFINITIONS/);
-  assert.match(tools, /toolDefinitionsFromManifest\(PROJECT_SETTINGS_TOOL_MANIFEST\)/);
+  assert.match(tools, /toolDefinitionsFromManifest\(PROJECT_SETTINGS_TOOL_MANIFEST/);
+  assert.match(tools, /configureHdrOutput/);
   assert.doesNotMatch(tools, /async handler/);
 });
 
@@ -167,6 +170,37 @@ test("project setting mutation tools forward payloads through the bridge", async
       ok: true,
       data: { endpoint: "/project/setting/metadata/set" }
     });
+  });
+});
+
+test("configure_hdr_output writes Godot 4.7 HDR project settings", async () => {
+  const received = [];
+
+  await withJsonBridge(async (req, res) => {
+    received.push({ url: req.url, body: await readJsonBody(req) });
+    res.setHeader("content-type", "application/json");
+    res.end(JSON.stringify({ ok: true, data: { endpoint: req.url } }));
+  }, async (port) => {
+    const result = await toolByName("configure_hdr_output").handler({
+      port,
+      requestHdrOutput: true,
+      hdr2d: true,
+      save: true
+    });
+
+    assert.deepEqual(received, [
+      {
+        url: "/project/setting/set",
+        body: { name: "display/window/hdr/request_hdr_output", value: true, save: false }
+      },
+      {
+        url: "/project/setting/set",
+        body: { name: "rendering/viewport/hdr_2d", value: true, save: true }
+      }
+    ]);
+    assert.equal(parseToolText(result).ok, true);
+    assert.equal(parseToolText(result).data.saved, true);
+    assert.equal(parseToolText(result).data.settings.length, 2);
   });
 });
 

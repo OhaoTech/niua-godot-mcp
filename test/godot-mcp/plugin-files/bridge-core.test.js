@@ -142,8 +142,8 @@ test("Godot bridge health reports version support from a focused module", async 
   assert.match(editorRoutes, /NiuaMcpVersionSupport\.health\(\)/);
   assert.match(versionSupport, /extends RefCounted/);
   assert.match(versionSupport, /static func health\(\) -> Dictionary:/);
-  assert.match(versionSupport, /supported: 4\.6\.x/);
-  assert.match(versionSupport, /best-effort: 4\.5\.x and 4\.7\.x/);
+  assert.match(versionSupport, /supported: 4\.7\.x \(verified 4\.7\.1\)/);
+  assert.match(versionSupport, /best-effort: 4\.6\.x and 4\.8\.x/);
   assert.match(versionSupport, /"warning": "" if status == "supported" else message/);
 });
 

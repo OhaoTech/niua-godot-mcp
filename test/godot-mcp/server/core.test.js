@@ -57,8 +57,11 @@ test("Godot MCP server handles initialize, listing, and version tool calls", asy
       "create_tile_set",
       "create_material",
       "create_shader_material",
+      "create_drawable_texture_2d",
+      "blit_drawable_texture_2d",
       "get_project_settings",
       "set_project_setting",
+      "configure_hdr_output",
       "set_project_setting_metadata",
       "get_input_map",
       "set_input_action",
@@ -78,6 +81,7 @@ test("Godot MCP server handles initialize, listing, and version tool calls", asy
       "create_script",
       "attach_script",
       "import_project_assets",
+      "wait_for_imported_asset",
       "list_imported_assets",
       "get_import_metadata",
       "get_import_diagnostics",
@@ -119,6 +123,7 @@ test("Godot MCP server handles initialize, listing, and version tool calls", asy
       "travel_animation_tree",
       "create_ui_control",
       "set_control_layout",
+      "set_control_offset_transform",
       "create_ui_theme",
       "apply_ui_theme_override",
       "connect_ui_signal",
@@ -158,6 +163,8 @@ test("Godot MCP server handles initialize, listing, and version tool calls", asy
       "mark_scene_unsaved",
       "undo_editor_action",
       "redo_editor_action",
+      "find_nodes",
+      "instance_scene",
       "search_node_types",
       "create_node",
       "create_sprite_2d",
@@ -183,6 +190,7 @@ test("Godot MCP server handles initialize, listing, and version tool calls", asy
       "create_2d_trigger_zone",
       "create_3d_playable_blockout",
       "create_3d_character_controller",
+      "run_playtest_evidence",
       "apply_scene_recipe",
       "batch_scene_operations",
       "create_node_with_script",
@@ -222,7 +230,7 @@ test("Godot MCP server handles initialize, listing, and version tool calls", asy
       name: "get_godot_version",
       arguments: {}
     });
-    assert.match(version.result.content[0].text, /4\.6\.2\.test/);
+    assert.match(version.result.content[0].text, /4\.7\.1\.test/);
   } finally {
     await server.close();
   }

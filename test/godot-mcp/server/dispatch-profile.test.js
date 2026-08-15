@@ -5,7 +5,7 @@ import { dispatchToolsFromCatalog } from "../../../src/godot-mcp/server/dispatch
 import { resolveToolProfile, selectProfileTools } from "../../../src/godot-mcp/server/tool-profiles.js";
 import { GODOT_MCP_TOOLS } from "../../../src/godot-mcp/tools/index.js";
 
-const SCHEMA_BUDGET_CHARS = 20000; // ~5K tokens — the whole point of the profile
+const SCHEMA_BUDGET_CHARS = 21000; // ~5.25K tokens — compact profile plus 4.7 L1 actions
 
 function dispatchDefinitions() {
   return dispatchToolsFromCatalog(GODOT_MCP_TOOLS).map(({ handler, category, ...definition }) => definition);

@@ -3,11 +3,11 @@
 ## Supported Matrix
 
 - Node.js: `>=20`
-- Godot: `4.6.x`
+- Godot: `4.7.x` (verified local: `4.7.1.stable.official`)
 - Operating systems: Linux, macOS, and Windows
-- Primary development target: Linux with the official Godot `4.6.x` x86_64 build
+- Primary development target: official Godot `4.7.1` (Windows scoop `extras/godot` and official Linux x86_64 builds)
 
-Godot `4.5.x` and `4.7.x` are best-effort. Other versions are reported as untested through the bridge health response so agents can diagnose version drift before a deep editor operation fails.
+Godot `4.6.x` and `4.8.x` are best-effort. Other versions are reported as untested through the bridge health response so agents can diagnose version drift before a deep editor operation fails.
 
 ## Install Shape
 
@@ -44,7 +44,7 @@ This checkout does not include `.github` workflow files. If CI is added, it shou
 
 - Node 20 unit tests on Linux
 - Path-handling tests on macOS and Windows
-- A real Godot 4.6.x conformance run for editor bridge behavior
+- A real Godot 4.7.1 conformance run for editor bridge behavior
 
 ## Runtime Notes
 

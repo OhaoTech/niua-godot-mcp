@@ -39,7 +39,8 @@ func _editor_state() -> Dictionary:
 		_context.open_scenes(),
 		_main_screen_state(),
 		_context.selection_data(),
-		_context.logs()
+		_context.logs(),
+		_context.editor
 	)
 
 

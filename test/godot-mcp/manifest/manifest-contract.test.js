@@ -141,7 +141,7 @@ test("migrated manifest registry validates every migrated domain", () => {
     "viewport"
   ]);
   validateToolManifest(MIGRATED_TOOL_MANIFESTS);
-  assert.equal(MIGRATED_TOOL_MANIFESTS.length, 179);
+  assert.equal(MIGRATED_TOOL_MANIFESTS.length, 183);
 });
 
 test("animation manifest defines imported-scene and editor animation contracts", () => {
@@ -437,6 +437,8 @@ test("resource manifest preserves resource builder and assignment contracts", ()
     "create_tile_set",
     "create_material",
     "create_shader_material",
+    "create_drawable_texture_2d",
+    "blit_drawable_texture_2d",
     "assign_material"
   ]);
   assert.deepEqual(

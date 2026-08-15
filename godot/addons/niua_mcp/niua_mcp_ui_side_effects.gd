@@ -24,6 +24,14 @@ static func set_control_layout_with_side_effects(editor: EditorInterface, body: 
 	return response
 
 
+static func set_control_offset_transform_with_side_effects(editor: EditorInterface, body: Dictionary, remember: Callable) -> Dictionary:
+	var response := NiuaMcpUiLayoutOperations.set_control_offset_transform(editor, body)
+	if bool(response.get("ok", false)):
+		var data: Dictionary = response.get("data", {})
+		NiuaMcpSceneGraphUtils.remember(remember, "Updated UI offset transform %s" % str(data.get("nodePath", "")))
+	return response
+
+
 static func create_ui_theme_with_side_effects(editor: EditorInterface, body: Dictionary, refresh_filesystem: Callable, remember: Callable) -> Dictionary:
 	var response := NiuaMcpUiThemeOperations.create_ui_theme(editor, body, refresh_filesystem)
 	if bool(response.get("ok", false)):

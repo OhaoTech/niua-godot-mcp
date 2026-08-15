@@ -5,6 +5,8 @@ import {
   CREATE_SHADER_MATERIAL_SCHEMA,
   CREATE_SPRITE_FRAMES_SCHEMA,
   CREATE_TILE_SET_SCHEMA,
+  CREATE_DRAWABLE_TEXTURE_2D_SCHEMA,
+  BLIT_DRAWABLE_TEXTURE_2D_SCHEMA,
   FILESYSTEM_PATH_SCHEMA,
   SAVE_RESOURCE_SCHEMA
 } from "./schemas.js";
@@ -254,6 +256,64 @@ export const RESOURCE_TOOL_MANIFEST = [
     },
     docs: {
       summary: "Creates Shader and ShaderMaterial resources, sets uniforms, and can assign the material to a node."
+    }
+  },
+  {
+    name: "create_drawable_texture_2d",
+    description: "Create a Godot 4.7 DrawableTexture2D, call setup() with size/format/fill color, optionally blit a source texture, and save it under res://.",
+    profile: "full",
+    tier: "standard",
+    category: "resources",
+    inputSchema: CREATE_DRAWABLE_TEXTURE_2D_SCHEMA,
+    bridge: {
+      owner: "resources",
+      clientMethod: "createDrawableTexture2d",
+      endpoint: "/resource/drawable-texture/create",
+      method: "POST",
+      request: "body"
+    },
+    godotRoute: {
+      side: "write",
+      endpoint: "/resource/drawable-texture/create",
+      handler: "_create_drawable_texture_2d",
+      arg: "body",
+      methodError: "DrawableTexture2D creation requires POST"
+    },
+    conformance: {
+      happy: "create and setup a DrawableTexture2D resource under res://",
+      error: "reject missing paths or editors older than Godot 4.7"
+    },
+    docs: {
+      summary: "Creates a Godot 4.7 DrawableTexture2D, runs setup(), and saves it under res://."
+    }
+  },
+  {
+    name: "blit_drawable_texture_2d",
+    description: "Blit a Texture2D into an existing Godot 4.7 DrawableTexture2D and save the result.",
+    profile: "full",
+    tier: "standard",
+    category: "resources",
+    inputSchema: BLIT_DRAWABLE_TEXTURE_2D_SCHEMA,
+    bridge: {
+      owner: "resources",
+      clientMethod: "blitDrawableTexture2d",
+      endpoint: "/resource/drawable-texture/blit",
+      method: "POST",
+      request: "body"
+    },
+    godotRoute: {
+      side: "write",
+      endpoint: "/resource/drawable-texture/blit",
+      handler: "_blit_drawable_texture_2d",
+      arg: "body",
+      methodError: "DrawableTexture2D blit requires POST"
+    },
+    conformance: {
+      happy: "blit a Texture2D onto a saved DrawableTexture2D",
+      error: "reject missing DrawableTexture2D or source textures"
+    },
+    docs: {
+      summary: "Blits a Texture2D into an existing DrawableTexture2D and saves it."
     }
   },
   {

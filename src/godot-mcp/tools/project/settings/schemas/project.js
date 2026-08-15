@@ -52,6 +52,26 @@ export const SET_PROJECT_SETTING_SCHEMA = {
   additionalProperties: false
 };
 
+export const CONFIGURE_HDR_OUTPUT_SCHEMA = {
+  type: "object",
+  properties: {
+    ...CONNECTION_PROPERTIES,
+    requestHdrOutput: {
+      type: "boolean",
+      description: "Set display/window/hdr/request_hdr_output (Godot 4.7 HDR monitor output)."
+    },
+    hdr2d: {
+      type: "boolean",
+      description: "Set rendering/viewport/hdr_2d so 2D can keep HDR values."
+    },
+    save: {
+      type: "boolean",
+      description: "Save project.godot after applying the settings. Defaults to true."
+    }
+  },
+  additionalProperties: false
+};
+
 export const SET_PROJECT_SETTING_METADATA_SCHEMA = {
   type: "object",
   properties: {

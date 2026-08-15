@@ -11,7 +11,10 @@ const FORBIDDEN_IN_CORE = [
   "create_static_body_3d",
   "create_3d_character_controller",
   "upsert_audio_bus",
-  "create_audio_stream_player"
+  "create_audio_stream_player",
+  "set_control_offset_transform",
+  "create_drawable_texture_2d",
+  "configure_hdr_output"
 ];
 
 const REQUIRED_IN_CORE = [

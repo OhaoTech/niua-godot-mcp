@@ -1,6 +1,6 @@
 # niua-godot-forge skill
 
-A portable [Agent Skill](https://agentskills.io/specification) that teaches an agent the safe workflow for driving a Godot 4.6 editor through the **NIUA Godot MCP** — the correct build/run order, profile guidance, error recovery, and a per-subsystem tool reference loaded on demand.
+A portable [Agent Skill](https://agentskills.io/specification) that teaches an agent the safe workflow for driving a Godot 4.7 editor through the **NIUA Godot MCP** — the correct build/run order, profile guidance, error recovery, and a per-subsystem tool reference loaded on demand.
 
 This skill is the *playbook*; it does not replace the MCP server. Install and connect the `niua-godot` MCP server first (see the repo `README.md`), then install this skill into your agent platform.
 

@@ -95,7 +95,9 @@ test("resource tools and bridge client are generated from the manifest", async (
     "saveResource",
     "createSpriteFrames",
     "createTileSet",
-    "createShaderMaterial"
+    "createShaderMaterial",
+    "createDrawableTexture2d",
+    "blitDrawableTexture2d"
   ]);
 });
 

@@ -30,18 +30,36 @@ static func project_info() -> Dictionary:
 	}
 
 
-static func editor_state(current_scene: String, open_scenes: Array, main_screen: Dictionary, selection: Array, logs: Array) -> Dictionary:
+static func editor_state(current_scene: String, open_scenes: Array, main_screen: Dictionary, selection: Array, logs: Array, editor: EditorInterface = null) -> Dictionary:
+	var unsaved_scenes := _unsaved_scene_paths(editor)
 	return {
 		"ok": true,
 		"data": {
 			"projectRoot": ProjectSettings.globalize_path("res://"),
 			"currentScene": current_scene,
 			"openScenes": open_scenes,
+			"unsavedScenes": unsaved_scenes,
+			"unsavedSceneCount": unsaved_scenes.size(),
 			"mainScreen": main_screen,
 			"selection": selection,
 			"logs": logs.duplicate()
 		}
 	}
+
+
+static func _unsaved_scene_paths(editor: EditorInterface) -> Array:
+	var paths: Array = []
+	if editor == null or not editor.has_method("get_unsaved_scenes"):
+		return paths
+	var raw = editor.get_unsaved_scenes()
+	if raw == null:
+		return paths
+	for item in raw:
+		var path := str(item)
+		if not path.is_empty():
+			paths.append(path)
+	paths.sort()
+	return paths
 
 
 static func scene_tree(current_scene: String, root: Node, query: Dictionary = {}) -> Dictionary:

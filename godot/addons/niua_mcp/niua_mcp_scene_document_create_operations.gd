@@ -3,6 +3,7 @@ extends RefCounted
 
 const NiuaMcpPathUtils = preload("niua_mcp_path_utils.gd")
 const NiuaMcpSceneDocumentUtils = preload("niua_mcp_scene_document_utils.gd")
+const NiuaMcpVersionSupport = preload("niua_mcp_version_support.gd")
 
 
 static func create_scene(editor: EditorInterface, body: Dictionary, refresh_filesystem: Callable) -> Dictionary:
@@ -22,7 +23,7 @@ static func create_scene(editor: EditorInterface, body: Dictionary, refresh_file
 	if root_type.is_empty():
 		root_type = "Node3D"
 	if not ClassDB.class_exists(root_type):
-		return NiuaMcpSceneDocumentUtils.error("unknown Godot class: %s" % root_type)
+		return NiuaMcpSceneDocumentUtils.error(NiuaMcpVersionSupport.unknown_class_message(root_type))
 
 	var instance: Object = ClassDB.instantiate(root_type)
 	if not (instance is Node):

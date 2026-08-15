@@ -16,6 +16,10 @@ static func set_control_layout_with_side_effects(editor: EditorInterface, body: 
 	return NiuaMcpUiSideEffects.set_control_layout_with_side_effects(editor, body, remember)
 
 
+static func set_control_offset_transform_with_side_effects(editor: EditorInterface, body: Dictionary, remember: Callable) -> Dictionary:
+	return NiuaMcpUiSideEffects.set_control_offset_transform_with_side_effects(editor, body, remember)
+
+
 static func create_ui_theme_with_side_effects(editor: EditorInterface, body: Dictionary, refresh_filesystem: Callable, remember: Callable) -> Dictionary:
 	return NiuaMcpUiSideEffects.create_ui_theme_with_side_effects(editor, body, refresh_filesystem, remember)
 
@@ -34,6 +38,10 @@ static func create_ui_control(editor: EditorInterface, body: Dictionary, path_va
 
 static func set_control_layout(editor: EditorInterface, body: Dictionary) -> Dictionary:
 	return NiuaMcpUiLayoutOperations.set_control_layout(editor, body)
+
+
+static func set_control_offset_transform(editor: EditorInterface, body: Dictionary) -> Dictionary:
+	return NiuaMcpUiLayoutOperations.set_control_offset_transform(editor, body)
 
 
 static func create_ui_theme(editor: EditorInterface, body: Dictionary, refresh_filesystem: Callable) -> Dictionary:

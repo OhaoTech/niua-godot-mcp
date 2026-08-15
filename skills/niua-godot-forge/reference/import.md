@@ -2,12 +2,13 @@
 
 Generated from the manifest-backed tool catalog. Do not edit by hand; run `npm run godot:mcp:docs`.
 
-- Tools: 7 (3 in v1, 4 full-only)
+- Tools: 8 (4 in v1, 4 full-only)
 - Argument names with `*` are required.
 
 | Tool | Profiles | Description | Arguments |
 | --- | --- | --- | --- |
 | `import_project_assets` | full | Run a local Godot CLI import pass for an allowlisted project when the visible editor Import dock cannot safely import new source assets. | projectRoot*:string, timeoutMs:number |
+| `wait_for_imported_asset` | v1, full | Poll until a res:// asset is import-ready (metadata or listing), or timeout. Use after write/reimport to avoid import races. | path:string, assetPath:string, timeoutMs:number, pollMs:number, host:string, port:number, expectedProjectRoot:string |
 | `list_imported_assets` | v1, full | List assets with Godot .import metadata under a res:// folder. Assets are listed in sorted name order per directory, depth-first. | host:string, port:number, expectedProjectRoot:string, path:string, recursive:boolean |
 | `get_import_metadata` | full | Read Godot .import sidecar metadata for an imported asset. | host:string, port:number, expectedProjectRoot:string, path*:string |
 | `get_import_diagnostics` | v1, full | Diagnose Godot import sidecar health, generated target files, dependencies, and stale source metadata for an asset. | host:string, port:number, expectedProjectRoot:string, path*:string |

@@ -29,7 +29,7 @@ export function createMcpProcess(env = {}) {
     cwd: repoRoot,
     env: {
       ...process.env,
-      GODOT_MCP_GODOT_VERSION: "Godot Engine 4.6.2.test",
+      GODOT_MCP_GODOT_VERSION: "Godot Engine 4.7.1.test",
       // The suite exercises the whole catalog; profile-specific tests
       // override this (e.g. NIUA_MCP_PROFILE: "" for the v1 default).
       NIUA_MCP_PROFILE: "full",
@@ -211,7 +211,7 @@ writeFileSync(process.env.NIUA_FAKE_GODOT_SCRIPT_CHECK_LOG, JSON.stringify({
   cwd: process.cwd()
 }) + "\\n", { flag: "a" });
 
-process.stdout.write("Godot Engine v4.6.2.test - https://godotengine.org\\n\\n");
+process.stdout.write("Godot Engine v4.7.1.test - https://godotengine.org\\n\\n");
 process.stderr.write('SCRIPT ERROR: Parse Error: Unexpected "Indent" in class body.\\n');
 process.stderr.write("          at: GDScript::reload (res://scripts/player.gd:3)\\n");
 process.stderr.write('ERROR: Failed to load script "res://scripts/player.gd" with error "Parse error".\\n');
@@ -238,7 +238,7 @@ writeFileSync(process.env.NIUA_FAKE_GODOT_SCRIPT_CHECK_LOG, JSON.stringify({
   scriptPath
 }) + "\\n", { flag: "a" });
 
-process.stdout.write("Godot Engine v4.6.2.test - https://godotengine.org\\n\\n");
+process.stdout.write("Godot Engine v4.7.1.test - https://godotengine.org\\n\\n");
 if (scriptPath.endsWith("enemy.gd")) {
   process.stderr.write('SCRIPT ERROR: Parse Error: Expected statement, found "Indent".\\n');
   process.stderr.write("          at: GDScript::reload (res://scripts/enemy.gd:4)\\n");

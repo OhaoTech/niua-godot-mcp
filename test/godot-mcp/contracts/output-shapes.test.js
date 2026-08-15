@@ -452,7 +452,7 @@ test("bridge tool outputs match their declared shapes (fixture bridge)", async (
 
 test("get_godot_version output matches its declared shape (real handler)", async () => {
   const previous = process.env.GODOT_MCP_GODOT_VERSION;
-  process.env.GODOT_MCP_GODOT_VERSION = "Godot Engine 4.6.2.test";
+  process.env.GODOT_MCP_GODOT_VERSION = "Godot Engine 4.7.1.test";
   try {
     const value = await getGodotVersionTool();
     assertShape(value, {

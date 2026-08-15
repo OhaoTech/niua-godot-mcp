@@ -13,5 +13,9 @@ const LIGHT_3D_KINDS = new Map([
   ["sun", { kind: "directional", type: "DirectionalLight3D" }],
   ["omni", { kind: "omni", type: "OmniLight3D", rangeProperty: "omni_range" }],
   ["point", { kind: "omni", type: "OmniLight3D", rangeProperty: "omni_range" }],
-  ["spot", { kind: "spot", type: "SpotLight3D", rangeProperty: "spot_range", angleProperty: "spot_angle" }]
+  ["spot", { kind: "spot", type: "SpotLight3D", rangeProperty: "spot_range", angleProperty: "spot_angle" }],
+  ["area", { kind: "area", type: "AreaLight3D", rangeProperty: "area_range" }],
+  ["arealight", { kind: "area", type: "AreaLight3D", rangeProperty: "area_range" }],
+  ["rect", { kind: "area", type: "AreaLight3D", rangeProperty: "area_range" }],
+  ["rectangle", { kind: "area", type: "AreaLight3D", rangeProperty: "area_range" }]
 ]);

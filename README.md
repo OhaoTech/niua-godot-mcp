@@ -22,7 +22,7 @@ Restart the AI client when it says so. Done.
 
 ### Option B — do it yourself
 
-**Need:** [Node 20+](https://nodejs.org) · [Godot 4.6](https://godotengine.org/download) · Claude / Cursor / Codex / etc.
+**Need:** [Node 20+](https://nodejs.org) · [Godot 4.7](https://godotengine.org/download) · Claude / Cursor / Codex / etc.
 
 ```bash
 git clone https://github.com/OhaoTech/niua-godot-mcp.git
@@ -69,7 +69,7 @@ You should see Godot open and a real game window. The agent gets one compact evi
 
 | Problem | Fix |
 |---|---|
-| `Unable to run Godot` | Install Godot 4.6, or set `GODOT_BIN=/path/to/godot` in the MCP config |
+| `Unable to run Godot` | Install Godot 4.7, or set `GODOT_BIN=/path/to/godot` in the MCP config |
 | `outside allowed project roots` | Put projects under `~/Godot/NIUAProjects` (or the folder you chose) |
 | `bridge is not reachable` | Ask the AI: “open the project with open_project” |
 | Tools missing | Restart the AI client after install |

@@ -31,6 +31,7 @@ test("UI_TOOL_DEFINITIONS exposes the curated UI subsystem tools", () => {
   assert.deepEqual(UI_TOOL_DEFINITIONS.map((tool) => tool.name), [
     "create_ui_control",
     "set_control_layout",
+    "set_control_offset_transform",
     "create_ui_theme",
     "apply_ui_theme_override",
     "connect_ui_signal"
@@ -134,6 +135,50 @@ test("create_ui_theme handler forwards theme resources and overrides", async () 
           }
         }
       ]
+    });
+  });
+});
+
+test("set_control_offset_transform forwards Godot 4.7 offset transform fields", async () => {
+  let seenUrl = null;
+  let receivedBody = null;
+
+  await withJsonBridge(async (req, res) => {
+    seenUrl = req.url;
+    const chunks = [];
+    for await (const chunk of req) {
+      chunks.push(chunk);
+    }
+    receivedBody = JSON.parse(Buffer.concat(chunks).toString("utf8"));
+    res.setHeader("content-type", "application/json");
+    res.end(JSON.stringify({
+      ok: true,
+      data: {
+        nodePath: "Menu/Title",
+        offsetTransform: { available: true, enabled: true }
+      }
+    }));
+  }, async (port) => {
+    const result = await toolByName("set_control_offset_transform").handler({
+      port,
+      nodePath: "Menu/Title",
+      enabled: true,
+      position: { x: 0, y: -12 },
+      rotationDegrees: 8,
+      scale: { x: 1.1, y: 1.1 },
+      visualOnly: true
+    });
+    const payload = parseToolText(result);
+
+    assert.equal(seenUrl, "/ui/control/offset-transform");
+    assert.equal(payload.data.nodePath, "Menu/Title");
+    assert.deepEqual(receivedBody, {
+      nodePath: "Menu/Title",
+      enabled: true,
+      position: { x: 0, y: -12 },
+      rotationDegrees: 8,
+      scale: { x: 1.1, y: 1.1 },
+      visualOnly: true
     });
   });
 });

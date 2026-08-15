@@ -12,7 +12,7 @@ import {
 export const NODE3D_TOOL_MANIFEST = [
   {
     name: "create_light_3d",
-    description: "Create a DirectionalLight3D, OmniLight3D, or SpotLight3D with practical transform and lighting fields.",
+    description: "Create a DirectionalLight3D, OmniLight3D, SpotLight3D, or Godot 4.7 AreaLight3D with practical transform and lighting fields.",
     profile: "full",
     tier: "standard",
     category: "nodes-3d",
@@ -22,11 +22,11 @@ export const NODE3D_TOOL_MANIFEST = [
       handler: "createLight3D"
     },
     conformance: {
-      happy: "create a 3D light with transform and lighting fields",
+      happy: "create a 3D light including AreaLight3D with transform and lighting fields",
       error: "reject unsupported light kinds, invalid transforms, or missing parents"
     },
     docs: {
-      summary: "Creates a DirectionalLight3D, OmniLight3D, or SpotLight3D."
+      summary: "Creates a DirectionalLight3D, OmniLight3D, SpotLight3D, or AreaLight3D."
     }
   },
   {

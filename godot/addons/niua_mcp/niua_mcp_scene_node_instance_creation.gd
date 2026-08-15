@@ -4,6 +4,7 @@ extends RefCounted
 const NiuaMcpSceneNodeContext = preload("niua_mcp_scene_node_context.gd")
 const NiuaMcpVariantCodec = preload("niua_mcp_variant_codec.gd")
 const NiuaMcpPathUtils = preload("niua_mcp_path_utils.gd")
+const NiuaMcpVersionSupport = preload("niua_mcp_version_support.gd")
 
 
 static func instance_scene(editor: EditorInterface, body: Dictionary, path_validator: Callable) -> Dictionary:
@@ -91,7 +92,7 @@ static func create_node(editor: EditorInterface, body: Dictionary, path_validato
 	if type_name.is_empty():
 		return NiuaMcpSceneNodeContext.error("node type is required")
 	if not ClassDB.class_exists(type_name):
-		return NiuaMcpSceneNodeContext.error("unknown Godot class: %s" % type_name)
+		return NiuaMcpSceneNodeContext.error(NiuaMcpVersionSupport.unknown_class_message(type_name))
 
 	var instance: Object = ClassDB.instantiate(type_name)
 	if not (instance is Node):

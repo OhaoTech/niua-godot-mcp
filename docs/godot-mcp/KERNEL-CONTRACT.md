@@ -4,7 +4,7 @@ This package is a **Godot execution substrate for AI agents**, not a full studio
 
 ## Guarantees
 
-1. **Live editor coupling** — tools talk to a real Godot 4.6 editor via a localhost bridge.
+1. **Live editor coupling** — tools talk to a real Godot 4.7 editor via a localhost bridge.
 2. **Runtime observe** — running games can be probed (state, events, properties, methods, screenshots when available).
 3. **Truth over echo** — mutators should return engine-verified post-state; failures are loud and actionable.
 4. **Cheap multi-step work** — recipes, batch ops, compact reads, and the JS SDK keep intermediates out of model context.

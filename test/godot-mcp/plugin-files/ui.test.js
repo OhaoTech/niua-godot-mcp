@@ -15,6 +15,7 @@ test("Godot UI bridge routes live in a focused write route module", async () => 
   assert.match(writeRoutes, /preload\("niua_mcp_bridge_write_ui_routes\.gd"\)/);
   assert.match(writeRoutes, /NiuaMcpBridgeWriteUiRoutes\.new\(\)/);
   assert.match(writeRoutes, /"_create_ui_control": true/);
+  assert.match(writeRoutes, /"_set_control_offset_transform": true/);
   assert.match(writeRoutes, /"_create_ui_theme": true/);
   assert.match(writeRoutes, /"_connect_ui_signal": true/);
 
@@ -23,10 +24,13 @@ test("Godot UI bridge routes live in a focused write route module", async () => 
   assert.match(writeUiRoutes, /NiuaMcpUiOperations\.create_ui_control_with_side_effects/);
   assert.match(writeUiRoutes, /func _set_control_layout\(body: Dictionary\) -> Dictionary:/);
   assert.match(writeUiRoutes, /NiuaMcpUiOperations\.set_control_layout_with_side_effects/);
+  assert.match(writeUiRoutes, /func _set_control_offset_transform\(body: Dictionary\) -> Dictionary:/);
+  assert.match(writeUiRoutes, /NiuaMcpUiOperations\.set_control_offset_transform_with_side_effects/);
   assert.match(writeUiRoutes, /func _connect_ui_signal\(body: Dictionary\) -> Dictionary:/);
   assert.match(writeUiRoutes, /NiuaMcpUiOperations\.connect_ui_signal_with_side_effects/);
 
   assert.match(writeEndpoints, /"\/ui\/control\/create"/);
+  assert.match(writeEndpoints, /"\/ui\/control\/offset-transform"/);
   assert.match(writeEndpoints, /"\/ui\/theme\/override"/);
   assert.match(writeRouteTable, /"\/ui\/signal\/connect": \{ "handler": "_connect_ui_signal", "arg": "body", "methodError": "UI signal connection requires POST" \}/);
 });
@@ -51,8 +55,10 @@ test("Godot UI operations are split by focused operation modules", async () => {
   assert.match(controls, /TextureRect/);
 
   assert.match(layout, /static func set_control_layout/);
+  assert.match(layout, /static func set_control_offset_transform/);
   assert.match(layout, /anchor_left/);
   assert.match(layout, /offset_right/);
+  assert.match(layout, /offset_transform_enabled/);
 
   assert.match(theme, /static func create_ui_theme/);
   assert.match(theme, /Theme\.new\(\)/);

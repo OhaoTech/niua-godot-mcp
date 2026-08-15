@@ -144,7 +144,7 @@ test("Godot MCP server diagnoses installed export templates", async () => {
   const allowedRoot = await mkdtemp(path.join(tmpdir(), "niua-godot-template-project-"));
   const templatesRoot = await mkdtemp(path.join(tmpdir(), "niua-godot-templates-"));
   const projectRoot = path.join(allowedRoot, "export-demo");
-  const templateVersionRoot = path.join(templatesRoot, "4.6.2.test");
+  const templateVersionRoot = path.join(templatesRoot, "4.7.1.test");
 
   try {
     await mkdir(projectRoot, { recursive: true });
@@ -181,7 +181,7 @@ test("Godot MCP server diagnoses installed export templates", async () => {
       assert.equal(payload.ok, true);
       assert.equal(payload.data.installed, true);
       assert.equal(payload.data.templatesRoot, templatesRoot);
-      assert.equal(payload.data.selected.versionKey, "4.6.2.test");
+      assert.equal(payload.data.selected.versionKey, "4.7.1.test");
       assert.equal(payload.data.selected.fileCount, 2);
       assert.equal(payload.data.project.projectRoot, projectRoot);
       assert.equal(payload.data.project.projectFileExists, true);
@@ -219,7 +219,7 @@ test("Godot MCP server reports missing export templates", async () => {
       assert.equal(payload.data.templatesRoot, templatesRoot);
       assert.equal(payload.data.selected, null);
       assert.match(payload.data.guidance.join("\n"), /Manage Export Templates/);
-      assert.ok(payload.data.candidates.some((candidate) => candidate.versionKey === "4.6.2.test"));
+      assert.ok(payload.data.candidates.some((candidate) => candidate.versionKey === "4.7.1.test"));
     } finally {
       await server.close();
     }
@@ -232,7 +232,7 @@ test("Godot MCP server validates a Linux export preset", async () => {
   const allowedRoot = await mkdtemp(path.join(tmpdir(), "niua-godot-validate-export-"));
   const templatesRoot = await mkdtemp(path.join(tmpdir(), "niua-godot-validate-templates-"));
   const projectRoot = path.join(allowedRoot, "export-demo");
-  const templateVersionRoot = path.join(templatesRoot, "4.6.2.test");
+  const templateVersionRoot = path.join(templatesRoot, "4.7.1.test");
 
   try {
     await mkdir(projectRoot, { recursive: true });

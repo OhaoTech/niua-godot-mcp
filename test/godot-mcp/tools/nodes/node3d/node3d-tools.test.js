@@ -539,6 +539,54 @@ test("create_light_3d builds light properties and creates a node", async () => {
   });
 });
 
+test("create_light_3d builds AreaLight3D properties for Godot 4.7", async () => {
+  let received = null;
+
+  await withJsonBridge(async (req, res) => {
+    received = { url: req.url, body: await readJsonBody(req) };
+    res.setHeader("content-type", "application/json");
+    res.end(JSON.stringify({ ok: true, data: { nodePath: "Root/WindowLight" } }));
+  }, async (port) => {
+    const result = await toolByName("create_light_3d").handler({
+      port,
+      kind: "area",
+      name: "WindowLight",
+      parentPath: "Root",
+      position: [0, 2, 0],
+      color: "#ffffff",
+      energy: 4,
+      range: 8,
+      areaSize: [2, 1],
+      areaAttenuation: 2,
+      areaNormalizeEnergy: true,
+      areaTexturePath: "res://lights/window.png",
+      shadowEnabled: true
+    });
+
+    assert.deepEqual(received, {
+      url: "/scene/node/create",
+      body: {
+        type: "AreaLight3D",
+        name: "WindowLight",
+        parentPath: "Root",
+        properties: {
+          position: { type: "Vector3", x: 0, y: 2, z: 0 },
+          light_color: { type: "Color", r: 1, g: 1, b: 1, a: 1 },
+          light_energy: 4,
+          shadow_enabled: true,
+          area_range: 8,
+          area_size: { type: "Vector2", x: 2, y: 1 },
+          area_attenuation: 2,
+          area_normalize_energy: true,
+          area_texture: "res://lights/window.png"
+        }
+      }
+    });
+    assert.equal(parseToolText(result).data.kind, "area");
+    assert.equal(parseToolText(result).data.type, "AreaLight3D");
+  });
+});
+
 test("create_mesh_instance_3d creates a mesh resource and referencing node", async () => {
   const received = [];
 
