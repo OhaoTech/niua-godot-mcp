@@ -59,7 +59,7 @@ export const FILESYSTEM_TOOL_MANIFEST = [
             default: false,
             type: "boolean"
           },
-          maxDepth: {},
+          maxDepth: { default: 2 },
           exclude: { array: "csv", trim: true }
         }
       }

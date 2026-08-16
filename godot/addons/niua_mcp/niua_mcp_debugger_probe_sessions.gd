@@ -60,7 +60,6 @@ func runtime_session_snapshots(debugger_probe: EditorDebuggerPlugin, store) -> A
 			"debuggable": false,
 			"breaked": false,
 			"hasRuntimeState": bool(runtime_data.get("hasRuntimeState", false)),
-			"lastRuntimeMessage": runtime_data.get("lastRuntimeMessage", null),
 			"runtimeState": runtime_data.get("runtimeState", null)
 		}
 

@@ -146,7 +146,7 @@ test("get_runtime_state schema declares the maxDepth and pathFilter diet control
   assert.equal(schema.type, "object");
   assert.equal(schema.additionalProperties, false);
   assert.equal(schema.properties.maxDepth.type, "number");
-  assert.match(schema.properties.maxDepth.description, /0 or omitted/);
+  assert.match(schema.properties.maxDepth.description, /Defaults to 2/);
   assert.equal(schema.properties.pathFilter.type, "string");
   assert.match(schema.properties.pathFilter.description, /subtree/);
 });
@@ -179,9 +179,10 @@ test("get_runtime_state handler forwards maxDepth and pathFilter through the bri
 
     assert.deepEqual(seenUrls, [
       "/runtime/state?maxDepth=2",
-      "/runtime/state?pathFilter=%2Froot%2FPlayer",
-      "/runtime/state"
+      "/runtime/state?maxDepth=2&pathFilter=%2Froot%2FPlayer",
+      "/runtime/state?maxDepth=2"
     ]);
+    assert.equal(parseToolText(full).data.events, undefined);
   });
 });
 

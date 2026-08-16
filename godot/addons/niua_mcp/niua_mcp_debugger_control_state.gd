@@ -19,7 +19,7 @@ static func debugger_state(debugger_probe, editor: EditorInterface) -> Dictionar
 			"sessionCount": sessions.size(),
 			"sessions": sessions,
 			"breakpoints": _debugger_breakpoints(editor),
-			"events": events,
+			"eventCount": events.size(),
 			"monitors": _debugger_monitors()
 		}
 	}

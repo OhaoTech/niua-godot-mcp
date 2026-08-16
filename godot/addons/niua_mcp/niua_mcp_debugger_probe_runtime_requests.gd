@@ -39,22 +39,29 @@ func send_runtime_snapshot_request(debugger_probe: EditorDebuggerPlugin, session
 	return requested_sessions
 
 
-func send_runtime_node_properties_request(debugger_probe: EditorDebuggerPlugin, session_ids: Array[int], node_path: String, request_id: String, record_event: Callable) -> Array:
+func send_runtime_node_properties_request(debugger_probe: EditorDebuggerPlugin, session_ids: Array[int], node_path: String, request_id: String, record_event: Callable, properties: Array = [], verbose: bool = false) -> Array:
 	var requested_sessions := []
+	var payload := {
+		"requestId": request_id,
+		"nodePath": node_path,
+		"verbose": verbose
+	}
+	if properties.size() > 0:
+		payload["properties"] = properties
+
 	for session_id in session_ids:
 		var session := debugger_probe.get_session(session_id)
 		if session == null or not session.is_active():
 			continue
 
-		session.send_message(NODE_PROPERTIES_MESSAGE, [{
-			"requestId": request_id,
-			"nodePath": node_path
-		}])
+		session.send_message(NODE_PROPERTIES_MESSAGE, [payload])
 		requested_sessions.append(session_id)
 
 	_record(record_event, "runtime_node_properties_requested", {
 		"nodePath": node_path,
 		"requestId": request_id,
+		"propertyCount": properties.size(),
+		"verbose": verbose,
 		"requestedSessions": requested_sessions
 	})
 	return requested_sessions

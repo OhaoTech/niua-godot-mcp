@@ -22,8 +22,7 @@ static func main_screen_state(editor: EditorInterface) -> Dictionary:
 		"available": true,
 		"name": str(main_screen.name),
 		"type": main_screen.get_class(),
-		"visible": main_screen.visible,
-		"path": str(main_screen.get_path())
+		"visible": main_screen.visible
 	}
 
 

@@ -72,8 +72,8 @@ func next_runtime_request_id(prefix: String) -> String:
 	return _runtime_requests.next_runtime_request_id(prefix)
 
 
-func send_runtime_node_properties_request(node_path: String, request_id: String) -> Array:
-	return _runtime_requests.send_runtime_node_properties_request(self, _sessions.ids(), node_path, request_id, Callable(self, "_record_event"))
+func send_runtime_node_properties_request(node_path: String, request_id: String, properties: Array = [], verbose: bool = false) -> Array:
+	return _runtime_requests.send_runtime_node_properties_request(self, _sessions.ids(), node_path, request_id, Callable(self, "_record_event"), properties, verbose)
 
 
 func runtime_node_properties(node_path: String, request_id: String = "") -> Array:

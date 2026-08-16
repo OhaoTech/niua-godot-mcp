@@ -5,8 +5,13 @@ import {
   SCENE_TAB_TOOL_MANIFEST,
   SCENE_TOOL_MANIFEST
 } from "./manifest.js";
+import { getSceneTree } from "./tree-adapter.js";
 
-export const SCENE_TOOL_DEFINITIONS = toolDefinitionsFromManifest(SCENE_TOOL_MANIFEST);
+export const SCENE_TOOL_DEFINITIONS = toolDefinitionsFromManifest(SCENE_TOOL_MANIFEST, {
+  adapterHandlers: {
+    getSceneTree
+  }
+});
 
 export const SCENE_STATE_TOOL_DEFINITIONS = toolsForManifest(SCENE_STATE_TOOL_MANIFEST);
 export const SCENE_TAB_TOOL_DEFINITIONS = toolsForManifest(SCENE_TAB_TOOL_MANIFEST);

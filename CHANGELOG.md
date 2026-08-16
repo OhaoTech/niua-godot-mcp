@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.10 - Token diet for live editor + runtime probe
+
+- **Shallow by default:** `get_scene_tree` and `get_runtime_state` default to `maxDepth: 2` on both the MCP client and the Godot HTTP bridge. Pass `0` for the full tree.
+- **`savePath` on trees:** write the full JSON to disk and return a compact root/currentScene/nodeCount summary.
+- **Runtime snapshot no longer includes events.** Use `get_runtime_events` (default limit 25). Sessions drop `lastRuntimeMessage` chrome.
+- **Runtime properties** default to script variables (name/type/value). `properties` and `verbose` now reach the live probe so allowlists like `["visible"]` work; `verbose:true` is the full editor list.
+- **Screenshots** omit inline base64 unless `savePath` or `includePayload: true`.
+- **`run_playtest_evidence`** reads the real `responses[].properties` shape, reports serialized `nodeCount`, persists a screenshot (temp path if `savePath` omitted), and only claims `visualProof` when pixels were saved or returned.
+- **`get_editor_state`** returns `logCount`/`lastLog` instead of the 200-line bridge log. Use `get_output_logs`.
+- **`get_debugger_state`** returns `eventCount` instead of the event buffer. Use `get_runtime_events`.
+- **`list_filesystem`** recursive listings default to `maxDepth: 2` (`0` = unbounded).
+
 ## 0.1.9 - Godot 4.7 kernel
 
 - **Target Godot 4.7.x** as the supported editor line. 4.6.x and 4.8.x stay best-effort; older/newer minors are untested.

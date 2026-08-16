@@ -30,6 +30,9 @@ test("get_scene_tree keeps its depth and subtree diet controls", async () => {
   const entry = manifestEntry(SCENE_TOOL_MANIFEST, "get_scene_tree");
   assert.ok(entry.inputSchema.properties.maxDepth, "schema lost maxDepth");
   assert.ok(entry.inputSchema.properties.pathFilter, "schema lost pathFilter");
+  assert.ok(entry.inputSchema.properties.savePath, "schema lost savePath");
+  assert.match(entry.inputSchema.properties.maxDepth.description, /Defaults to 2/);
+  assert.ok(entry.adapter?.handler === "getSceneTree", "scene tree lost its diet adapter");
   assert.ok(entry.bridge.query.fields.maxDepth, "query lost maxDepth");
   assert.ok(entry.bridge.query.fields.pathFilter, "query lost pathFilter");
   assert.equal(entry.godotRoute.arg, "query");
@@ -39,12 +42,16 @@ test("get_scene_tree keeps its depth and subtree diet controls", async () => {
   assert.match(operations, /pathFilter/);
   const snapshot = await addonFile("niua_mcp_node_snapshot.gd");
   assert.match(snapshot, /childrenTruncated/);
+  assert.match(snapshot, /"childCount": node.get_child_count\(\)/);
 });
 
 test("get_runtime_state keeps its runtime-tree depth and subtree diet controls", async () => {
   const entry = manifestEntry(DEBUGGER_TOOL_MANIFEST, "get_runtime_state");
   assert.ok(entry.inputSchema.properties.maxDepth, "schema lost maxDepth");
   assert.ok(entry.inputSchema.properties.pathFilter, "schema lost pathFilter");
+  assert.ok(entry.inputSchema.properties.savePath, "schema lost savePath");
+  assert.match(entry.inputSchema.properties.maxDepth.description, /Defaults to 2/);
+  assert.ok(entry.adapter?.handler === "getRuntimeState", "runtime state lost its diet adapter");
   assert.ok(entry.bridge.query.fields.maxDepth, "query lost maxDepth");
   assert.ok(entry.bridge.query.fields.pathFilter, "query lost pathFilter");
   assert.equal(entry.godotRoute.arg, "query");
@@ -63,6 +70,28 @@ test("get_runtime_state keeps its runtime-tree depth and subtree diet controls",
   assert.match(runtimeRequests, /"pathFilter": path_filter/);
 });
 
+test("get_runtime_node_properties forwards allowlist and verbose through the probe", async () => {
+  const entry = manifestEntry(DEBUGGER_TOOL_MANIFEST, "get_runtime_node_properties");
+  assert.ok(entry.inputSchema.properties.properties, "schema lost properties allowlist");
+  assert.ok(entry.inputSchema.properties.verbose, "schema lost verbose");
+  assert.equal(entry.bridge.query.fields.properties.array, "csv");
+  assert.equal(entry.bridge.query.fields.verbose.type, "boolean");
+  assert.ok(entry.adapter?.handler === "getRuntimeNodeProperties", "runtime properties lost its diet adapter");
+
+  const operations = await addonFile("niua_mcp_runtime_node_operations.gd");
+  assert.match(operations, /send_runtime_node_properties_request\(node_path, request_id, properties, verbose\)/);
+  const requests = await addonFile("niua_mcp_debugger_probe_runtime_requests.gd");
+  assert.match(requests, /"verbose": verbose/);
+  assert.match(requests, /payload\["properties"\] = properties/);
+  const reader = await addonFile("niua_mcp_runtime_probe_node_property_reader.gd");
+  assert.match(reader, /PROPERTY_USAGE_SCRIPT_VARIABLE/);
+  assert.match(reader, /propertyMode/);
+  const editorTree = await addonFile("niua_mcp_editor_state_operations.gd");
+  assert.match(editorTree, /query\.get\("maxDepth", "2"\)/);
+  const runtimeState = await addonFile("niua_mcp_runtime_state_operations.gd");
+  assert.match(runtimeState, /query\.get\("maxDepth", "2"\)/);
+});
+
 test("get_inspector_properties keeps compact-by-default and the allowlist", async () => {
   const entry = manifestEntry(INSPECTOR_TOOL_MANIFEST, "get_inspector_properties");
   assert.ok(entry.inputSchema.properties.verbose, "schema lost verbose");
@@ -76,14 +105,25 @@ test("get_inspector_properties keeps compact-by-default and the allowlist", asyn
   assert.match(operations, /if not verbose:/);
 });
 
+test("editor and debugger snapshots do not glue their log streams", async () => {
+  const editor = await addonFile("niua_mcp_editor_state_operations.gd");
+  assert.match(editor, /"logCount": logs.size\(\)/);
+  assert.doesNotMatch(editor, /"logs": logs\.duplicate\(\)/);
+  const debuggerState = await addonFile("niua_mcp_debugger_control_state.gd");
+  assert.match(debuggerState, /"eventCount": events.size\(\)/);
+  assert.doesNotMatch(debuggerState, /"events": events/);
+});
+
 test("list_filesystem keeps exclude and maxDepth diet controls", async () => {
   const entry = manifestEntry(FILESYSTEM_TOOL_MANIFEST, "list_filesystem");
   assert.ok(entry.inputSchema.properties.maxDepth, "schema lost maxDepth");
   assert.ok(entry.inputSchema.properties.exclude, "schema lost exclude");
+  assert.match(entry.inputSchema.properties.maxDepth.description, /Defaults to 2/);
+  assert.equal(entry.bridge.query.fields.maxDepth.default, 2);
   assert.equal(entry.bridge.query.fields.exclude.array, "csv");
 
   const operations = await addonFile("niua_mcp_filesystem_read_operations.gd");
-  assert.match(operations, /query\.get\("maxDepth", "0"\)/);
+  assert.match(operations, /query\.get\("maxDepth", "2"\)/);
   assert.match(operations, /query\.get\("exclude", ""\)/);
   assert.match(operations, /static func _excluded\(/);
 });

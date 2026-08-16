@@ -6,11 +6,10 @@ static func runtime_state(debugger_probe, query: Dictionary) -> Dictionary:
 	# Token diet: maxDepth bounds the requested runtime snapshot depth
 	# (0 = unlimited); truncated nodes report childrenTruncated. pathFilter
 	# serializes only the subtree rooted at a live node path.
-	var max_depth := str(query.get("maxDepth", "0")).to_int()
+	var max_depth := str(query.get("maxDepth", "2")).to_int()
 	var path_filter := str(query.get("pathFilter", ""))
 	var probe_state := {
-		"sessions": [],
-		"events": []
+		"sessions": []
 	}
 	var requested_sessions := []
 	var request_id := ""
@@ -32,7 +31,6 @@ static func runtime_state(debugger_probe, query: Dictionary) -> Dictionary:
 			"pending": requested_sessions.size() > 0,
 			"sessionCount": sessions.size(),
 			"sessions": sessions,
-			"events": probe_state.get("events", []),
 			"snapshotRequestedSessions": requested_sessions
 		}
 	}
@@ -49,8 +47,7 @@ static func runtime_state_result(debugger_probe, query: Dictionary) -> Dictionar
 
 	var responses := []
 	var probe_state := {
-		"sessions": [],
-		"events": []
+		"sessions": []
 	}
 	if debugger_probe != null:
 		responses = debugger_probe.runtime_snapshot_result(request_id)
@@ -65,14 +62,13 @@ static func runtime_state_result(debugger_probe, query: Dictionary) -> Dictionar
 			"pending": debugger_probe != null and responses.size() == 0,
 			"sessionCount": sessions.size(),
 			"sessions": sessions,
-			"events": probe_state.get("events", []),
 			"snapshotRequestedSessions": []
 		}
 	}
 
 
 static func runtime_events(debugger_probe, query: Dictionary) -> Dictionary:
-	var limit := int(query.get("limit", "100"))
+	var limit := int(query.get("limit", "25"))
 	var since_msec := int(query.get("sinceMsec", "-1"))
 	var kinds := []
 	for raw_kind in str(query.get("kinds", "")).split(",", false):

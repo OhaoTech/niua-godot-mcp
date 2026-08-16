@@ -10,7 +10,7 @@ static func list_filesystem(query: Dictionary) -> Dictionary:
 	var recursive := str(query.get("recursive", "false")).to_lower() == "true"
 	# Token diet: maxDepth bounds recursion (0 = unlimited); exclude is a CSV of
 	# substrings matched against entry paths (e.g. "addons,.godot").
-	var max_depth := str(query.get("maxDepth", "0")).to_int()
+	var max_depth := str(query.get("maxDepth", "2")).to_int()
 	var exclude := PackedStringArray()
 	var raw_exclude := str(query.get("exclude", ""))
 	if not raw_exclude.is_empty():

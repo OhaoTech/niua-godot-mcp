@@ -1,3 +1,4 @@
+import { resolveTreeMaxDepth } from "../../tools/shared/payload-diet.js";
 import {
   DEFAULT_RUNTIME_POLL_INTERVAL_MSEC,
   DEFAULT_RUNTIME_TIMEOUT_MSEC,
@@ -14,9 +15,7 @@ export const RUNTIME_BASE_BRIDGE_METHODS = {
 
   async requestRuntimeState({ maxDepth, pathFilter } = {}) {
     const query = new URLSearchParams();
-    if (maxDepth !== undefined) {
-      query.set("maxDepth", String(maxDepth));
-    }
+    query.set("maxDepth", String(resolveTreeMaxDepth(maxDepth)));
     if (pathFilter !== undefined && pathFilter !== "") {
       query.set("pathFilter", String(pathFilter));
     }

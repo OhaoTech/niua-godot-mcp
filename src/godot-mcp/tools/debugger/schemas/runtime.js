@@ -1,6 +1,7 @@
 import {
   CONNECTION_PROPERTIES
 } from "../../shared/bridge-schema.js";
+import { SAVE_JSON_PATH_PROPERTY } from "../../shared/payload-diet.js";
 import { SAVE_PATH_PROPERTY } from "../../shared/screenshot-io.js";
 
 export const RUNTIME_STATE_SCHEMA = {
@@ -9,12 +10,13 @@ export const RUNTIME_STATE_SCHEMA = {
     ...CONNECTION_PROPERTIES,
     maxDepth: {
       type: "number",
-      description: "Maximum runtime tree depth to return. 0 or omitted means the full tree (up to the probe's internal cap); truncated nodes report childrenTruncated."
+      description: "Maximum runtime tree depth to return. Defaults to 2 so large running scenes stay cheap. Pass 0 for the full tree (up to the probe's internal cap); truncated nodes report childrenTruncated."
     },
     pathFilter: {
       type: "string",
       description: "Only serialize the runtime subtree rooted at this live node path, for example /root/Player. An unknown path reports an error in the snapshot naming get_runtime_node_properties."
     },
+    ...SAVE_JSON_PATH_PROPERTY,
     timeoutMsec: {
       type: "number",
       description: "How long to poll for the freshly requested snapshot before returning. Defaults to 3000. On timeout the response reports pending: true and the sessions still hold the previous snapshot."
@@ -33,7 +35,7 @@ export const RUNTIME_EVENTS_SCHEMA = {
     ...CONNECTION_PROPERTIES,
     limit: {
       type: "integer",
-      description: "Maximum runtime/debugger events to return. Defaults to 100 and is capped by the editor bridge."
+      description: "Maximum runtime/debugger events to return. Defaults to 25 and is capped at 100 by the editor bridge."
     },
     kinds: {
       type: "array",
@@ -59,7 +61,11 @@ export const RUNTIME_NODE_PROPERTIES_SCHEMA = {
     properties: {
       type: "array",
       items: { type: "string" },
-      description: "Optional property-name allowlist, for example [\"hp\", \"score\"]. When set, only matching properties are returned instead of the full ~100-entry dump; totalPropertyCount reports the unfiltered count."
+      description: "Property-name allowlist, for example [\"hp\", \"visible\"]. When set, only those names are read (including engine fields). Without an allowlist the probe returns script variables only; pass verbose:true for the full editor list. totalPropertyCount is the unfiltered match count."
+    },
+    verbose: {
+      type: "boolean",
+      description: "When true, include engine editor properties plus usage/hint/hintString. Defaults to false: script variables only, name/type/value."
     },
     timeoutMsec: {
       type: "number",

@@ -1,4 +1,8 @@
+import { tmpdir } from "node:os";
+import path from "node:path";
+
 import { pickBridgeConnectionArgs } from "../../../server/context.js";
+import { countRuntimeStateNodes } from "../../shared/payload-diet.js";
 
 /**
  * One-shot playtest job: run → probe → observe → optional screenshot → stop.
@@ -87,9 +91,12 @@ export function createRunPlaytestEvidence({ callTool }) {
       steps
     );
     const events = await call("get_runtime_events", { ...connection }, steps);
-    const shotArgs = { ...connection };
-    if (savePath) shotArgs.savePath = savePath;
-    const screenshot = await call("capture_runtime_screenshot", shotArgs, steps);
+    const screenshotPath = savePath || path.join(tmpdir(), `niua-playtest-${Date.now()}.png`);
+    const screenshot = await call(
+      "capture_runtime_screenshot",
+      { ...connection, savePath: screenshotPath },
+      steps
+    );
 
     let stopped = null;
     if (stopAfter) {
@@ -212,13 +219,36 @@ async function runScenarioStep(spec, connection, call, steps) {
 
 function extractPropertyValue(data, property) {
   if (!data || typeof data !== "object") return undefined;
-  if (data.properties && typeof data.properties === "object") {
-    const entry = data.properties[property] ?? data.properties.find?.((p) => p?.name === property);
-    if (entry && typeof entry === "object" && "value" in entry) return entry.value;
-    if (entry !== undefined) return entry;
+  const bags = [];
+  if (Array.isArray(data.responses)) {
+    for (const response of data.responses) {
+      if (response?.properties) bags.push(response.properties);
+    }
   }
-  if (property in data) return data[property];
-  return data.value ?? data[property];
+  if (data.properties) bags.push(data.properties);
+  for (const bag of bags) {
+    const found = propertyFromBag(bag, property);
+    if (found !== undefined) return found;
+  }
+  if (Object.prototype.hasOwnProperty.call(data, property)) return data[property];
+  return undefined;
+}
+
+function propertyFromBag(bag, property) {
+  if (Array.isArray(bag)) {
+    const entry = bag.find((item) => item && item.name === property);
+    if (!entry) return undefined;
+    return Object.prototype.hasOwnProperty.call(entry, "value") ? entry.value : entry;
+  }
+  if (bag && typeof bag === "object") {
+    if (!Object.prototype.hasOwnProperty.call(bag, property)) return undefined;
+    const entry = bag[property];
+    if (entry && typeof entry === "object" && Object.prototype.hasOwnProperty.call(entry, "value")) {
+      return entry.value;
+    }
+    return entry;
+  }
+  return undefined;
 }
 
 function evaluateAssert(value, spec) {
@@ -287,7 +317,7 @@ function buildEvidencePack({
   scenarios = []
 }) {
   const shot = screenshot && typeof screenshot === "object" ? screenshot : {};
-  const available = shot.available === true || typeof shot.pngBase64 === "string" || typeof shot.path === "string";
+  const proof = screenshotProof(shot);
   const headless = String(displayServer ?? "").toLowerCase() === "headless" || interactive === false;
   const scenariosOk = scenarios.length === 0 || scenarios.every((s) => s.ok !== false);
 
@@ -309,13 +339,13 @@ function buildEvidencePack({
       nodeCount: countNodes(runtimeState)
     },
     screenshot: {
-      available,
-      path: shot.path ?? shot.savePath ?? null,
-      reason: available
+      available: proof.available,
+      path: proof.path,
+      reason: proof.available
         ? null
         : headless
           ? "headless_or_no_renderer"
-          : shot.reason ?? shot.error ?? "unavailable"
+          : proof.reason
     },
     environment: {
       displayServer: displayServer ?? null,
@@ -326,7 +356,7 @@ function buildEvidencePack({
     claims: {
       ran: true,
       playableObservation: Boolean(runtimeState) || countEvents(runtimeEvents) > 0,
-      visualProof: available,
+      visualProof: proof.available,
       scenariosPassed: scenariosOk
     }
   };
@@ -341,9 +371,47 @@ function countEvents(events) {
 
 function countNodes(state) {
   if (!state) return 0;
-  if (typeof state.nodeCount === "number") return state.nodeCount;
+  const counted = countRuntimeStateNodes(state);
+  if (counted > 0) return counted;
   if (state.tree) return 1;
   return 0;
+}
+
+function screenshotProof(shot) {
+  const savedPath = firstSavedScreenshotPath(shot);
+  if (savedPath || hasInlinePixels(shot)) {
+    return { available: true, path: savedPath, reason: null };
+  }
+  if (shot.omitted || (Array.isArray(shot.responses) && shot.responses.some((item) => item?.omitted))) {
+    return { available: false, path: null, reason: "screenshot omitted — pass savePath to persist pixels" };
+  }
+  return { available: false, path: null, reason: shot.reason ?? shot.error ?? "unavailable" };
+}
+
+function firstSavedScreenshotPath(shot) {
+  if (typeof shot.savedPath === "string" && shot.savedPath) return shot.savedPath;
+  if (Array.isArray(shot.savedPaths) && shot.savedPaths[0]) return String(shot.savedPaths[0]);
+  if (typeof shot.path === "string" && shot.path) return shot.path;
+  if (typeof shot.savePath === "string" && shot.savePath) return shot.savePath;
+  if (Array.isArray(shot.responses)) {
+    for (const response of shot.responses) {
+      if (typeof response?.savedPath === "string" && response.savedPath) {
+        return response.savedPath;
+      }
+    }
+  }
+  return null;
+}
+
+function hasInlinePixels(shot) {
+  if (typeof shot.pngBase64 === "string" && shot.pngBase64.length > 0) return true;
+  if (typeof shot.data === "string" && shot.data.length > 0 && shot.omitted !== true) return true;
+  if (Array.isArray(shot.responses)) {
+    return shot.responses.some(
+      (item) => typeof item?.data === "string" && item.data.length > 0 && item.omitted !== true
+    );
+  }
+  return false;
 }
 
 function compactStep(step) {

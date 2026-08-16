@@ -163,7 +163,7 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
   },
   {
     name: "get_runtime_state",
-    description: "Read a FRESH runtime scene-tree snapshot from the running game: the call requests a snapshot and polls until the probe answers (pending: false, sessions[].runtimeState.kind == \"snapshot\"), so the returned tree is current truth rather than a cached earlier state. Pass maxDepth to keep large runtime trees shallow (truncated nodes report childrenTruncated) and pathFilter to serialize only the subtree rooted at a live node path.",
+    description: "Read a FRESH runtime scene-tree snapshot from the running game: the call requests a snapshot and polls until the probe answers (pending: false, sessions[].runtimeState.kind == \"snapshot\"), so the returned tree is current truth rather than a cached earlier state. Defaults to maxDepth 2. Pass 0 for the full tree, pathFilter for a subtree, or savePath to keep the full JSON on disk. Events are not included — use get_runtime_events.",
     profile: "full",
     tier: "essential",
     category: "debugger",
@@ -180,6 +180,9 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
           pathFilter: { omitEmpty: true }
         }
       }
+    },
+    adapter: {
+      handler: "getRuntimeState"
     },
     godotRoute: {
       side: "read",
@@ -235,7 +238,7 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
   },
   {
     name: "get_runtime_node_properties",
-    description: "Inspect runtime node properties from the running Godot game through the NIUA runtime probe. Pass properties: [\"hp\", \"score\"] to return only those properties instead of the full ~100-entry dump.",
+    description: "Inspect runtime node properties from the running Godot game through the NIUA runtime probe. Defaults to script variables (name/type/value). Pass properties: [\"hp\", \"visible\"] for an allowlist, or verbose:true for the full editor list.",
     profile: "full",
     tier: "essential",
     category: "debugger",
@@ -255,7 +258,14 @@ export const DEBUGGER_RUNTIME_TOOL_MANIFEST = [
             default: true,
             type: "boolean"
           },
-          requestId: {}
+          requestId: {},
+          properties: {
+            array: "csv",
+            trim: true
+          },
+          verbose: {
+            type: "boolean"
+          }
         }
       }
     },

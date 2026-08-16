@@ -1,4 +1,5 @@
 import { createBridgeClient } from "../context.js";
+import { DEFAULT_TREE_MAX_DEPTH } from "../../tools/shared/payload-diet.js";
 
 export async function readBridgeResource(uri, args = {}) {
   const client = createBridgeClient(args);
@@ -13,7 +14,12 @@ export async function readBridgeResource(uri, args = {}) {
     case "godot://editor/state":
       return client.getEditorState();
     case "godot://filesystem/tree":
-      return client.listFilesystem({ path: "res://", recursive: true });
+      return client.listFilesystem({
+        path: "res://",
+        recursive: true,
+        maxDepth: DEFAULT_TREE_MAX_DEPTH,
+        exclude: ["addons", ".godot"]
+      });
     case "godot://import/assets":
       return client.listImportedAssets({ path: "res://", recursive: true });
     case "godot://import/events":
@@ -27,11 +33,11 @@ export async function readBridgeResource(uri, args = {}) {
     case "godot://debugger/state":
       return client.getDebuggerState();
     case "godot://runtime/state":
-      return client.getRuntimeState();
+      return client.getRuntimeState({ maxDepth: DEFAULT_TREE_MAX_DEPTH });
     case "godot://runtime/events":
       return client.getRuntimeEvents();
     case "godot://scene/tree":
-      return client.getSceneTree();
+      return client.getSceneTree({ maxDepth: DEFAULT_TREE_MAX_DEPTH });
     case "godot://selection":
       return client.getSelection();
     case "godot://logs":

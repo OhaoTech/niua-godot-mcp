@@ -8,7 +8,8 @@ import { persistScreenshotResult } from "../../../../src/godot-mcp/tools/shared/
 import {
   captureRuntimeScreenshot,
   filterRuntimeNodeProperties,
-  getRuntimeNodeProperties
+  getRuntimeNodeProperties,
+  getRuntimeState
 } from "../../../../src/godot-mcp/tools/debugger/runtime-adapters.js";
 import {
   captureEditorScreenshot,
@@ -184,7 +185,7 @@ test("filterRuntimeNodeProperties passes results through without a filter", () =
   assert.equal(result.data.responses[0].totalPropertyCount, undefined);
 });
 
-test("getRuntimeNodeProperties adapter strips the properties filter from the bridge request", async () => {
+test("getRuntimeNodeProperties adapter forwards the properties filter to the bridge request", async () => {
   let seen;
   const client = {
     async getRuntimeNodeProperties(request) {
@@ -197,6 +198,94 @@ test("getRuntimeNodeProperties adapter strips the properties filter from the bri
     client,
     payload: { nodePath: "/root/Main", properties: ["hp"], timeoutMsec: 250 }
   });
-  assert.deepEqual(seen, { nodePath: "/root/Main", timeoutMsec: 250 });
+  assert.deepEqual(seen, { nodePath: "/root/Main", timeoutMsec: 250, properties: ["hp"], verbose: undefined });
   assert.deepEqual(result.data.responses[0].properties.map((p) => p.name), ["hp"]);
+  assert.deepEqual(result.data.responses[0].properties[0], {
+    name: "hp",
+    type: "float",
+    value: 42
+  });
+});
+
+test("getRuntimeState defaults maxDepth to 2 and drops events", async () => {
+  const seen = [];
+  const client = {
+    async getRuntimeState(request) {
+      seen.push(request);
+      return {
+        ok: true,
+        data: {
+          available: true,
+          requestId: "snapshot:1",
+          pending: false,
+          sessionCount: 1,
+          sessions: [{
+            lastRuntimeMessage: { kind: "runtime_state", timeMsec: 1 },
+            runtimeState: {
+              currentScene: "res://main.tscn",
+              root: { name: "Main", path: "/root/Main", type: "Node", childCount: 4 }
+            }
+          }],
+          events: [{ kind: "runtime_state" }]
+        }
+      };
+    }
+  };
+
+  const omitted = await getRuntimeState({ client, payload: {} });
+  const full = await getRuntimeState({ client, payload: { maxDepth: 0 } });
+  assert.deepEqual(seen, [{ maxDepth: 2 }, { maxDepth: 0 }]);
+  assert.equal(omitted.data.events, undefined);
+  assert.equal(full.data.events, undefined);
+  assert.equal(omitted.data.nodeCount, 1);
+  assert.equal(omitted.data.sessions[0].lastRuntimeMessage, undefined);
+  assert.equal(omitted.data.sessions[0].runtimeState.currentScene, "res://main.tscn");
+});
+
+test("getRuntimeState savePath keeps the full snapshot on disk", async () => {
+  await withTempDir(async (dir) => {
+    const savePath = path.join(dir, "runtime.json");
+    const client = {
+      async getRuntimeState() {
+        return {
+          ok: true,
+          data: {
+            available: true,
+            requestId: "snapshot:1",
+            pending: false,
+            sessionCount: 1,
+            sessions: [{
+              runtimeState: {
+                currentScene: "res://main.tscn",
+                root: { name: "Main", path: "/root/Main", type: "Node", childCount: 4 }
+              }
+            }],
+            events: [{ kind: "runtime_state" }]
+          }
+        };
+      }
+    };
+
+    const result = await getRuntimeState({ client, payload: { savePath } });
+    assert.equal(result.data.savedPath, savePath);
+    assert.equal(result.data.currentScene, "res://main.tscn");
+    assert.equal(result.data.root.name, "Main");
+    assert.equal(result.data.nodeCount, 1);
+    assert.equal(result.data.sessions, undefined);
+    const saved = JSON.parse(await readFile(savePath, "utf8"));
+    assert.equal(saved.sessions[0].runtimeState.root.name, "Main");
+    assert.equal(saved.events, undefined);
+  });
+});
+
+test("captureRuntimeScreenshot omits inline pixels without savePath", async () => {
+  const client = {
+    async captureRuntimeScreenshot() {
+      return runtimeScreenshotResult();
+    }
+  };
+  const result = await captureRuntimeScreenshot({ client, payload: {} });
+  assert.equal(result.data.responses[0].data, "");
+  assert.equal(result.data.responses[0].omitted, true);
+  assert.match(result.data.responses[0].hint, /savePath/);
 });

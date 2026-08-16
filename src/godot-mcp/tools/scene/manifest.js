@@ -29,11 +29,15 @@ const SCENE_TREE_SCHEMA = {
     ...CONNECTION_PROPERTIES,
     maxDepth: {
       type: "number",
-      description: "Maximum tree depth to return. 0 or omitted means the full tree; truncated nodes report childrenTruncated."
+      description: "Maximum tree depth to return. Defaults to 2 so large scenes stay cheap. Pass 0 for the full tree; truncated nodes report childrenTruncated."
     },
     pathFilter: {
       type: "string",
       description: "Only return the subtree rooted at this node path under the scene root."
+    },
+    savePath: {
+      type: "string",
+      description: "Write the full tree JSON to this path and return a compact summary (savedPath + root name/type)."
     }
   },
   additionalProperties: false
@@ -136,7 +140,7 @@ export const SCENE_TOOL_MANIFEST = [
   },
   {
     name: "get_scene_tree",
-    description: "Read the current scene tree from the visible Godot editor.",
+    description: "Read the current scene tree from the visible Godot editor. Defaults to maxDepth 2; pass 0 for the full tree, pathFilter for a subtree, or savePath to keep the full JSON on disk.",
     profile: "full",
     tier: "essential",
     category: "scene",
@@ -149,10 +153,13 @@ export const SCENE_TOOL_MANIFEST = [
       request: "query",
       query: {
         fields: {
-          maxDepth: {},
+          maxDepth: { default: 2 },
           pathFilter: { omitEmpty: true }
         }
       }
+    },
+    adapter: {
+      handler: "getSceneTree"
     },
     godotRoute: {
       side: "read",

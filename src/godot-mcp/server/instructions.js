@@ -9,7 +9,7 @@ const CORE_INSTRUCTIONS = `NIUA Godot MCP — golden path:
 3) Large scenes: find_nodes { nameContains|type|pathPrefix|sceneFileContains } instead of dumping get_scene_tree. Props: wait_for_imported_asset then instance_scene { path, name, parentPath, properties }.
 4) Multi-step builds: apply_scene_recipe / batch_scene_operations.
 5) Playtest: run_playtest_evidence { scenePath?, savePath?, scenarios:[{type:input|assert_property|wait}…] }. Headless screenshot available:false is OK.
-6) Keep results small: pathFilter/maxDepth; screenshot savePath; list_filesystem exclude addons/.godot.
+6) Diet: scene/runtime trees default maxDepth=2 (0=full); savePath for full JSON; screenshots need savePath; properties allowlist on get_runtime_node_properties; events via get_runtime_events.
 7) Errors include recovery.tool when available. Lost? describe_tools.`;
 
 const DISPATCH_ADDENDUM = `

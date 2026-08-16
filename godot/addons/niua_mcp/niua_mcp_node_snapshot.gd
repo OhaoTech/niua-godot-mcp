@@ -52,7 +52,8 @@ static func serialize_node(node: Node, root: Node, max_depth: int = 0, depth: in
 		"name": node.name,
 		"path": node_path_for_response(node, root),
 		"type": node.get_class(),
-		"sceneFilePath": node.scene_file_path
+		"sceneFilePath": node.scene_file_path,
+		"childCount": node.get_child_count()
 	}
 
 	if max_depth > 0 and depth >= max_depth:

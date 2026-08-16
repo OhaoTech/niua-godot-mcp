@@ -1,13 +1,26 @@
+import { omitInlineScreenshotPayload } from "../shared/payload-diet.js";
 import { persistScreenshotResult } from "../shared/screenshot-io.js";
 
 export async function captureEditorScreenshot({ client, payload = {} }) {
-  const { savePath } = payload;
+  const { savePath, includePayload } = payload;
   const result = await client.captureEditorScreenshot();
-  return persistScreenshotResult(result, savePath);
+  if (savePath) {
+    return persistScreenshotResult(result, savePath);
+  }
+  if (includePayload) {
+    return result;
+  }
+  return omitInlineScreenshotPayload(result);
 }
 
 export async function captureViewportScreenshot({ client, payload = {} }) {
-  const { savePath, ...request } = payload;
+  const { savePath, includePayload, ...request } = payload;
   const result = await client.captureViewportScreenshot(request);
-  return persistScreenshotResult(result, savePath);
+  if (savePath) {
+    return persistScreenshotResult(result, savePath);
+  }
+  if (includePayload) {
+    return result;
+  }
+  return omitInlineScreenshotPayload(result);
 }

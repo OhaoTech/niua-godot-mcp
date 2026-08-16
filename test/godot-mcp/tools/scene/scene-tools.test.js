@@ -76,7 +76,8 @@ test("scene tool implementation is generated from the manifest", async () => {
   const index = await readSceneSource("index.js");
   const schemas = await readSceneSource("tabs/schemas.js");
 
-  assert.match(index, /toolDefinitionsFromManifest\(SCENE_TOOL_MANIFEST\)/);
+  assert.match(index, /toolDefinitionsFromManifest\(SCENE_TOOL_MANIFEST/);
+  assert.match(index, /getSceneTree/);
   assert.match(index, /SCENE_STATE_TOOL_MANIFEST/);
   assert.match(index, /SCENE_TAB_TOOL_MANIFEST/);
   assert.doesNotMatch(index, /async handler/);

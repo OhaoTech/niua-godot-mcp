@@ -2228,9 +2228,9 @@ test("GodotBridgeClient reads runtime state captured by the debugger probe", asy
     res.setHeader("content-type", "application/json");
 
     if (
-      req.url === "/runtime/state" ||
+      req.url === "/runtime/state?maxDepth=2" ||
       req.url === "/runtime/state?maxDepth=3" ||
-      req.url === "/runtime/state?pathFilter=%2Froot%2FPlayer"
+      req.url === "/runtime/state?maxDepth=2&pathFilter=%2Froot%2FPlayer"
     ) {
       res.end(JSON.stringify({
         ok: true,
@@ -2282,10 +2282,10 @@ test("GodotBridgeClient reads runtime state captured by the debugger probe", asy
     assert.equal(emptyFilterResponse.ok, true);
 
     assert.deepEqual(seenUrls, [
-      "/runtime/state",
+      "/runtime/state?maxDepth=2",
       "/runtime/state?maxDepth=3",
-      "/runtime/state?pathFilter=%2Froot%2FPlayer",
-      "/runtime/state"
+      "/runtime/state?maxDepth=2&pathFilter=%2Froot%2FPlayer",
+      "/runtime/state?maxDepth=2"
     ]);
   });
 });

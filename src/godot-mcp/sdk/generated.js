@@ -195,6 +195,7 @@ export function buildNamespaces(call) {
      * @param {object} [args]
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
+     * @param {boolean} [args.includePayload] Return inline base64 PNG data. Defaults to false — screenshots omit pixels unless savePath or includ
      * @param {number} [args.pollIntervalMsec] Delay between runtime screenshot polling requests. Defaults to 100.
      * @param {number} [args.port] Bridge port (default 9174).
      * @param {string} [args.savePath] When set, decode the PNG payload and write it to this filesystem path instead of returning inline ba
@@ -215,32 +216,34 @@ export function buildNamespaces(call) {
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
      * @param {Array} [args.kinds] Optional event kind filter, for example ['session_started', 'runtime_state'].
-     * @param {number} [args.limit] Maximum runtime/debugger events to return. Defaults to 100 and is capped by the editor bridge.
+     * @param {number} [args.limit] Maximum runtime/debugger events to return. Defaults to 25 and is capped at 100 by the editor bridge.
      * @param {number} [args.port] Bridge port (default 9174).
      * @param {number} [args.sinceMsec] Only return events with timeMsec greater than this value. Defaults to -1, meaning no lower bound.
      */
       "get_runtime_events": (args = {}) => call("get_runtime_events", args),
       /**
-     * Inspect runtime node properties from the running Godot game through the NIUA runtime probe. Pass properties: ["hp", "score"] to return only those properties instead of the full ~100-entry dump.
+     * Inspect runtime node properties from the running Godot game through the NIUA runtime probe. Defaults to script variables (name/type/value). Pass properties: ["hp", "visible"] for an allowlist, or verbose:true for the full editor list.
      * @param {object} [args]
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
      * @param {string} [args.nodePath] Runtime node path, for example /root/Player. Defaults to /root.
      * @param {number} [args.pollIntervalMsec] Delay between runtime property polling requests. Defaults to 100.
      * @param {number} [args.port] Bridge port (default 9174).
-     * @param {Array} [args.properties] Optional property-name allowlist, for example ["hp", "score"]. When set, only matching properties ar
+     * @param {Array} [args.properties] Property-name allowlist, for example ["hp", "visible"]. When set, only those names are read (includi
      * @param {number} [args.timeoutMsec] How long the MCP client should poll for the debugger response. Defaults to 3000.
+     * @param {boolean} [args.verbose] When true, include engine editor properties plus usage/hint/hintString. Defaults to false: script va
      */
       "get_runtime_node_properties": (args = {}) => call("get_runtime_node_properties", args),
       /**
-     * Read a FRESH runtime scene-tree snapshot from the running game: the call requests a snapshot and polls until the probe answers (pending: false, sessions[].runtimeState.kind == "snapshot"), so the returned tree is current truth rather than a cached earlier state. Pass maxDepth to keep large runtime trees shallow (truncated nodes report childrenTruncated) and pathFilter to serialize only the subtree rooted at a live node path.
+     * Read a FRESH runtime scene-tree snapshot from the running game: the call requests a snapshot and polls until the probe answers (pending: false, sessions[].runtimeState.kind == "snapshot"), so the returned tree is current truth rather than a cached earlier state. Defaults to maxDepth 2. Pass 0 for the full tree, pathFilter for a subtree, or savePath to keep the full JSON on disk. Events are not included — use get_runtime_events.
      * @param {object} [args]
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
-     * @param {number} [args.maxDepth] Maximum runtime tree depth to return. 0 or omitted means the full tree (up to the probe's internal c
+     * @param {number} [args.maxDepth] Maximum runtime tree depth to return. Defaults to 2 so large running scenes stay cheap. Pass 0 for t
      * @param {string} [args.pathFilter] Only serialize the runtime subtree rooted at this live node path, for example /root/Player. An unkno
      * @param {number} [args.pollIntervalMsec] Delay between snapshot result polling requests. Defaults to 100.
      * @param {number} [args.port] Bridge port (default 9174).
+     * @param {string} [args.savePath] Write the full JSON payload to this filesystem path and return a compact summary (savedPath + savedB
      * @param {number} [args.timeoutMsec] How long to poll for the freshly requested snapshot before returning. Defaults to 3000. On timeout t
      */
       "get_runtime_state": (args = {}) => call("get_runtime_state", args),
@@ -2141,13 +2144,14 @@ export function buildNamespaces(call) {
      */
       "get_project_info": (args = {}) => call("get_project_info", args),
       /**
-     * Read the current scene tree from the visible Godot editor.
+     * Read the current scene tree from the visible Godot editor. Defaults to maxDepth 2; pass 0 for the full tree, pathFilter for a subtree, or savePath to keep the full JSON on disk.
      * @param {object} [args]
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
-     * @param {number} [args.maxDepth] Maximum tree depth to return. 0 or omitted means the full tree; truncated nodes report childrenTrunc
+     * @param {number} [args.maxDepth] Maximum tree depth to return. Defaults to 2 so large scenes stay cheap. Pass 0 for the full tree; tr
      * @param {string} [args.pathFilter] Only return the subtree rooted at this node path under the scene root.
      * @param {number} [args.port] Bridge port (default 9174).
+     * @param {string} [args.savePath] Write the full tree JSON to this path and return a compact summary (savedPath + root name/type).
      */
       "get_scene_tree": (args = {}) => call("get_scene_tree", args),
       /**
@@ -2506,6 +2510,7 @@ export function buildNamespaces(call) {
      * @param {object} [args]
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
+     * @param {boolean} [args.includePayload] Return inline base64 PNG data. Defaults to false — screenshots omit pixels unless savePath or includ
      * @param {number} [args.port] Bridge port (default 9174).
      * @param {string} [args.savePath] When set, decode the PNG payload and write it to this filesystem path instead of returning inline ba
      */
@@ -2515,6 +2520,7 @@ export function buildNamespaces(call) {
      * @param {object} [args]
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
+     * @param {boolean} [args.includePayload] Return inline base64 PNG data. Defaults to false — screenshots omit pixels unless savePath or includ
      * @param {number} [args.index] 3D viewport index. Ignored for 2D. Defaults to 0.
      * @param {number} [args.port] Bridge port (default 9174).
      * @param {string} [args.savePath] When set, decode the PNG payload and write it to this filesystem path instead of returning inline ba
@@ -2526,6 +2532,7 @@ export function buildNamespaces(call) {
      * @param {object} [args]
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
+     * @param {boolean} [args.includePayload] Return inline base64 PNG data. Defaults to false — screenshots omit pixels unless savePath or includ
      * @param {number} [args.index] 3D viewport index. Ignored for 2D. Defaults to 0.
      * @param {number} [args.port] Bridge port (default 9174).
      * @param {string} [args.savePath] When set, decode the PNG payload and write it to this filesystem path instead of returning inline ba

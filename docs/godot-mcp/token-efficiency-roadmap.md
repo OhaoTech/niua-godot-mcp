@@ -57,9 +57,20 @@ Every tool result is a cost imposed on the caller's context window.
   descriptions (they repeat in all 173 schemas — saved ~12.5K chars across profiles).
   Final schema tax: full 212K chars (~53K tok), v1 44.6K (~11.1K tok),
   dispatch 16.2K (~4.1K tok).
-- CANDIDATES (not yet done): dedupe curated-builder response echoes (same data ~3x in
-  create_character_body_3d-style results); runtime-tree maxDepth parity on
-  get_runtime_state; MCP initialize `instructions` cheat-sheet.
+- DONE (live editor + runtime probe): default `maxDepth: 2` on `get_scene_tree`
+  and `get_runtime_state` (`0` = full) at the JS client, MCP resource, and
+  Godot HTTP layers; `savePath` dumps the full JSON and returns a summary;
+  runtime snapshots no longer include `events` or `lastRuntimeMessage`;
+  runtime properties default to script variables, with `properties`/`verbose`
+  forwarded into the live probe; screenshots omit inline base64 unless
+  `savePath` or `includePayload`; playtest evidence uses the real property
+  payload shape and only claims visualProof when pixels were persisted.
+- CHECKED (builder echoes): `created*` wrappers already dropped (2026-07-03). Remaining
+  L1 builders still return request `*Properties` next to the engine `node`/`mesh`
+  read-back — one extra copy, not the live editor/probe tax.
+- DONE (leftover live-bridge reads): `get_editor_state` drops the log array
+  (`logCount`/`lastLog`); `get_debugger_state` drops the event buffer (`eventCount`);
+  `list_filesystem` recursive default is `maxDepth: 2`.
 - DONE (Tier 3): `NIUA_MCP_PROFILE=dispatch` — 13 action-routed domain tools expose
   the full 173-tool surface at 17.3K chars (~4.3K tokens) of schema per request vs
   224K chars (~56K tokens) for `full`: a 92% schema-tax cut. Per-action schemas served

@@ -5,6 +5,10 @@ export const SAVE_PATH_PROPERTY = {
   savePath: {
     type: "string",
     description: "When set, decode the PNG payload and write it to this filesystem path instead of returning inline base64. The response replaces the base64 data with savedPath + savedBytes, keeping tool output small. Parent directories are created automatically."
+  },
+  includePayload: {
+    type: "boolean",
+    description: "Return inline base64 PNG data. Defaults to false — screenshots omit pixels unless savePath or includePayload is set."
   }
 };
 

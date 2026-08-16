@@ -14,7 +14,7 @@ export const FILESYSTEM_LIST_SCHEMA = {
     },
     maxDepth: {
       type: "number",
-      description: "Maximum directory depth for recursive listings. 0 or omitted means unlimited."
+      description: "Maximum directory depth for recursive listings. Defaults to 2. Pass 0 for an unbounded recursive walk."
     },
     exclude: {
       type: "array",

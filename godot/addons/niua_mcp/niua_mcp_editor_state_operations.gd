@@ -42,7 +42,8 @@ static func editor_state(current_scene: String, open_scenes: Array, main_screen:
 			"unsavedSceneCount": unsaved_scenes.size(),
 			"mainScreen": main_screen,
 			"selection": selection,
-			"logs": logs.duplicate()
+			"logCount": logs.size(),
+			"lastLog": str(logs.back()) if logs.size() > 0 else ""
 		}
 	}
 
@@ -63,7 +64,7 @@ static func _unsaved_scene_paths(editor: EditorInterface) -> Array:
 
 
 static func scene_tree(current_scene: String, root: Node, query: Dictionary = {}) -> Dictionary:
-	var max_depth := str(query.get("maxDepth", "0")).to_int()
+	var max_depth := str(query.get("maxDepth", "2")).to_int()
 	var path_filter := str(query.get("pathFilter", ""))
 
 	var subtree_root := root

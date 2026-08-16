@@ -3013,7 +3013,7 @@ test("Godot run operations delegate focused domain modules", async () => {
 	assert.match(utils, /static func require_editor_method\(editor: EditorInterface, method_name: String\) -> Dictionary:/);
 	assert.match(utils, /static func save_before_run_if_requested\(editor: EditorInterface, body: Dictionary\) -> Dictionary:/);
 	assert.match(utils, /static func remember\(remember: Callable, message: String\) -> void:/);
-	assert.match(utils, /static func error\(message: String, code: String = "bad_request"\) -> Dictionary:/);
+	assert.match(utils, /static func error\(message: String, code: String = "bad_request", recovery: Dictionary = {}\) -> Dictionary:/);
 	assert.match(utils, /save_all_scenes/);
 
 	assert.match(settings, /preload\("niua_mcp_path_utils\.gd"\)/);
@@ -3539,6 +3539,8 @@ test("Godot runtime probe delegates focused domain modules", async () => {
   assert.match(nodePropertyReader, /NiuaMcpRuntimeProbeNodeLookup\.find_node/);
   assert.match(nodePropertyReader, /get_property_list/);
   assert.match(nodePropertyReader, /NiuaMcpRuntimeProbeVariantCodec\.variant_to_json/);
+  assert.match(nodePropertyReader, /PROPERTY_USAGE_SCRIPT_VARIABLE/);
+  assert.match(nodePropertyReader, /propertyMode/);
   assert.match(nodePropertyWriter, /static func set_node_property\(probe: Node, request: Dictionary\) -> Dictionary:/);
   assert.match(nodePropertyWriter, /static func has_property\(node: Node, property_name: String\) -> bool:/);
   assert.match(nodePropertyWriter, /NiuaMcpRuntimeProbeNodeLookup\.find_node/);

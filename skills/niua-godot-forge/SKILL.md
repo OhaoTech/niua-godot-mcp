@@ -21,7 +21,7 @@ Follow this order. Steps 4–5 are the ones agents skip.
 4. **Save to a `res://` path.** If the scene has a file, `save_current_scene`. If it is untitled (no path), you MUST use `save_scene_as(path: "res://<name>.tscn")` — `save_current_scene` errors on an untitled scene.
 5. **Define what runs.** For `run_main_scene`: call `set_main_scene(path)` first. To skip that, use `run_custom_scene(path, saveBeforeRun: true)` with the saved scene's path.
 6. **Run.** `run_main_scene` / `run_current_scene` / `run_custom_scene` (pass `saveBeforeRun: true`).
-7. **Observe.** `capture_runtime_screenshot` (returns `available:false` in headless — that is expected, not an error), `get_runtime_events`, then `stop_running_scene`.
+7. **Observe.** Prefer `run_playtest_evidence` (compact pack; pass `savePath` to keep the PNG). Or `get_runtime_state` (defaults to `maxDepth: 2`), `get_runtime_events`, `get_runtime_node_properties` with a `properties` allowlist, `capture_runtime_screenshot` with `savePath`. Headless `available:false` is expected.
 
 When unsure of state, call `get_run_settings` (reports `mainScene` + `mainSceneExists`) and `get_scene_tree` before running — cheaper than recovering from a stuck dialog.
 

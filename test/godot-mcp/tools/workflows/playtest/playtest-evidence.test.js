@@ -20,7 +20,23 @@ test("run_playtest_evidence returns compact evidence on happy path", async () =>
       get_run_settings: { ok: true, data: { mainScene: "res://main.tscn", mainSceneExists: true } },
       run_main_scene: { ok: true, data: { playing: true, displayServer: "headless", interactive: false } },
       install_runtime_probe: { ok: true, data: { installed: true } },
-      get_runtime_state: { ok: true, data: { nodeCount: 3, tree: { name: "Main" } } },
+      get_runtime_state: {
+        ok: true,
+        data: {
+          sessions: [{
+            runtimeState: {
+              currentScene: "res://main.tscn",
+              root: {
+                name: "Main",
+                path: "/root/Main",
+                type: "Node2D",
+                childCount: 2,
+                children: [{ name: "Player" }, { name: "HUD" }]
+              }
+            }
+          }]
+        }
+      },
       get_runtime_events: { ok: true, data: { events: [{ name: "run.start" }] } },
       capture_runtime_screenshot: { ok: true, data: { available: false, reason: "headless" } },
       stop_running_scene: { ok: true, data: { playing: false } },
@@ -36,6 +52,8 @@ test("run_playtest_evidence returns compact evidence on happy path", async () =>
   assert.equal(result.evidence.claims.ran, true);
   assert.equal(result.evidence.screenshot.available, false);
   assert.equal(result.evidence.screenshot.reason, "headless_or_no_renderer");
+  assert.equal(result.evidence.claims.visualProof, false);
+  assert.equal(result.evidence.runtime.nodeCount, 3);
   assert.equal(result.evidence.environment.headless, true);
   assert.ok(calls.includes("run_main_scene"));
   assert.ok(calls.includes("capture_runtime_screenshot"));
@@ -50,7 +68,12 @@ test("run_playtest_evidence scenarios can assert properties after input", async 
     if (name === "get_runtime_node_properties") {
       return {
         ok: true,
-        data: { properties: { global_position: { value: { x: 1, y: 0, z: 2 } } } }
+        data: {
+          responses: [{
+            nodePath: "Player",
+            properties: [{ name: "global_position", type: "Vector3", value: { x: 1, y: 0, z: 2 } }]
+          }]
+        }
       };
     }
     if (name === "capture_runtime_screenshot") {
@@ -75,6 +98,42 @@ test("run_playtest_evidence scenarios can assert properties after input", async 
   assert.equal(result.ok, true);
   assert.equal(result.evidence.claims.scenariosPassed, true);
   assert.equal(result.evidence.scenarios.length, 2);
+});
+
+test("run_playtest_evidence visualProof requires saved or inline pixels", async () => {
+  const callTool = async (name) => {
+    if (name === "get_run_settings") {
+      return { ok: true, data: { mainScene: "res://main.tscn", mainSceneExists: true } };
+    }
+    if (name === "capture_runtime_screenshot") {
+      return {
+        ok: true,
+        data: {
+          available: true,
+          omitted: true,
+          responses: [{ available: true, data: "", omitted: true }]
+        }
+      };
+    }
+    return { ok: true, data: { playing: true, events: [] } };
+  };
+  const omitted = await createRunPlaytestEvidence({ callTool })({ settleMs: 0 });
+  assert.equal(omitted.evidence.claims.visualProof, false);
+  assert.match(omitted.evidence.screenshot.reason, /omitted/);
+
+  const saved = await createRunPlaytestEvidence({
+    callTool: async (name) => {
+      if (name === "get_run_settings") {
+        return { ok: true, data: { mainScene: "res://main.tscn", mainSceneExists: true } };
+      }
+      if (name === "capture_runtime_screenshot") {
+        return { ok: true, data: { savedPath: "C:/tmp/playtest.png", savedPaths: ["C:/tmp/playtest.png"] } };
+      }
+      return { ok: true, data: { playing: true, events: [] } };
+    }
+  })({ settleMs: 0 });
+  assert.equal(saved.evidence.claims.visualProof, true);
+  assert.equal(saved.evidence.screenshot.path, "C:/tmp/playtest.png");
 });
 
 test("run_playtest_evidence fails clearly without main or scenePath", async () => {

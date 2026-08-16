@@ -99,7 +99,7 @@ test("Godot MCP server forwards get_runtime_state calls to the editor bridge", a
       assert.match(resourceResponse.result.contents[0].text, /"hasRuntimeState":true/);
       assert.deepEqual(seenUrls, [
         "/runtime/state?maxDepth=2",
-        "/runtime/state"
+        "/runtime/state?maxDepth=2"
       ]);
     } finally {
       await server.close();

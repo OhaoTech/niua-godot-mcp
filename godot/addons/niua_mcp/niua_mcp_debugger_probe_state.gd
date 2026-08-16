@@ -10,9 +10,10 @@ static func state(debugger_probe: EditorDebuggerPlugin, sessions, store) -> Dict
 
 
 static func runtime_state(debugger_probe: EditorDebuggerPlugin, sessions, store) -> Dictionary:
+	# Snapshots must not copy the event log — get_runtime_events owns that
+	# stream. Duplicating it on every poll is wasted HTTP and tokens.
 	return {
-		"sessions": sessions.runtime_session_snapshots(debugger_probe, store),
-		"events": store.runtime_events()
+		"sessions": sessions.runtime_session_snapshots(debugger_probe, store)
 	}
 
 

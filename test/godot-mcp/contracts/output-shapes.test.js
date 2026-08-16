@@ -216,6 +216,7 @@ const NODE_SNAPSHOT_SHAPE = {
     path: "string",
     type: "nonempty-string",
     sceneFilePath: "string",
+    childCount: "integer",
     children: { type: "array", items: null }
   },
   optional: { childrenTruncated: "integer" },
@@ -291,12 +292,14 @@ const BRIDGE_TOOL_CONTRACTS = [
           path: "",
           type: "Node2D",
           sceneFilePath: "res://scenes/main.tscn",
+          childCount: 1,
           children: [
             {
               name: "Player",
               path: "Player",
               type: "CharacterBody2D",
               sceneFilePath: "",
+              childCount: 2,
               children: [],
               childrenTruncated: 2
             }
