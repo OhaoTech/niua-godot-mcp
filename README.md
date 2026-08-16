@@ -1,5 +1,7 @@
 # NIUA Godot MCP
 
+[![v0.1.10](https://img.shields.io/badge/v0.1.10-111827?style=flat-square)](./CHANGELOG.md)
+
 **Your AI builds real Godot games on your machine.**
 
 Install once. Chat. Godot opens, scenes appear, the game runs. All local.
