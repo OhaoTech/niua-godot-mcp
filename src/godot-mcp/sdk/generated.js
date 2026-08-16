@@ -425,7 +425,7 @@ export function buildNamespaces(call) {
      * @param {Array} [args.exclude] Path substrings to exclude, such as ["addons", ".godot"].
      * @param {string} [args.expectedProjectRoot] Absolute project root the bridge must match; mismatch fails mutating/run tools.
      * @param {string} [args.host] Bridge host (default 127.0.0.1).
-     * @param {number} [args.maxDepth] Maximum directory depth for recursive listings. 0 or omitted means unlimited.
+     * @param {number} [args.maxDepth] Maximum directory depth for recursive listings. Defaults to 2. Pass 0 for an unbounded recursive wal
      * @param {string} [args.path] Godot project path to list. Defaults to res://.
      * @param {number} [args.port] Bridge port (default 9174).
      * @param {boolean} [args.recursive] Whether to include nested descendants. Defaults to false.

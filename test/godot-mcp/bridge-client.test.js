@@ -728,7 +728,7 @@ test("GodotBridgeClient encodes filesystem query requests", async () => {
     seenUrls.push(req.url);
     res.setHeader("content-type", "application/json");
 
-    if (req.url === "/filesystem/list?path=res%3A%2F%2Fscripts&recursive=true") {
+    if (req.url === "/filesystem/list?path=res%3A%2F%2Fscripts&recursive=true&maxDepth=2") {
       res.end(JSON.stringify({
         ok: true,
         data: {
@@ -772,7 +772,7 @@ test("GodotBridgeClient encodes filesystem query requests", async () => {
     await client.getFilesystemDockState();
 
     assert.deepEqual(seenUrls, [
-      "/filesystem/list?path=res%3A%2F%2Fscripts&recursive=true",
+      "/filesystem/list?path=res%3A%2F%2Fscripts&recursive=true&maxDepth=2",
       "/filesystem/file/read?path=res%3A%2F%2Fscripts%2Fplayer.gd",
       "/filesystem/state"
     ]);

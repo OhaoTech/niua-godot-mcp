@@ -36,6 +36,7 @@ function parseToolText(result) {
 test("IMPORT_TOOL_DEFINITIONS exposes import tool descriptors", () => {
   assert.deepEqual(IMPORT_TOOL_DEFINITIONS.map((tool) => tool.name), [
     "import_project_assets",
+    "wait_for_imported_asset",
     "list_imported_assets",
     "get_import_metadata",
     "get_import_diagnostics",
