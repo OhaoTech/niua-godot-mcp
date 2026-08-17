@@ -1,8 +1,9 @@
 # Changelog
 
-## Unreleased
+## 0.1.11 - Skill rename + playbook
 
-- Renamed the agent skill `niua-godot-forge` → `niua-godot`. Recopy or re-symlink `skills/niua-godot` into your client skills directory.
+- Renamed the agent skill `niua-godot-forge` → `niua-godot`.
+- Skill playbook now documents the token diet (`find_nodes`, `maxDepth`, `savePath`, property allowlists) and what lives in `SKILL.md` vs `reference/`.
 
 ## 0.1.10 - Token diet for live editor + runtime probe
 
