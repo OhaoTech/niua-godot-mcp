@@ -1,0 +1,150 @@
+{
+  "skill": "niua-godot",
+  "notes": "Trigger evals for the SKILL.md description. should_trigger queries must have at least one signal phrase covered by the description. should_not_trigger queries are near-misses (shared game/engine words, different product).",
+  "queries": [
+    {
+      "id": "cube-and-run",
+      "split": "train",
+      "should_trigger": true,
+      "signals": ["create/open/save scenes", "run_main_scene"],
+      "query": "add a cube to my scene and run it"
+    },
+    {
+      "id": "no-main-scene",
+      "split": "train",
+      "should_trigger": true,
+      "signals": ["no_main_scene"],
+      "query": "run_main_scene failed with no_main_scene, what now"
+    },
+    {
+      "id": "unsaved-scene",
+      "split": "train",
+      "should_trigger": true,
+      "signals": ["unsaved"],
+      "query": "I got unsaved_scene when I tried to play"
+    },
+    {
+      "id": "save-as-modal",
+      "split": "train",
+      "should_trigger": true,
+      "signals": ["Save As"],
+      "query": "Godot popped a Save As dialog and now every MCP call hangs"
+    },
+    {
+      "id": "black-window",
+      "split": "train",
+      "should_trigger": true,
+      "signals": ["black run window"],
+      "query": "the game window is just black after I hit run"
+    },
+    {
+      "id": "playtest-hub",
+      "split": "train",
+      "should_trigger": true,
+      "signals": ["run_playtest_evidence"],
+      "query": "playtest the hub apartment and tell me if the player spawned"
+    },
+    {
+      "id": "find-player",
+      "split": "train",
+      "should_trigger": true,
+      "signals": ["find_nodes"],
+      "query": "this scene is huge, find the Player node without dumping the tree"
+    },
+    {
+      "id": "runtime-hp",
+      "split": "train",
+      "should_trigger": true,
+      "signals": ["runtime probe"],
+      "query": "read hp on /root/Main/Player in the running game"
+    },
+    {
+      "id": "screenshot",
+      "split": "validation",
+      "should_trigger": true,
+      "signals": ["screenshots"],
+      "query": "capture a screenshot of the running game to disk"
+    },
+    {
+      "id": "create-project",
+      "split": "validation",
+      "should_trigger": true,
+      "signals": ["NIUA Godot MCP"],
+      "query": "create a Godot project at ~/Godot/NIUAProjects/first-game and open it"
+    },
+    {
+      "id": "attach-script",
+      "split": "validation",
+      "should_trigger": true,
+      "signals": ["scripts"],
+      "query": "attach a script to the Player node in the editor"
+    },
+    {
+      "id": "select-main-dialog",
+      "split": "validation",
+      "should_trigger": true,
+      "signals": ["select-main-scene"],
+      "query": "editor is stuck on select main scene, I can't click it"
+    },
+    {
+      "id": "blender-rig",
+      "split": "train",
+      "should_trigger": false,
+      "query": "rig this character in Blender and apply the finisher"
+    },
+    {
+      "id": "unity-scene",
+      "split": "train",
+      "should_trigger": false,
+      "query": "add a cube to my Unity scene and press play"
+    },
+    {
+      "id": "unreal-level",
+      "split": "train",
+      "should_trigger": false,
+      "query": "open this Unreal level and place a point light"
+    },
+    {
+      "id": "gdscript-gist",
+      "split": "train",
+      "should_trigger": false,
+      "query": "fix the syntax error in this GDScript gist, no editor"
+    },
+    {
+      "id": "godot-docs",
+      "split": "train",
+      "should_trigger": false,
+      "query": "what is CharacterBody3D in Godot 4, just explain it"
+    },
+    {
+      "id": "scoop-godot",
+      "split": "train",
+      "should_trigger": false,
+      "query": "install Godot 4.7 with scoop on Windows"
+    },
+    {
+      "id": "gdd-only",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "write a one-page GDD for a walking sim, no engine"
+    },
+    {
+      "id": "js-pr",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "review this Node test PR, it only touches bridge-client.test.js"
+    },
+    {
+      "id": "blender-bake",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "bake this mesh in Blender and export a glb, don't open Godot yet"
+    },
+    {
+      "id": "android-studio",
+      "split": "validation",
+      "should_trigger": false,
+      "query": "set up Android Studio so I can export later, don't touch the Godot project"
+    }
+  ]
+}

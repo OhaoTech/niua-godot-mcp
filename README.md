@@ -1,6 +1,6 @@
 # NIUA Godot MCP
 
-[![v0.1.11](https://img.shields.io/badge/v0.1.11-111827?style=flat-square)](./CHANGELOG.md)
+[![v0.1.12](https://img.shields.io/badge/v0.1.12-111827?style=flat-square)](./CHANGELOG.md)
 
 **Your AI builds real Godot games on your machine.**
 

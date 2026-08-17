@@ -1,6 +1,15 @@
 ---
 name: niua-godot
-description: Use when building, running, or debugging a Godot game through the NIUA Godot MCP (mcp__niua-godot__* tools) — creating scenes and nodes, wiring scripts, running a scene, capturing runtime screenshots, or recovering from errors like "no_main_scene", "unsaved_scene", "current scene has no file path", or a stuck Godot editor dialog after a run.
+description: >-
+  Use when building, running, playtesting, or debugging a Godot 4.7 game through
+  the NIUA Godot MCP (mcp__niua-godot__* tools): create/open/save scenes, nodes,
+  scripts, run_main_scene / run_custom_scene / run_playtest_evidence, runtime
+  probe, screenshots. Also use for untitled or unsaved scenes, no_main_scene,
+  stuck Save As or select-main-scene dialogs, a black run window, or token-diet
+  reads (find_nodes, maxDepth, savePath). Do not use for Blender, Unity, Unreal,
+  or Godot work that is not going through this MCP.
+metadata:
+  version: "0.1.12"
 ---
 
 # NIUA Godot
@@ -13,6 +22,8 @@ Playbook for a real Godot 4.7 editor through the NIUA Godot MCP. The MCP is the 
 | --- | --- |
 | `SKILL.md` (this file) | Safe build/run loop, token diet, error recovery |
 | `reference/*.md` | Generated tool lists per domain — read only the one you need |
+| `evals/triggers.json` | Should / should-not prompts for description triggering |
+| `scripts/score-triggers.mjs` | Deterministic coverage check (CI) |
 
 The MCP already sends a short golden path at initialize. Use this skill when you are actually building or debugging.
 

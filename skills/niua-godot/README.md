@@ -10,7 +10,15 @@ This skill is the *playbook*; it does not replace the MCP server. Install and co
 niua-godot/
   SKILL.md            # hand-written playbook (the tested part)
   reference/          # one auto-generated doc per subsystem (26 + INDEX.md)
+  evals/triggers.json # should / should-not prompts for description triggering
+  scripts/            # score-triggers.mjs — CI coverage check
   README.md
+```
+
+Trigger coverage (not an LLM eval):
+
+```bash
+npm run skill:triggers
 ```
 
 `reference/*.md` is generated from the MCP manifest — never edit by hand. Regenerate after any tool change:

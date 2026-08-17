@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.12 - Skill trigger evals
+
+- Skill frontmatter now carries `metadata.version` (kept in lockstep with `package.json`).
+- Added `evals/triggers.json` (12 should-trigger / 10 should-not, train + validation) and `scripts/score-triggers.mjs`. CI fails if the description drops a trigger signal or exceeds 1024 characters.
+
 ## 0.1.11 - Skill rename + playbook
 
 - Renamed the agent skill `niua-godot-forge` → `niua-godot`.
