@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `npm run skill:triggers:live` — 3-run xAI judge over `evals/triggers.json` (name+description only). Results go to gitignored `evals/results/`.
 - Skill trigger evals: live 3-run protocol in `evals/README.md`; `npm run skill:install` copies the skill into `~/.claude/skills` and `~/.agents/skills`.
 
 ## 0.1.12 - Skill trigger evals

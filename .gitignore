@@ -2,3 +2,4 @@ node_modules/
 runs/
 *.log
 .DS_Store
+skills/niua-godot/evals/results/
