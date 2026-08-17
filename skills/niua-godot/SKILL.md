@@ -1,9 +1,9 @@
 ---
-name: niua-godot-forge
+name: niua-godot
 description: Use when building, running, or debugging a Godot game through the NIUA Godot MCP (mcp__niua-godot__* tools) — creating scenes and nodes, wiring scripts, running a scene, capturing runtime screenshots, or recovering from errors like "no_main_scene", "unsaved_scene", "current scene has no file path", or a stuck Godot editor dialog after a run.
 ---
 
-# NIUA Godot Forge
+# NIUA Godot
 
 Playbook for driving a real Godot 4.7 editor through the NIUA Godot MCP tools. The MCP is the hands; this is the order of operations that keeps the editor from blocking on modal GUI dialogs the agent cannot click.
 

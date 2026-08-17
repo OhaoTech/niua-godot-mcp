@@ -94,10 +94,10 @@ More help: [troubleshooting](docs/godot-mcp/troubleshooting.md)
 
 ```bash
 # Claude Code
-mkdir -p ~/.claude/skills && cp -r skills/niua-godot-forge ~/.claude/skills/
+mkdir -p ~/.claude/skills && cp -r skills/niua-godot ~/.claude/skills/
 
 # Codex / agents
-mkdir -p ~/.agents/skills && cp -r skills/niua-godot-forge ~/.agents/skills/
+mkdir -p ~/.agents/skills && cp -r skills/niua-godot ~/.agents/skills/
 ```
 
 </details>

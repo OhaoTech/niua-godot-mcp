@@ -143,7 +143,7 @@ Fix:
 Safe prompt:
 
 ```text
-Use niua-godot-forge.
+Use niua-godot.
 Open or create res://main.tscn, save it, set it as the main scene, then run_main_scene.
 ```
 

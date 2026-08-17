@@ -19,7 +19,7 @@
   "files": [
     "src/godot-mcp",
     "godot/addons/niua_mcp",
-    "skills/niua-godot-forge",
+    "skills/niua-godot",
     "examples",
     "scripts/install-niua-godot-addon.js",
     "scripts/generate-godot-mcp-docs.mjs",

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Generate per-subsystem reference docs for the niua-godot-forge skill.
+// Generate per-subsystem reference docs for the niua-godot skill.
 // One file per manifest domain, sourced from the same tool catalog as
 // docs/godot-mcp/tools.md so the skill's reference never drifts.
 import { mkdir, writeFile } from "node:fs/promises";
@@ -11,7 +11,7 @@ import { MIGRATED_MANIFEST_DOMAINS } from "../src/godot-mcp/manifest/domains.js"
 import { V1_TOOL_NAMES } from "../src/godot-mcp/server/tool-profiles.js";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const outputDir = path.join(repoRoot, "skills/niua-godot-forge/reference");
+const outputDir = path.join(repoRoot, "skills/niua-godot/reference");
 const v1Names = new Set(V1_TOOL_NAMES);
 const toolsByName = new Map(GODOT_MCP_TOOLS.map((tool) => [tool.name, tool]));
 

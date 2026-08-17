@@ -52,5 +52,5 @@ Candidates when recipes/SDK cover dogfood paths:
 
 1. Edit the tool’s `tier` + `profile` in its domain `manifest.js` (`essential`/`v1` or `standard`/`full`).
 2. Update any contract tests that pin v1 membership.
-3. Refresh skill docs counts (`skills/niua-godot-forge/SKILL.md`).
+3. Refresh skill docs counts (`skills/niua-godot/SKILL.md`).
 4. `npm test` — core projection is derived from `tier`, not a hand list.

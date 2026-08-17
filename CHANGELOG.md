@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Renamed the agent skill `niua-godot-forge` → `niua-godot`. Recopy or re-symlink `skills/niua-godot` into your client skills directory.
+
 ## 0.1.10 - Token diet for live editor + runtime probe
 
 - **Shallow by default:** `get_scene_tree` and `get_runtime_state` default to `maxDepth: 2` on both the MCP client and the Godot HTTP bridge. Pass `0` for the full tree.

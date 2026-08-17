@@ -88,7 +88,7 @@ Save, set main, run, confirm it's playing.
 
 Offer once:
 
-- Claude Code: `cp -r <clone>/skills/niua-godot-forge ~/.claude/skills/`
-- Codex: `cp -r <clone>/skills/niua-godot-forge ~/.agents/skills/`
+- Claude Code: `cp -r <clone>/skills/niua-godot ~/.claude/skills/`
+- Codex: `cp -r <clone>/skills/niua-godot ~/.agents/skills/`
 
 Teaches save-before-run so the editor doesn’t get stuck on dialogs.
