@@ -8,8 +8,10 @@ description: >-
   stuck Save As or select-main-scene dialogs, a black run window, or token-diet
   reads (find_nodes, maxDepth, savePath). Do not use for Blender, Unity, Unreal,
   or Godot work that is not going through this MCP.
+compatibility: Requires the NIUA Godot MCP server and a Godot 4.7 editor with the bundled addon.
 metadata:
   version: "0.1.12"
+  evals: evals/triggers.json
 ---
 
 # NIUA Godot

@@ -38,6 +38,7 @@
     "godot:mcp:doctor": "node src/godot-mcp/doctor.js",
     "godot:mcp:docs": "node scripts/generate-godot-mcp-docs.mjs && node scripts/generate-godot-mcp-skill-reference.mjs",
     "skill:triggers": "node skills/niua-godot/scripts/score-triggers.mjs",
+    "skill:install": "node skills/niua-godot/scripts/install-skill.mjs",
     "gen:sdk": "node scripts/gen-sdk.mjs",
     "probe:sdk-ruler": "node scripts/probes/sdk-token-ruler.mjs",
     "smoke:p0-p2": "node scripts/p0-p2-smoke.mjs"

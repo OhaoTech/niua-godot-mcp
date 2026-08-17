@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Skill trigger evals: live 3-run protocol in `evals/README.md`; `npm run skill:install` copies the skill into `~/.claude/skills` and `~/.agents/skills`.
+
 ## 0.1.12 - Skill trigger evals
 
 - Skill frontmatter now carries `metadata.version` (kept in lockstep with `package.json`).

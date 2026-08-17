@@ -94,6 +94,10 @@ export function evaluateSkillTriggers(root = skillDir) {
   if (should.length < 10 || shouldNot.length < 10) {
     problems.push(`need at least 10 should / 10 should-not queries (have ${should.length}/${shouldNot.length})`);
   }
+  const ids = evals.queries.map((query) => query.id);
+  if (new Set(ids).size !== ids.length) {
+    problems.push("duplicate query ids in evals/triggers.json");
+  }
   const train = evals.queries.filter((query) => query.split === "train");
   const validation = evals.queries.filter((query) => query.split === "validation");
   if (train.length < 8 || validation.length < 6) {
